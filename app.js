@@ -102,21 +102,43 @@ function initUI() {
 function initEmployeeSearch(prefix, roleFilter, inputEl, hiddenEl) {
   const dropdown = document.getElementById(`${prefix}-dropdown`);
   const getList = () => roleFilter ? employeeData.filter(e=>e.role===roleFilter) : employeeData;
+  const isEmpDropdown = prefix !== 'q5';
 
   inputEl.addEventListener('input', () => {
     const q = inputEl.value.trim().toLowerCase();
     const list = getList();
     const matches = q ? list.filter(e=>e.name.toLowerCase().includes(q)).slice(0,40) : list.slice(0,40);
     renderDropdown(dropdown, matches.map(e=>e.name), name=>{
-      inputEl.value=name; hiddenEl.value=name; dropdown.classList.remove('open');
+      if (name === '__other__') {
+        inputEl.value = ''; hiddenEl.value = '__other__';
+        inputEl.placeholder = 'พิมพ์ชื่อ Parttime...';
+        inputEl.dataset.otherMode = '1';
+      } else {
+        inputEl.value=name; hiddenEl.value=name;
+        inputEl.dataset.otherMode = '';
+      }
+      dropdown.classList.remove('open');
       setToggleBtnState(prefix, false);
       saveFormState();
-    });
+    }, isEmpDropdown ? {addOther:true} : undefined);
     dropdown.classList.add('open');
     setToggleBtnState(prefix, true);
   });
 
-  inputEl.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState(prefix,false);},200));
+  // When in other mode, sync typed text to hidden value
+  inputEl.addEventListener('change', () => {
+    if (inputEl.dataset.otherMode === '1') {
+      hiddenEl.value = inputEl.value.trim() || '__other__';
+    }
+  });
+
+  inputEl.addEventListener('blur',()=>setTimeout(()=>{
+    dropdown.classList.remove('open');setToggleBtnState(prefix,false);
+    // Sync other mode value on blur
+    if (inputEl.dataset.otherMode === '1' && inputEl.value.trim()) {
+      hiddenEl.value = inputEl.value.trim();
+    }
+  },200));
   inputEl.addEventListener('focus',()=>{inputEl.dispatchEvent(new Event('input'));});
 }
 
@@ -139,13 +161,22 @@ function toggleDropdownAll(prefix) {
 
   const inputEl = document.getElementById(inputMap[prefix]);
   const hiddenEl = document.getElementById(hiddenMap[prefix]);
+  const isEmpDropdown = prefix !== 'q5';
 
   renderDropdown(dropdown, list, val=>{
-    inputEl.value=val; hiddenEl.value=val; dropdown.classList.remove('open');
+    if (val === '__other__') {
+      inputEl.value = ''; hiddenEl.value = '__other__';
+      inputEl.placeholder = 'พิมพ์ชื่อ Parttime...';
+      inputEl.dataset.otherMode = '1';
+    } else {
+      inputEl.value=val; hiddenEl.value=val;
+      inputEl.dataset.otherMode = '';
+      if(prefix==='q5'){const d=masterData.find(x=>x.drug===val);if(d)selectDrug(d);}
+    }
+    dropdown.classList.remove('open');
     setToggleBtnState(prefix,false);
-    if(prefix==='q5'){const d=masterData.find(x=>x.drug===val);if(d)selectDrug(d);}
     saveFormState();
-  });
+  }, isEmpDropdown ? {addOther:true} : undefined);
   dropdown.classList.add('open');
   setToggleBtnState(prefix, true);
   inputEl.focus();
@@ -158,7 +189,7 @@ function setToggleBtnState(prefix, open) {
   if (btn) btn.classList.toggle('open', open);
 }
 
-function renderDropdown(dropdown, items, onSelect) {
+function renderDropdown(dropdown, items, onSelect, opts) {
   dropdown.innerHTML = '';
   if (!items.length) { dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>'; return; }
   items.forEach(label=>{
@@ -166,12 +197,24 @@ function renderDropdown(dropdown, items, onSelect) {
     item.addEventListener('mousedown',e=>{e.preventDefault();onSelect(label);});
     dropdown.appendChild(item);
   });
+  // Add "อื่นๆ" for employee dropdowns
+  if (opts && opts.addOther) {
+    const sep = document.createElement('div');
+    sep.style.cssText = 'border-top:1px dashed var(--border); margin:4px 0;';
+    dropdown.appendChild(sep);
+    const otherItem = document.createElement('div');
+    otherItem.className = 'dropdown-item';
+    otherItem.textContent = '✏️ อื่นๆ (Parttime)';
+    otherItem.style.color = 'var(--text3)';
+    otherItem.addEventListener('mousedown', e => { e.preventDefault(); onSelect('__other__'); });
+    dropdown.appendChild(otherItem);
+  }
 }
 
 function clearEmpSearch(prefix) {
-  const map={q3:['q3-pharmacist-search','q3-pharmacist'],q4:['q4-assistant-search','q4-assistant'],q9:['q9-3-counter-search','q9-3-counter']};
-  const [sId,hId]=map[prefix]||[];
-  if(sId)document.getElementById(sId).value='';
+  const map={q3:['q3-pharmacist-search','q3-pharmacist','พิมพ์ชื่อเภสัชกร...'],q4:['q4-assistant-search','q4-assistant','พิมพ์ชื่อผู้ช่วยเภสัชกร...'],q9:['q9-3-counter-search','q9-3-counter','พิมพ์ชื่อ...']};
+  const [sId,hId,ph]=map[prefix]||[];
+  if(sId){const el=document.getElementById(sId); el.value=''; el.dataset.otherMode=''; el.placeholder=ph||'พิมพ์ชื่อ...';}
   if(hId)document.getElementById(hId).value='';
   saveFormState();
 }
@@ -230,18 +273,32 @@ function toggleCheck(chk){
   const item=chk.closest('.check-item');
   item.classList.toggle('checked',chk.checked);
   updateSelectAllBtn();
+  updateChecklistProgress();
   saveFormState();
 }
 
 function toggleSelectAll(){
   const allChecked=MAIN_CHECKS.every(n=>document.querySelector(`[name="${n}"]`).checked);
   MAIN_CHECKS.forEach(n=>{const c=document.querySelector(`[name="${n}"]`);c.checked=!allChecked;toggleCheck(c);if(n==='check_change_counter')toggleChangeCounter();});
-  updateSelectAllBtn(); saveFormState();
+  updateSelectAllBtn(); updateChecklistProgress(); saveFormState();
 }
 
 function updateSelectAllBtn(){
   const all=MAIN_CHECKS.every(n=>document.querySelector(`[name="${n}"]`).checked);
   document.getElementById('btn-select-all').textContent=all?'☐ ยกเลิกทั้งหมด':'☑ เลือกทั้งหมด';
+}
+
+function updateChecklistProgress(){
+  const done = MAIN_CHECKS.filter(n => document.querySelector(`[name="${n}"]`).checked).length;
+  const total = MAIN_CHECKS.length;
+  const pct = Math.round((done / total) * 100);
+  const fill = document.getElementById('checklist-progress-fill');
+  const text = document.getElementById('checklist-progress-text');
+  if (fill) fill.style.width = pct + '%';
+  if (text) {
+    text.textContent = `${done} / ${total} รายการ`;
+    text.style.color = done === total ? 'var(--success)' : 'var(--accent-dark)';
+  }
 }
 
 function toggleChangeCounter(){
@@ -303,13 +360,12 @@ function updateQ11Visibility() {
 function toggleQ11Room(chk, room) {
   const item = chk.closest('.check-item');
   item.classList.toggle('checked', chk.checked);
-  // Find the matching room config
   const cfg = Q11_ROOMS.find(r => r.room === room);
   if (cfg) {
     document.getElementById(cfg.subId).classList.toggle('visible', chk.checked);
   }
-  // If checking a room, uncheck "none"
-  if (chk.checked) {
+  // If checking a non-stock room, uncheck "none"
+  if (chk.checked && room !== 'คลังยา') {
     const noneChk = document.getElementById('chk-q11-none');
     if (noneChk) { noneChk.checked = false; noneChk.closest('.check-item').classList.remove('checked'); }
   }
@@ -319,8 +375,9 @@ function toggleQ11Room(chk, room) {
 function toggleQ11None(chk) {
   chk.closest('.check-item').classList.toggle('checked', chk.checked);
   if (chk.checked) {
-    // Uncheck all rooms & hide sub-fields
+    // Uncheck all rooms EXCEPT คลังยา
     Q11_ROOMS.forEach(r => {
+      if (r.key === 'stock') return; // skip คลังยา
       const c = document.querySelector(`[name="${r.chkName}"]`);
       if (c) { c.checked = false; c.closest('.check-item').classList.remove('checked'); }
       const sub = document.getElementById(r.subId);
@@ -357,27 +414,61 @@ function addSuspectCase() {
   const entry = document.createElement('div');
   entry.className = 'similar-drug-entry suspect-case-entry';
   entry.id = `suspect-entry-${id}`;
+
+  // Build name option lists
+  const assistants = employeeData.filter(e => e.role === 'ผู้ช่วยเภสัชกร').map(e => e.name);
+  const pharmacists = employeeData.filter(e => e.role === 'เภสัชกร').map(e => e.name);
+  const makeOptions = (list) => `<option value="">-- เลือก --</option>` + list.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="__other__">อื่นๆ (Parttime)</option>`;
+
   entry.innerHTML = `
     <div class="suspect-case-header">เคสที่ ${id}
       <button type="button" class="remove-btn" onclick="removeSuspectCase(${id})">\u2715</button>
     </div>
     <div class="suspect-case-fields">
       <div class="field-row">
-        <div class="field-group"><label>\u0e27\u0e31\u0e19\u0e17\u0e35\u0e48</label><input type="date" id="sc-date-${id}" /></div>
-        <div class="field-group"><label>HN</label><input type="text" id="sc-hn-${id}" placeholder="\u0e23\u0e30\u0e1a\u0e38 HN..." /></div>
+        <div class="field-group"><label>วันที่</label><input type="date" id="sc-date-${id}" /></div>
+        <div class="field-group"><label>HN <span style="color:var(--text3);font-weight:400;">(7 หลัก)</span></label><input type="text" id="sc-hn-${id}" maxlength="7" pattern="[0-9]{7}" inputmode="numeric" placeholder="เช่น 2412405" oninput="this.value=this.value.replace(/[^0-9]/g,'')" /></div>
       </div>
       <div class="field-row">
-        <div class="field-group"><label>\u0e08\u0e33\u0e19\u0e27\u0e19</label><input type="number" id="sc-qty-${id}" placeholder="\u00b10" step="any" /></div>
-        <div class="field-group"><label>\u0e1c\u0e39\u0e49\u0e08\u0e31\u0e14\u0e22\u0e32</label><input type="text" id="sc-prep-${id}" placeholder="\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e08\u0e31\u0e14" /></div>
+        <div class="field-group"><label>จำนวน</label><input type="number" id="sc-qty-${id}" placeholder="±0" step="any" /></div>
+        <div class="field-group"><label>ผู้จัดยา</label>
+          <select id="sc-prep-${id}" onchange="handleScOther(this,'sc-prep-other-${id}')">${makeOptions(assistants)}</select>
+          <input type="text" id="sc-prep-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อ Parttime..." />
+        </div>
       </div>
       <div class="field-row">
-        <div class="field-group"><label>\u0e1c\u0e39\u0e49\u0e40\u0e0a\u0e47\u0e04</label><input type="text" id="sc-chk-${id}" placeholder="\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e40\u0e0a\u0e47\u0e04" /></div>
-        <div class="field-group"><label>\u0e1c\u0e39\u0e49\u0e08\u0e48\u0e32\u0e22</label><input type="text" id="sc-disp-${id}" placeholder="\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e08\u0e48\u0e32\u0e22" /></div>
+        <div class="field-group"><label>ผู้เช็ค</label>
+          <select id="sc-chk-${id}" onchange="handleScOther(this,'sc-chk-other-${id}')">${makeOptions(pharmacists)}</select>
+          <input type="text" id="sc-chk-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อ Parttime..." />
+        </div>
+        <div class="field-group"><label>ผู้จ่าย</label>
+          <select id="sc-disp-${id}" onchange="handleScOther(this,'sc-disp-other-${id}')">${makeOptions(pharmacists)}</select>
+          <input type="text" id="sc-disp-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อ Parttime..." />
+        </div>
       </div>
     </div>
   `;
   document.getElementById('suspect-case-list').appendChild(entry);
   saveFormState();
+}
+
+function handleScOther(sel, otherId) {
+  const otherInput = document.getElementById(otherId);
+  if (sel.value === '__other__') {
+    otherInput.style.display = 'block';
+    otherInput.focus();
+  } else {
+    otherInput.style.display = 'none';
+    otherInput.value = '';
+  }
+  saveFormState();
+}
+
+function getScValue(selectId, otherId) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return '';
+  if (sel.value === '__other__') return document.getElementById(otherId)?.value || '';
+  return sel.value;
 }
 
 function removeSuspectCase(id) {
@@ -589,9 +680,9 @@ async function submitForm(){
       date: document.getElementById(`sc-date-${id}`)?.value || '',
       hn: document.getElementById(`sc-hn-${id}`)?.value || '',
       qty: document.getElementById(`sc-qty-${id}`)?.value || '',
-      prep: document.getElementById(`sc-prep-${id}`)?.value || '',
-      checker: document.getElementById(`sc-chk-${id}`)?.value || '',
-      dispenser: document.getElementById(`sc-disp-${id}`)?.value || '',
+      prep: getScValue(`sc-prep-${id}`, `sc-prep-other-${id}`),
+      checker: getScValue(`sc-chk-${id}`, `sc-chk-other-${id}`),
+      dispenser: getScValue(`sc-disp-${id}`, `sc-disp-other-${id}`),
     });
   });
 
@@ -664,6 +755,7 @@ function resetForm(){
   document.getElementById('progress-bar').style.width='0%';
   localStorage.removeItem(FORM_STATE_KEY);
   updateSelectAllBtn();
+  updateChecklistProgress();
   updateQ11Visibility();
 }
 
@@ -760,9 +852,9 @@ function collectQ11Q12Q13State(state) {
       date: document.getElementById(`sc-date-${id}`)?.value || '',
       hn: document.getElementById(`sc-hn-${id}`)?.value || '',
       qty: document.getElementById(`sc-qty-${id}`)?.value || '',
-      prep: document.getElementById(`sc-prep-${id}`)?.value || '',
-      checker: document.getElementById(`sc-chk-${id}`)?.value || '',
-      dispenser: document.getElementById(`sc-disp-${id}`)?.value || '',
+      prep: getScValue(`sc-prep-${id}`, `sc-prep-other-${id}`),
+      checker: getScValue(`sc-chk-${id}`, `sc-chk-other-${id}`),
+      dispenser: getScValue(`sc-disp-${id}`, `sc-disp-other-${id}`),
     });
   });
   // Q13
@@ -809,6 +901,7 @@ function restoreFormState(){
       });
     }
     updateSelectAllBtn();
+    updateChecklistProgress();
     updateProgress();
     // Q11
     if (s.q11) {
@@ -843,9 +936,22 @@ function restoreFormState(){
           if (sc.date) document.getElementById(`sc-date-${id}`).value = sc.date;
           if (sc.hn) document.getElementById(`sc-hn-${id}`).value = sc.hn;
           if (sc.qty) document.getElementById(`sc-qty-${id}`).value = sc.qty;
-          if (sc.prep) document.getElementById(`sc-prep-${id}`).value = sc.prep;
-          if (sc.checker) document.getElementById(`sc-chk-${id}`).value = sc.checker;
-          if (sc.dispenser) document.getElementById(`sc-disp-${id}`).value = sc.dispenser;
+          // Restore name fields (select + other)
+          ['prep','chk','disp'].forEach(field => {
+            const key = {prep:'prep',chk:'checker',disp:'dispenser'}[field];
+            const val = sc[key] || '';
+            const sel = document.getElementById(`sc-${field}-${id}`);
+            const otherInput = document.getElementById(`sc-${field}-other-${id}`);
+            if (!sel) return;
+            // Check if value exists in select options
+            const optExists = [...sel.options].some(o => o.value === val);
+            if (optExists) {
+              sel.value = val;
+            } else if (val) {
+              sel.value = '__other__';
+              if (otherInput) { otherInput.style.display = 'block'; otherInput.value = val; }
+            }
+          });
         });
       }
     }

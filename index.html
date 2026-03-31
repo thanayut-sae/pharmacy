@@ -144,46 +144,69 @@
     <!-- === SECTION 3: Checklist === -->
     <div class="card">
       <div class="section-title"><div class="icon">🔍</div>การตรวจสอบในห้องยาที่นับ</div>
-      <div class="select-all-bar">
-        <span class="req-note">* ต้องเลือกทุกรายการ (ข้อ 9.1–9.8)</span>
-        <button type="button" class="btn-select-all" id="btn-select-all" onclick="toggleSelectAll()">☑ เลือกทั้งหมด</button>
-      </div>
-      <div class="checklist-items" id="checklist-wrap">
-        <label class="check-item" id="ci-9-1"><input type="checkbox" name="check_recount" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.1 นับซ้ำ</div></div></label>
-        <label class="check-item" id="ci-9-2"><input type="checkbox" name="check_pending_prep" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.2 ยาค้างจัด</div></div></label>
-        <label class="check-item" id="ci-9-3"><input type="checkbox" name="check_change_counter" value="1" id="chk-9-3" onchange="toggleCheck(this); toggleChangeCounter()" /><div class="check-box"></div>
-          <div style="flex:1;"><div class="check-label">9.3 เปลี่ยนคนนับ</div>
-            <div class="sub-field" id="sub-change-counter">
-              <label>ผู้นับคนใหม่<span class="req">*</span></label>
-              <div class="search-select-wrap">
-                <input type="text" id="q9-3-counter-search" class="search-input" placeholder="พิมพ์ชื่อ..." autocomplete="off" />
-                <div class="input-actions">
-                  <button type="button" class="toggle-btn" onmousedown="event.preventDefault(); toggleDropdownAll('q9')" title="แสดงรายการ"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg></button>
-                  <button type="button" class="clear-btn" onmousedown="event.preventDefault(); clearEmpSearch('q9')" title="ล้าง">✕</button>
+
+      <!-- GROUP A: Mandatory 9.1-9.8 -->
+      <div class="checklist-group" id="checklist-group-required">
+        <div class="checklist-group-header">
+          <div class="checklist-group-title">
+            <span class="group-badge required">บังคับ</span>
+            <span>รายการที่ต้องตรวจสอบ</span>
+          </div>
+          <button type="button" class="btn-select-all" id="btn-select-all" onclick="toggleSelectAll()">☑ เลือกทั้งหมด</button>
+        </div>
+        <div class="checklist-mini-progress">
+          <div class="mini-progress-bar"><div class="mini-progress-fill" id="checklist-progress-fill"></div></div>
+          <span class="mini-progress-text" id="checklist-progress-text">0 / 8 รายการ</span>
+        </div>
+        <div class="checklist-items" id="checklist-wrap">
+          <label class="check-item" id="ci-9-1"><input type="checkbox" name="check_recount" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">🔄 9.1 นับซ้ำ</div></div></label>
+          <label class="check-item" id="ci-9-2"><input type="checkbox" name="check_pending_prep" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">📋 9.2 ยาค้างจัด</div></div></label>
+          <label class="check-item" id="ci-9-3"><input type="checkbox" name="check_change_counter" value="1" id="chk-9-3" onchange="toggleCheck(this); toggleChangeCounter()" /><div class="check-box"></div>
+            <div style="flex:1;"><div class="check-label">🔁 9.3 เปลี่ยนคนนับ</div>
+              <div class="sub-field" id="sub-change-counter">
+                <label>ผู้นับคนใหม่<span class="req">*</span></label>
+                <div class="search-select-wrap">
+                  <input type="text" id="q9-3-counter-search" class="search-input" placeholder="พิมพ์ชื่อ..." autocomplete="off" />
+                  <div class="input-actions">
+                    <button type="button" class="toggle-btn" onmousedown="event.preventDefault(); toggleDropdownAll('q9')" title="แสดงรายการ"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg></button>
+                    <button type="button" class="clear-btn" onmousedown="event.preventDefault(); clearEmpSearch('q9')" title="ล้าง">✕</button>
+                  </div>
+                  <div class="dropdown-list" id="q9-dropdown"></div>
                 </div>
-                <div class="dropdown-list" id="q9-dropdown"></div>
+                <input type="hidden" id="q9-3-counter" name="q9_3_counter" />
               </div>
-              <input type="hidden" id="q9-3-counter" name="q9_3_counter" />
             </div>
-          </div>
-        </label>
-        <label class="check-item" id="ci-9-4"><input type="checkbox" name="check_expire" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.4 ยารอส่ง Expire</div></div></label>
-        <label class="check-item" id="ci-9-5"><input type="checkbox" name="check_damaged" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.5 ยารอส่งชำรุด</div></div></label>
-        <label class="check-item" id="ci-9-6"><input type="checkbox" name="check_pending_req" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.6 ใบเบิกค้างตัด</div></div></label>
-        <label class="check-item" id="ci-9-7"><input type="checkbox" name="check_qi" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.7 ยาคืน QI</div></div></label>
-        <label class="check-item" id="ci-9-8"><input type="checkbox" name="check_mrp" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div>
-          <div><div class="check-label">9.8 ยา MRP ที่ Run ขึ้น</div><div class="check-note">วันธรรมดาตัดยอด 15:00 น. | วันหยุด 12:00 น.</div></div>
-        </label>
-        <label class="check-item" id="ci-9-9"><input type="checkbox" name="check_other" value="1" id="chk-9-9" onchange="toggleCheck(this); toggleOtherNote()" /><div class="check-box"></div>
-          <div style="flex:1;"><div class="check-label">9.9 การตรวจสอบอื่นๆ</div>
-            <div class="sub-field" id="sub-other-note">
-              <label>รายละเอียดเพิ่มเติม</label>
-              <textarea id="q9-9-note" name="q9_9_note" placeholder="กรอกรายละเอียด..."></textarea>
-            </div>
-          </div>
-        </label>
+          </label>
+          <label class="check-item" id="ci-9-4"><input type="checkbox" name="check_expire" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">⏰ 9.4 ยารอส่ง Expire</div></div></label>
+          <label class="check-item" id="ci-9-5"><input type="checkbox" name="check_damaged" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">📦 9.5 ยารอส่งชำรุด</div></div></label>
+          <label class="check-item" id="ci-9-6"><input type="checkbox" name="check_pending_req" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">📄 9.6 ใบเบิกค้างตัด</div></div></label>
+          <label class="check-item" id="ci-9-7"><input type="checkbox" name="check_qi" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">↩️ 9.7 ยาคืน QI</div></div></label>
+          <label class="check-item" id="ci-9-8"><input type="checkbox" name="check_mrp" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div>
+            <div><div class="check-label">📊 9.8 ยา MRP ที่ Run ขึ้น</div><div class="check-note">🕒 วันธรรมดาตัดยอด 15:00 น. | วันหยุด 12:00 น.</div></div>
+          </label>
+        </div>
+        <div class="checklist-error-msg" id="checklist-error-msg">⚠️ กรุณาเลือกทุกรายการ (ข้อ 9.1–9.8) ให้ครบทุกข้อ</div>
       </div>
-      <div class="checklist-error-msg" id="checklist-error-msg">⚠️ กรุณาเลือกทุกรายการ (ข้อ 9.1–9.8) ให้ครบทุกข้อ</div>
+
+      <!-- GROUP B: Optional 9.9 -->
+      <div class="checklist-group optional-group" id="checklist-group-optional">
+        <div class="checklist-group-header">
+          <div class="checklist-group-title">
+            <span class="group-badge optional">ไม่บังคับ</span>
+            <span>รายการเพิ่มเติม (ถ้ามี)</span>
+          </div>
+        </div>
+        <div class="checklist-items">
+          <label class="check-item optional-item" id="ci-9-9"><input type="checkbox" name="check_other" value="1" id="chk-9-9" onchange="toggleCheck(this); toggleOtherNote()" /><div class="check-box"></div>
+            <div style="flex:1;"><div class="check-label">🔎 9.9 การตรวจสอบอื่นๆ</div>
+              <div class="sub-field" id="sub-other-note">
+                <label>รายละเอียดเพิ่มเติม</label>
+                <textarea id="q9-9-note" name="q9_9_note" placeholder="กรอกรายละเอียด..."></textarea>
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
 
       <!-- === SECTION 4: Q10 (Moved inside Q9 card) === -->
       <hr class="divider" style="margin: 32px 0 24px;" />
@@ -263,6 +286,11 @@
               </div>
             </div>
           </label>
+          <label class="check-item" id="ci-q11-none">
+            <input type="checkbox" name="q11_none" value="1" id="chk-q11-none" onchange="toggleQ11None(this)" />
+            <div class="check-box"></div>
+            <div><div class="check-label">ไม่มีการ Stock ที่ห้องยาชั้นอื่น</div></div>
+          </label>
           <label class="check-item" id="ci-q11-stock" data-room="คลังยา">
             <input type="checkbox" name="q11_stock" value="1" onchange="toggleQ11Room(this,'คลังยา')" />
             <div class="check-box"></div>
@@ -273,11 +301,6 @@
                 <input type="number" id="q11-diff-stock" name="q11_diff_stock" placeholder="±0" step="any" />
               </div>
             </div>
-          </label>
-          <label class="check-item" id="ci-q11-none">
-            <input type="checkbox" name="q11_none" value="1" id="chk-q11-none" onchange="toggleQ11None(this)" />
-            <div class="check-box"></div>
-            <div><div class="check-label">ไม่มีการ Stock ที่ห้องยาชั้นอื่น</div></div>
           </label>
         </div>
         <div class="checklist-error-msg" id="q11-error-msg">⚠️ กรุณาเลือกอย่างน้อย 1 ตำแหน่ง</div>
