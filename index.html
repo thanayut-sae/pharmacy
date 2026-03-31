@@ -789,7 +789,12 @@ function setDefaultDate() {
 async function loadSheetData() {
   showLoading(['load-pharmacist','load-assistant']);
   try {
-    const res = await fetch(`${GAS_URL}?action=getInitData`);
+    const res = await fetch(`${GAS_URL}?action=getInitData`, {
+      method: 'GET',
+      credentials: 'omit',
+      cache: 'no-cache',
+      redirect: 'follow',
+    });
     const data = await res.json();
     masterData   = data.master   || [];
     employeeData = data.employees || [];
@@ -799,7 +804,7 @@ async function loadSheetData() {
     initDrugSearchable();
   } catch(e) {
     showToast('❌ โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า', 'error');
-    console.error(e);
+    console.error('GAS Fetch Error:', e);
   } finally {
     hideLoading(['load-pharmacist','load-assistant']);
   }
