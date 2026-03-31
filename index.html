@@ -10,7 +10,6 @@
   <style>
     /* ===================== CSS RESET & BASE ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg:        #0f1117;
       --surface:   #1a1d27;
@@ -30,9 +29,7 @@
       --shadow:    0 4px 24px rgba(0,0,0,.4);
       --transition: .2s ease;
     }
-
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Sarabun', 'Inter', sans-serif;
       background: var(--bg);
@@ -42,21 +39,18 @@
         radial-gradient(ellipse at 20% 0%, rgba(91,141,238,.12) 0%, transparent 60%),
         radial-gradient(ellipse at 80% 100%, rgba(123,94,167,.1) 0%, transparent 60%);
     }
-
     /* ===================== LAYOUT ===================== */
     .page-wrapper {
       max-width: 860px;
       margin: 0 auto;
       padding: 32px 20px 80px;
     }
-
     /* ===================== HEADER ===================== */
     .form-header {
       text-align: center;
       margin-bottom: 36px;
       position: relative;
     }
-
     .form-header .badge {
       display: inline-flex;
       align-items: center;
@@ -72,7 +66,6 @@
       border-radius: 999px;
       margin-bottom: 14px;
     }
-
     .form-header h1 {
       font-size: clamp(1.4rem, 4vw, 2rem);
       font-weight: 700;
@@ -83,12 +76,10 @@
       line-height: 1.3;
       margin-bottom: 8px;
     }
-
     .form-header p {
       color: var(--text2);
       font-size: 14px;
     }
-
     /* ===================== CARD ===================== */
     .card {
       background: var(--surface);
@@ -100,7 +91,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .card::before {
       content: '';
       position: absolute;
@@ -110,9 +100,7 @@
       opacity: 0;
       transition: var(--transition);
     }
-
     .card:focus-within::before { opacity: 1; }
-
     .section-title {
       font-size: 13px;
       font-weight: 700;
@@ -126,7 +114,6 @@
       padding-bottom: 10px;
       border-bottom: 1px solid var(--border2);
     }
-
     .section-title .icon {
       width: 28px; height: 28px;
       background: rgba(91,141,238,.15);
@@ -134,25 +121,20 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 14px;
     }
-
     /* ===================== FORM FIELDS ===================== */
     .field-group { margin-bottom: 22px; }
     .field-group:last-child { margin-bottom: 0; }
-
     .field-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
       margin-bottom: 22px;
     }
-
     .field-row:last-child { margin-bottom: 0; }
-
     @media (max-width: 600px) {
       .field-row { grid-template-columns: 1fr; }
       .card { padding: 20px; }
     }
-
     label {
       display: block;
       font-size: 13px;
@@ -160,10 +142,8 @@
       color: var(--text2);
       margin-bottom: 7px;
     }
-
     label span.req { color: var(--danger); margin-left: 3px; }
     label .num { color: var(--accent); margin-right: 4px; }
-
     input[type="text"],
     input[type="number"],
     input[type="date"],
@@ -182,15 +162,12 @@
       appearance: none;
       -webkit-appearance: none;
     }
-
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px rgba(91,141,238,.18);
       background: var(--surface3);
     }
-
     input::placeholder, textarea::placeholder { color: var(--text2); opacity: .7; }
-
     select {
       cursor: pointer;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239aa5b4' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
@@ -198,24 +175,18 @@
       background-position: right 12px center;
       padding-right: 36px;
     }
-
     select option { background: #1a1d27; color: var(--text); }
-
     input[type="number"] { -moz-appearance: textfield; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
-
     textarea { resize: vertical; min-height: 80px; }
-
     /* ===================== SEARCHABLE SELECT ===================== */
     .search-select-wrap {
       position: relative;
     }
-
     .search-select-wrap input.search-input {
       padding-right: 36px;
     }
-
     .search-select-wrap .clear-btn {
       position: absolute;
       right: 10px;
@@ -230,9 +201,7 @@
       padding: 2px;
       display: none;
     }
-
     .search-select-wrap input:not(:placeholder-shown) ~ .clear-btn { display: block; }
-
     .dropdown-list {
       position: absolute;
       top: calc(100% + 4px);
@@ -246,13 +215,10 @@
       display: none;
       box-shadow: 0 8px 32px rgba(0,0,0,.5);
     }
-
     .dropdown-list.open { display: block; }
-
     .dropdown-list::-webkit-scrollbar { width: 5px; }
     .dropdown-list::-webkit-scrollbar-track { background: transparent; }
     .dropdown-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-
     .dropdown-item {
       padding: 9px 14px;
       font-size: 13.5px;
@@ -260,18 +226,14 @@
       transition: var(--transition);
       border-bottom: 1px solid var(--border2);
     }
-
     .dropdown-item:last-child { border-bottom: none; }
     .dropdown-item:hover, .dropdown-item.active { background: rgba(91,141,238,.2); color: var(--accent); }
     .dropdown-item.no-result { color: var(--text2); cursor: default; font-style: italic; }
     .dropdown-item.no-result:hover { background: none; color: var(--text2); }
-
     /* Hidden value input */
     .hidden-val { display: none !important; }
-
     /* ===================== CHECKLIST (CHECKBOXES) ===================== */
     .checklist-items { display: flex; flex-direction: column; gap: 12px; }
-
     .check-item {
       display: flex;
       align-items: flex-start;
@@ -284,12 +246,9 @@
       transition: var(--transition);
       position: relative;
     }
-
     .check-item:hover { border-color: var(--border); background: var(--surface3); }
     .check-item.checked { border-color: rgba(91,141,238,.5); background: rgba(91,141,238,.08); }
-
     .check-item input[type="checkbox"] { display: none; }
-
     .check-box {
       width: 20px; height: 20px;
       border: 2px solid var(--border);
@@ -300,12 +259,10 @@
       transition: var(--transition);
       background: var(--surface);
     }
-
     .check-item.checked .check-box {
       background: var(--accent);
       border-color: var(--accent);
     }
-
     .check-box::after {
       content: '';
       width: 5px; height: 9px;
@@ -315,24 +272,18 @@
       opacity: 0;
       transition: var(--transition);
     }
-
     .check-item.checked .check-box::after { opacity: 1; }
-
     .check-label { font-size: 14px; flex: 1; line-height: 1.5; }
     .check-note { font-size: 11.5px; color: var(--text2); margin-top: 3px; }
-
     .sub-field {
       margin-top: 10px;
       padding-top: 10px;
       border-top: 1px solid var(--border2);
       display: none;
     }
-
     .sub-field.visible { display: block; }
-
     /* ===================== RADIO GROUP (q10) ===================== */
     .radio-group { display: flex; flex-direction: column; gap: 10px; }
-
     .radio-item {
       display: flex;
       align-items: center;
@@ -344,11 +295,9 @@
       cursor: pointer;
       transition: var(--transition);
     }
-
     .radio-item:hover { border-color: var(--border); background: var(--surface3); }
     .radio-item.selected { border-color: rgba(91,141,238,.5); background: rgba(91,141,238,.08); }
     .radio-item input[type="checkbox"] { display: none; }
-
     .radio-dot {
       width: 18px; height: 18px;
       border: 2px solid var(--border);
@@ -357,12 +306,10 @@
       display: flex; align-items: center; justify-content: center;
       transition: var(--transition);
     }
-
     .radio-item.selected .radio-dot {
       background: var(--accent);
       border-color: var(--accent);
     }
-
     .radio-dot::after {
       content: '';
       width: 4px; height: 7px;
@@ -372,17 +319,13 @@
       opacity: 0;
       transition: var(--transition);
     }
-
     .radio-item.selected .radio-dot::after { opacity: 1; }
-
     /* ===================== SIMILAR DRUG ENTRIES ===================== */
     .similar-drugs-area {
       margin-top: 16px;
       display: none;
     }
-
     .similar-drugs-area.visible { display: block; }
-
     .similar-drug-entry {
       display: grid;
       grid-template-columns: 1fr auto 120px auto;
@@ -391,12 +334,10 @@
       margin-bottom: 10px;
       animation: slideIn .2s ease;
     }
-
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(-6px); }
       to   { opacity: 1; transform: translateY(0); }
     }
-
     .similar-drug-entry .remove-btn {
       background: rgba(239,68,68,.15);
       border: 1px solid rgba(239,68,68,.3);
@@ -408,9 +349,7 @@
       line-height: 1;
       transition: var(--transition);
     }
-
     .similar-drug-entry .remove-btn:hover { background: rgba(239,68,68,.25); }
-
     .add-entry-btn {
       display: inline-flex;
       align-items: center;
@@ -427,16 +366,13 @@
       font-weight: 600;
       transition: var(--transition);
     }
-
     .add-entry-btn:hover { background: rgba(91,141,238,.2); border-color: var(--accent); }
-
     /* ===================== DIVIDER ===================== */
     .divider {
       border: none;
       border-top: 1px solid var(--border2);
       margin: 4px 0 20px;
     }
-
     /* ===================== LOADING OVERLAY ===================== */
     .loading-indicator {
       display: none;
@@ -446,9 +382,7 @@
       color: var(--text2);
       margin-top: 4px;
     }
-
     .loading-indicator.visible { display: flex; }
-
     .spinner {
       width: 14px; height: 14px;
       border: 2px solid var(--border);
@@ -456,12 +390,9 @@
       border-radius: 50%;
       animation: spin .7s linear infinite;
     }
-
     @keyframes spin { to { transform: rotate(360deg); } }
-
     /* ===================== SUBMIT BUTTON ===================== */
     .submit-wrap { text-align: center; margin-top: 12px; }
-
     .btn-submit {
       display: inline-flex;
       align-items: center;
@@ -480,7 +411,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .btn-submit::before {
       content: '';
       position: absolute;
@@ -489,11 +419,9 @@
       opacity: 0;
       transition: opacity .15s;
     }
-
     .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(91,141,238,.45); }
     .btn-submit:active { transform: translateY(0); }
     .btn-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
     /* ===================== TOAST ===================== */
     #toast {
       position: fixed;
@@ -515,42 +443,34 @@
       text-align: center;
       box-shadow: 0 8px 32px rgba(0,0,0,.5);
     }
-
     #toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-
     #toast.success { border-color: var(--success); color: var(--success); }
     #toast.error   { border-color: var(--danger);  color: var(--danger);  }
-
     /* ===================== SUCCESS SCREEN ===================== */
     #success-screen {
       display: none;
       text-align: center;
       padding: 60px 30px;
     }
-
     #success-screen .checkmark {
       font-size: 64px;
       margin-bottom: 20px;
       animation: pop .4s cubic-bezier(.2,.8,.3,1.2);
     }
-
     @keyframes pop {
       from { transform: scale(0); opacity: 0; }
       to   { transform: scale(1); opacity: 1; }
     }
-
     #success-screen h2 {
       font-size: 1.5rem;
       font-weight: 700;
       margin-bottom: 10px;
       color: var(--success);
     }
-
     #success-screen p { color: var(--text2); margin-bottom: 28px; }
-
     .btn-reset {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -563,12 +483,9 @@
       cursor: pointer;
       transition: var(--transition);
     }
-
     .btn-reset:hover { background: var(--surface3); border-color: var(--accent); color: var(--accent); }
-
     /* ===================== DIFF LABEL ===================== */
     .diff-label-dynamic { color: var(--accent); }
-
     /* form error state */
     .field-error-msg {
       color: var(--danger);
@@ -576,13 +493,10 @@
       margin-top: 4px;
       display: none;
     }
-
     .field-error input, .field-error select, .field-error .search-input {
       border-color: var(--danger) !important;
     }
-
     .field-error .field-error-msg { display: block; }
-
     /* ===================== PROGRESS BAR ===================== */
     .progress-bar-wrap {
       height: 3px;
@@ -591,7 +505,6 @@
       margin-bottom: 28px;
       overflow: hidden;
     }
-
     .progress-bar-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--accent), var(--accent2));
@@ -603,36 +516,30 @@
 </head>
 <body>
 <div class="page-wrapper">
-
   <!-- Header -->
   <div class="form-header">
     <div class="badge">💊 ระบบบันทึกข้อมูล</div>
     <h1>Checklist สำหรับยา Diff ต่างจากเดิม</h1>
     <p>กรุณากรอกข้อมูลให้ครบถ้วน แล้วกดบันทึกเมื่อเสร็จสิ้น</p>
   </div>
-
   <!-- Progress -->
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progress-bar"></div>
   </div>
-
   <!-- ===================== FORM ===================== -->
   <form id="main-form" novalidate>
-
     <!-- ===== SECTION 1: ข้อมูลพื้นฐาน ===== -->
     <div class="card">
       <div class="section-title">
         <div class="icon">📋</div>
         ข้อมูลพื้นฐาน
       </div>
-
       <!-- Q1: วันที่ -->
       <div class="field-group">
         <label><span class="num">1.</span>วันที่พบยา Diff<span class="req">*</span></label>
         <input type="date" id="q1-date" name="q1_date" required />
         <div class="field-error-msg">กรุณาระบุวันที่</div>
       </div>
-
       <!-- Q2: ห้องยา -->
       <div class="field-group">
         <label><span class="num">2.</span>ห้องยาที่พบยา Diff<span class="req">*</span></label>
@@ -644,7 +551,6 @@
         </select>
         <div class="field-error-msg">กรุณาเลือกห้องยา</div>
       </div>
-
       <!-- Q3: เภสัชกร -->
       <div class="field-group">
         <label><span class="num">3.</span>เภสัชกรที่พบยา Diff<span class="req">*</span></label>
@@ -656,7 +562,6 @@
         </div>
         <div class="field-error-msg">กรุณาเลือกเภสัชกร</div>
       </div>
-
       <!-- Q4: ผู้ช่วยเภสัชกร -->
       <div class="field-group">
         <label><span class="num">4.</span>ผู้ช่วยเภสัชกรที่นับยา<span class="req">*</span></label>
@@ -669,14 +574,12 @@
         <div class="field-error-msg">กรุณาเลือกผู้ช่วยเภสัชกร</div>
       </div>
     </div>
-
     <!-- ===== SECTION 2: ข้อมูลยา ===== -->
     <div class="card">
       <div class="section-title">
         <div class="icon">💊</div>
         ข้อมูลยา
       </div>
-
       <!-- Q5: ชื่อยา (searchable) -->
       <div class="field-group" id="field-q5">
         <label><span class="num">5.</span>ชื่อยาและความแรง<span class="req">*</span></label>
@@ -688,13 +591,11 @@
         <input type="hidden" id="q5-drug-val" name="q5_drug" />
         <div class="field-error-msg">กรุณาเลือกชื่อยา</div>
       </div>
-
       <!-- Q6: เลข Material -->
       <div class="field-group" id="field-q6">
         <label><span class="num">6.</span>เลข Material</label>
         <input type="text" id="q6-material" name="q6_material" placeholder="กรอกเลข Material หรือจะถูก Auto-fill จากข้อ 5" />
       </div>
-
       <!-- Q7 & Q8: Diff เดิม / Diff ใหม่ -->
       <div class="field-row">
         <div class="field-group">
@@ -705,7 +606,6 @@
           <input type="number" id="q7-diff-old" name="q7_diff_old" placeholder="Auto-fill / แก้ไขได้" step="any" />
           <div class="field-error-msg">กรุณากรอก Diff เดิม</div>
         </div>
-
         <div class="field-group">
           <label><span class="num">8.</span>Diff ใหม่ที่นับได้<span class="req">*</span></label>
           <input type="number" id="q8-diff-new" name="q8_diff_new" placeholder="+ หรือ − หรือ 0" step="any" required />
@@ -713,16 +613,13 @@
         </div>
       </div>
     </div>
-
     <!-- ===== SECTION 3: การตรวจสอบในห้องยา ===== -->
     <div class="card">
       <div class="section-title">
         <div class="icon">🔍</div>
         การตรวจสอบในห้องยาที่นับ
       </div>
-
       <div class="checklist-items">
-
         <!-- 9.1 นับซ้ำ -->
         <label class="check-item" id="ci-9-1">
           <input type="checkbox" name="check_recount" value="1" onchange="toggleCheck(this)" />
@@ -731,7 +628,6 @@
             <div class="check-label">9.1 นับซ้ำ</div>
           </div>
         </label>
-
         <!-- 9.2 ยาค้างจัด -->
         <label class="check-item" id="ci-9-2">
           <input type="checkbox" name="check_pending_prep" value="1" onchange="toggleCheck(this)" />
@@ -740,7 +636,6 @@
             <div class="check-label">9.2 ยาค้างจัด</div>
           </div>
         </label>
-
         <!-- 9.3 เปลี่ยนคนนับ -->
         <label class="check-item" id="ci-9-3">
           <input type="checkbox" name="check_change_counter" value="1" id="chk-9-3" onchange="toggleCheck(this); toggleChangeCounter()" />
@@ -755,7 +650,6 @@
             </div>
           </div>
         </label>
-
         <!-- 9.4 ยารอส่ง Expire -->
         <label class="check-item" id="ci-9-4">
           <input type="checkbox" name="check_expire" value="1" onchange="toggleCheck(this)" />
@@ -764,7 +658,6 @@
             <div class="check-label">9.4 ยารอส่ง Expire</div>
           </div>
         </label>
-
         <!-- 9.5 ยารอส่งชำรุด -->
         <label class="check-item" id="ci-9-5">
           <input type="checkbox" name="check_damaged" value="1" onchange="toggleCheck(this)" />
@@ -773,7 +666,6 @@
             <div class="check-label">9.5 ยารอส่งชำรุด</div>
           </div>
         </label>
-
         <!-- 9.6 ใบเบิกค้างตัด -->
         <label class="check-item" id="ci-9-6">
           <input type="checkbox" name="check_pending_req" value="1" onchange="toggleCheck(this)" />
@@ -782,7 +674,6 @@
             <div class="check-label">9.6 ใบเบิกค้างตัด</div>
           </div>
         </label>
-
         <!-- 9.7 ยาคืน QI -->
         <label class="check-item" id="ci-9-7">
           <input type="checkbox" name="check_qi" value="1" onchange="toggleCheck(this)" />
@@ -791,7 +682,6 @@
             <div class="check-label">9.7 ยาคืน QI</div>
           </div>
         </label>
-
         <!-- 9.8 ยา MRP -->
         <label class="check-item" id="ci-9-8">
           <input type="checkbox" name="check_mrp" value="1" onchange="toggleCheck(this)" />
@@ -801,7 +691,6 @@
             <div class="check-note">หมายเหตุ: วันธรรมดาตัดยอด MRP เวลา 15:00 น. | วันหยุดเวลา 12:00 น.</div>
           </div>
         </label>
-
         <!-- 9.9 การตรวจสอบอื่นๆ -->
         <label class="check-item" id="ci-9-9">
           <input type="checkbox" name="check_other" value="1" id="chk-9-9" onchange="toggleCheck(this); toggleOtherNote()" />
@@ -814,39 +703,32 @@
             </div>
           </div>
         </label>
-
       </div><!-- end checklist-items -->
     </div>
-
     <!-- ===== SECTION 4: ยาลักษณะคล้าย / หลายความแรง ===== -->
     <div class="card">
       <div class="section-title">
         <div class="icon">⚠️</div>
         <span>10. ยามีหลายความแรงหรือมีลักษณะคล้ายคลึงกับตัวอื่น</span>
       </div>
-
       <p style="font-size:12.5px;color:var(--text2);margin-bottom:14px;">เลือกได้ไม่เกิน 2 รายการ (ตัวเลือกสุดท้ายไม่สามารถเลือกร่วมกับตัวเลือกแรก/ที่สอง)</p>
-
       <div class="radio-group" id="q10-group">
         <label class="radio-item" id="ri-multi-strength">
           <input type="checkbox" name="q10" value="multi_strength" id="opt-multi-strength" onchange="handleQ10Change()" />
           <div class="radio-dot"></div>
           <span>เป็นยาที่มีหลายความแรง</span>
         </label>
-
         <label class="radio-item" id="ri-similar-look">
           <input type="checkbox" name="q10" value="similar_look" id="opt-similar-look" onchange="handleQ10Change()" />
           <div class="radio-dot"></div>
           <span>เป็นยาที่มีลักษณะคล้ายกับตัวอื่น</span>
         </label>
-
         <label class="radio-item" id="ri-none">
           <input type="checkbox" name="q10" value="none" id="opt-none" onchange="handleQ10Change()" />
           <div class="radio-dot"></div>
           <span>ไม่มียาความแรงอื่นหรือลักษณะคล้ายกัน</span>
         </label>
       </div>
-
       <!-- Similar drug entries -->
       <div class="similar-drugs-area" id="similar-drugs-area">
         <hr class="divider" style="margin-top:16px;" />
@@ -857,16 +739,13 @@
         </button>
       </div>
     </div>
-
     <!-- Submit -->
     <div class="submit-wrap">
       <button type="button" class="btn-submit" id="btn-submit" onclick="submitForm()">
         <span>💾</span> บันทึกข้อมูล
       </button>
     </div>
-
   </form>
-
   <!-- Success Screen -->
   <div id="success-screen">
     <div class="checkmark">✅</div>
@@ -874,26 +753,21 @@
     <p>ข้อมูลถูกบันทึกลง Google Sheet เรียบร้อยแล้ว</p>
     <button class="btn-reset" onclick="resetForm()">+ กรอกข้อมูลใหม่</button>
   </div>
-
 </div><!-- end page-wrapper -->
-
 <!-- Toast -->
 <div id="toast"></div>
-
 <!-- ===================== JAVASCRIPT ===================== -->
 <script>
 // ================================================================
 //  CONFIG — แก้ URL ตรงนี้หลัง deploy Google Apps Script
 // ================================================================
-const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
-
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyoH6bp8YYjZtYgPZe_fN9k1haniCbyHt7IP459wxPrqjNrkFpfaKpS2Jv6i_hoyFIr/exec';
 // ================================================================
 //  STATE
 // ================================================================
 let masterData = [];      // [{ material, drug, diffOld }]
 let employeeData = [];    // [{ name, role }]
 let similarDrugCount = 0;
-
 // ================================================================
 //  INIT
 // ================================================================
@@ -902,7 +776,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadSheetData();
   initProgressBar();
 });
-
 function setDefaultDate() {
   const today = new Date();
   const y = today.getFullYear();
@@ -910,7 +783,6 @@ function setDefaultDate() {
   const d = String(today.getDate()).padStart(2, '0');
   document.getElementById('q1-date').value = `${y}-${m}-${d}`;
 }
-
 // ================================================================
 //  LOAD GOOGLE SHEET DATA
 // ================================================================
@@ -919,16 +791,12 @@ async function loadSheetData() {
   try {
     const res = await fetch(`${GAS_URL}?action=getInitData`);
     const data = await res.json();
-
     masterData   = data.master   || [];
     employeeData = data.employees || [];
-
     populateEmployeeDropdown('q3-pharmacist',  'เภสัชกร');
     populateEmployeeDropdown('q4-assistant',   'ผู้ช่วยเภสัชกร');
     populateEmployeeDropdown('q9-3-counter',   null); // all employees
-
     initDrugSearchable();
-
   } catch(e) {
     showToast('❌ โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า', 'error');
     console.error(e);
@@ -936,10 +804,8 @@ async function loadSheetData() {
     hideLoading(['load-pharmacist','load-assistant']);
   }
 }
-
 function showLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.add('visible')); }
 function hideLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.remove('visible')); }
-
 function populateEmployeeDropdown(selectId, roleFilter) {
   const sel = document.getElementById(selectId);
   if (!sel) return;
@@ -954,7 +820,6 @@ function populateEmployeeDropdown(selectId, roleFilter) {
     sel.appendChild(opt);
   });
 }
-
 // ================================================================
 //  DRUG SEARCHABLE (Q5)
 // ================================================================
@@ -962,14 +827,11 @@ function initDrugSearchable() {
   const input    = document.getElementById('q5-drug-search');
   const dropdown = document.getElementById('q5-dropdown');
   const hiddenVal= document.getElementById('q5-drug-val');
-
   input.addEventListener('input', () => {
     const query = input.value.trim().toLowerCase();
     if (!query) { dropdown.classList.remove('open'); return; }
-
     const matches = masterData.filter(d => d.drug.toLowerCase().includes(query)).slice(0, 50);
     dropdown.innerHTML = '';
-
     if (!matches.length) {
       dropdown.innerHTML = '<div class="dropdown-item no-result">ไม่พบรายการ</div>';
     } else {
@@ -986,11 +848,9 @@ function initDrugSearchable() {
     }
     dropdown.classList.add('open');
   });
-
   input.addEventListener('blur', () => setTimeout(() => dropdown.classList.remove('open'), 150));
   input.addEventListener('focus', () => { if (input.value) input.dispatchEvent(new Event('input')); });
 }
-
 function selectDrug(d) {
   document.getElementById('q5-drug-search').value = d.drug;
   document.getElementById('q5-drug-val').value    = d.drug;
@@ -999,7 +859,6 @@ function selectDrug(d) {
   document.getElementById('drug-name-label').textContent = d.drug;
   document.getElementById('q5-dropdown').classList.remove('open');
 }
-
 function clearDrugSearch() {
   document.getElementById('q5-drug-search').value = '';
   document.getElementById('q5-drug-val').value    = '';
@@ -1007,7 +866,6 @@ function clearDrugSearch() {
   document.getElementById('q7-diff-old').value    = '';
   document.getElementById('drug-name-label').textContent = '___';
 }
-
 // q6 material → auto-fill drug name
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('q6-material').addEventListener('change', function() {
@@ -1017,7 +875,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (found) selectDrug(found);
   });
 });
-
 // ================================================================
 //  CHECKLIST TOGGLE
 // ================================================================
@@ -1026,19 +883,16 @@ function toggleCheck(chk) {
   if (chk.checked) item.classList.add('checked');
   else              item.classList.remove('checked');
 }
-
 function toggleChangeCounter() {
   const chk = document.getElementById('chk-9-3');
   const sub = document.getElementById('sub-change-counter');
   sub.classList.toggle('visible', chk.checked);
 }
-
 function toggleOtherNote() {
   const chk = document.getElementById('chk-9-9');
   const sub = document.getElementById('sub-other-note');
   sub.classList.toggle('visible', chk.checked);
 }
-
 // ================================================================
 //  Q10 LOGIC (Multi-select with exclusion)
 // ================================================================
@@ -1046,14 +900,12 @@ function handleQ10Change() {
   const multiStrength = document.getElementById('opt-multi-strength');
   const similarLook   = document.getElementById('opt-similar-look');
   const noneOpt       = document.getElementById('opt-none');
-
   // Update selected class
   ['ri-multi-strength','ri-similar-look','ri-none'].forEach(id => {
     const ri = document.getElementById(id);
     const cb = ri.querySelector('input');
     ri.classList.toggle('selected', cb.checked);
   });
-
   // If "none" is selected → uncheck others
   if (noneOpt.checked) {
     multiStrength.checked = false;
@@ -1061,24 +913,20 @@ function handleQ10Change() {
     document.getElementById('ri-multi-strength').classList.remove('selected');
     document.getElementById('ri-similar-look').classList.remove('selected');
   }
-
   // If multi or similar selected → uncheck "none"
   if (multiStrength.checked || similarLook.checked) {
     noneOpt.checked = false;
     document.getElementById('ri-none').classList.remove('selected');
   }
-
   // Max 2 total
   const checkedCount = [multiStrength, similarLook, noneOpt].filter(c => c.checked).length;
   if (checkedCount > 2) {
     // uncheck last changed (the noneOpt can never be here due to exclusion above)
   }
-
   // Show/hide similar drugs area
   const showSimilar = multiStrength.checked || similarLook.checked;
   const area = document.getElementById('similar-drugs-area');
   area.classList.toggle('visible', showSimilar);
-
   if (!showSimilar) {
     // Clear entries
     document.getElementById('similar-drug-list').innerHTML = '';
@@ -1087,7 +935,6 @@ function handleQ10Change() {
     addSimilarDrug();
   }
 }
-
 // ================================================================
 //  SIMILAR DRUG ENTRIES
 // ================================================================
@@ -1095,7 +942,6 @@ function addSimilarDrug() {
   similarDrugCount++;
   const id = similarDrugCount;
   const list = document.getElementById('similar-drug-list');
-
   const entry = document.createElement('div');
   entry.className = 'similar-drug-entry';
   entry.id = `similar-entry-${id}`;
@@ -1115,27 +961,21 @@ function addSimilarDrug() {
     <button type="button" class="remove-btn" onclick="removeSimilarDrug(${id})">✕</button>
   `;
   list.appendChild(entry);
-
   // Init search for this entry
   initSimilarDrugSearch(id);
 }
-
 function removeSimilarDrug(id) {
   const el = document.getElementById(`similar-entry-${id}`);
   if (el) el.remove();
 }
-
 function initSimilarDrugSearch(id) {
   const input    = document.getElementById(`sim-drug-search-${id}`);
   const dropdown = document.getElementById(`sim-dropdown-${id}`);
-
   input.addEventListener('input', () => {
     const query = input.value.trim().toLowerCase();
     if (!query) { dropdown.classList.remove('open'); return; }
-
     const matches = masterData.filter(d => d.drug.toLowerCase().includes(query)).slice(0, 40);
     dropdown.innerHTML = '';
-
     if (!matches.length) {
       dropdown.innerHTML = '<div class="dropdown-item no-result">ไม่พบรายการ</div>';
     } else {
@@ -1154,10 +994,8 @@ function initSimilarDrugSearch(id) {
     }
     dropdown.classList.add('open');
   });
-
   input.addEventListener('blur', () => setTimeout(() => dropdown.classList.remove('open'), 150));
 }
-
 // ================================================================
 //  PROGRESS BAR
 // ================================================================
@@ -1166,7 +1004,6 @@ function initProgressBar() {
   form.addEventListener('change', updateProgress);
   form.addEventListener('input',  updateProgress);
 }
-
 function updateProgress() {
   const required = ['q1-date','q2-room','q3-pharmacist','q4-assistant','q5-drug-val','q8-diff-new'];
   const filled = required.filter(id => {
@@ -1176,13 +1013,11 @@ function updateProgress() {
   const pct = Math.round((filled / required.length) * 100);
   document.getElementById('progress-bar').style.width = pct + '%';
 }
-
 // ================================================================
 //  VALIDATION
 // ================================================================
 function validate() {
   let ok = true;
-
   const required = [
     { id: 'q1-date',       wrap: document.getElementById('q1-date').closest('.field-group') },
     { id: 'q2-room',       wrap: document.getElementById('q2-room').closest('.field-group') },
@@ -1190,7 +1025,6 @@ function validate() {
     { id: 'q4-assistant',  wrap: document.getElementById('q4-assistant').closest('.field-group') },
     { id: 'q8-diff-new',   wrap: document.getElementById('q8-diff-new').closest('.field-group') },
   ];
-
   required.forEach(({id, wrap}) => {
     const el = document.getElementById(id);
     if (!el.value || el.value.trim() === '') {
@@ -1200,7 +1034,6 @@ function validate() {
       wrap.classList.remove('field-error');
     }
   });
-
   // Q5 drug
   const drugWrap = document.getElementById('field-q5');
   if (!document.getElementById('q5-drug-val').value) {
@@ -1209,10 +1042,8 @@ function validate() {
   } else {
     drugWrap.classList.remove('field-error');
   }
-
   return ok;
 }
-
 // ================================================================
 //  SUBMIT
 // ================================================================
@@ -1221,11 +1052,9 @@ async function submitForm() {
     showToast('⚠️ กรุณากรอกข้อมูลที่จำเป็นให้ครบ', 'error');
     return;
   }
-
   const btn = document.getElementById('btn-submit');
   btn.disabled = true;
   btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2.5px;"></div> กำลังบันทึก...';
-
   // Gather checklist
   const checks = {
     recount:       document.querySelector('[name="check_recount"]').checked,
@@ -1240,7 +1069,6 @@ async function submitForm() {
     other:         document.querySelector('[name="check_other"]').checked,
     other_note:    document.getElementById('q9-9-note').value,
   };
-
   // Gather similar drugs
   const similarDrugs = [];
   document.querySelectorAll('#similar-drug-list .similar-drug-entry').forEach(entry => {
@@ -1251,11 +1079,9 @@ async function submitForm() {
     const diff = document.getElementById(`sim-diff-${n}`)?.value || '';
     if (drug) similarDrugs.push({ drug, diff });
   });
-
   // Q10 selections
   const q10Selected = [];
   document.querySelectorAll('[name="q10"]:checked').forEach(cb => q10Selected.push(cb.value));
-
   const payload = {
     date:          document.getElementById('q1-date').value,
     room:          document.getElementById('q2-room').value,
@@ -1269,7 +1095,6 @@ async function submitForm() {
     q10:           q10Selected,
     similar_drugs: similarDrugs,
   };
-
   try {
     if (GAS_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE') {
       // Demo mode
@@ -1278,17 +1103,14 @@ async function submitForm() {
       showSuccess();
       return;
     }
-
     const res = await fetch(GAS_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'saveRecord', data: payload }),
     });
-
     const result = await res.json();
     if (result.success) showSuccess();
     else throw new Error(result.message || 'Unknown error');
-
   } catch(e) {
     console.error(e);
     showToast('❌ บันทึกไม่สำเร็จ: ' + e.message, 'error');
@@ -1296,13 +1118,11 @@ async function submitForm() {
     btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
   }
 }
-
 function showSuccess() {
   document.getElementById('main-form').style.display = 'none';
   document.getElementById('success-screen').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
 function resetForm() {
   document.getElementById('main-form').reset();
   document.getElementById('q5-drug-search').value = '';
@@ -1314,18 +1134,14 @@ function resetForm() {
   document.querySelectorAll('.check-item').forEach(el => el.classList.remove('checked'));
   document.querySelectorAll('.sub-field').forEach(el => el.classList.remove('visible'));
   document.querySelectorAll('.radio-item').forEach(el => el.classList.remove('selected'));
-
   const btn = document.getElementById('btn-submit');
   btn.disabled = false;
   btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
-
   document.getElementById('main-form').style.display = 'block';
   document.getElementById('success-screen').style.display = 'none';
-
   setDefaultDate();
   document.getElementById('progress-bar').style.width = '0%';
 }
-
 // ================================================================
 //  TOAST
 // ================================================================
