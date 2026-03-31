@@ -6,144 +6,187 @@
   <title>Checklist ยา Diff ต่างจากเดิม</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Noto+Serif+Thai:wght@700&display=swap" rel="stylesheet" />
   <style>
     /* ===================== CSS RESET & BASE ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:        #0f1117;
-      --surface:   #1a1d27;
-      --surface2:  #22263a;
-      --surface3:  #2b3050;
-      --accent:    #5b8dee;
-      --accent2:   #7b5ea7;
+      /* === Hospital Theme: Navy + Gold === */
+      --bg:        #0b1a2e;
+      --surface:   #112240;
+      --surface2:  #163565;
+      --surface3:  #1a4080;
+      --accent:    #E8A020;   /* gold-orange (bright diamond) */
+      --accent2:   #B8902A;   /* deeper gold */
+      --accent-blue: #4a90d9; /* mid-blue highlight */
+      --navy:      #0e2347;
       --success:   #22c55e;
-      --warning:   #f59e0b;
-      --danger:    #ef4444;
-      --text:      #e8eaf6;
-      --text2:     #9aa5b4;
-      --border:    rgba(91,141,238,.25);
-      --border2:   rgba(91,141,238,.12);
-      --radius:    12px;
-      --radius-sm: 8px;
-      --shadow:    0 4px 24px rgba(0,0,0,.4);
+      --warning:   #F5A623;
+      --danger:    #f05252;
+      --text:      #EDF2FF;   /* bright white-blue */
+      --text2:     #A8BFDD;   /* muted blue-grey */
+      --border:    rgba(232,160,32,.30);
+      --border2:   rgba(232,160,32,.12);
+      --border-blue: rgba(74,144,217,.25);
+      --radius:    14px;
+      --radius-sm: 9px;
+      --shadow:    0 6px 32px rgba(0,0,0,.5);
       --transition: .2s ease;
     }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Sarabun', 'Inter', sans-serif;
+      font-family: 'Sarabun', sans-serif;
       background: var(--bg);
       color: var(--text);
+      font-size: 16px;
       min-height: 100vh;
       background-image:
-        radial-gradient(ellipse at 20% 0%, rgba(91,141,238,.12) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 100%, rgba(123,94,167,.1) 0%, transparent 60%);
+        radial-gradient(ellipse at 15% 0%, rgba(232,160,32,.08) 0%, transparent 55%),
+        radial-gradient(ellipse at 85% 100%, rgba(26,64,128,.4) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 50%, rgba(14,35,71,.6) 0%, transparent 80%);
     }
     /* ===================== LAYOUT ===================== */
     .page-wrapper {
-      max-width: 860px;
+      max-width: 900px;
       margin: 0 auto;
-      padding: 32px 20px 80px;
+      padding: 36px 24px 100px;
+    }
+    @media (max-width: 600px) {
+      .page-wrapper { padding: 20px 14px 80px; }
     }
     /* ===================== HEADER ===================== */
     .form-header {
       text-align: center;
-      margin-bottom: 36px;
+      margin-bottom: 40px;
       position: relative;
+    }
+    /* Hospital logo diamonds */
+    .hospital-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      margin-bottom: 16px;
+    }
+    .logo-diamond-top {
+      width: 22px; height: 22px;
+      background: var(--accent);
+      transform: rotate(45deg);
+      margin-bottom: -4px;
+    }
+    .logo-diamond-main {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent2), #c9a84c);
+      transform: rotate(45deg);
+    }
+    .hospital-name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text2);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .hospital-name strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
     }
     .form-header .badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(91,141,238,.15);
+      background: rgba(232,160,32,.15);
       border: 1px solid var(--border);
       color: var(--accent);
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 12.5px;
+      font-weight: 700;
       letter-spacing: .8px;
       text-transform: uppercase;
-      padding: 5px 14px;
+      padding: 5px 16px;
       border-radius: 999px;
       margin-bottom: 14px;
     }
     .form-header h1 {
-      font-size: clamp(1.4rem, 4vw, 2rem);
-      font-weight: 700;
-      background: linear-gradient(135deg, #e8eaf6 30%, var(--accent));
+      font-size: clamp(1.55rem, 4.5vw, 2.2rem);
+      font-weight: 800;
+      background: linear-gradient(130deg, #EDF2FF 20%, var(--accent) 80%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      line-height: 1.3;
-      margin-bottom: 8px;
+      line-height: 1.35;
+      margin-bottom: 10px;
     }
     .form-header p {
       color: var(--text2);
-      font-size: 14px;
+      font-size: 15px;
     }
     /* ===================== CARD ===================== */
     .card {
       background: var(--surface);
-      border: 1px solid var(--border2);
+      border: 1px solid rgba(232,160,32,.18);
       border-radius: var(--radius);
-      padding: 28px 32px;
-      margin-bottom: 20px;
+      padding: 30px 36px;
+      margin-bottom: 22px;
       box-shadow: var(--shadow);
       position: relative;
       overflow: hidden;
+    }
+    @media (max-width: 600px) {
+      .card { padding: 20px 18px; }
     }
     .card::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent-blue));
       opacity: 0;
       transition: var(--transition);
     }
     .card:focus-within::before { opacity: 1; }
     .section-title {
-      font-size: 13px;
+      font-size: 14.5px;
       font-weight: 700;
-      letter-spacing: 1.2px;
+      letter-spacing: 1px;
       text-transform: uppercase;
       color: var(--accent);
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border2);
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(232,160,32,.2);
     }
     .section-title .icon {
-      width: 28px; height: 28px;
-      background: rgba(91,141,238,.15);
-      border-radius: 6px;
+      width: 30px; height: 30px;
+      background: rgba(232,160,32,.15);
+      border-radius: 7px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 14px;
+      font-size: 15px;
     }
     /* ===================== FORM FIELDS ===================== */
-    .field-group { margin-bottom: 22px; }
+    .field-group { margin-bottom: 24px; }
     .field-group:last-child { margin-bottom: 0; }
     .field-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 20px;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
     .field-row:last-child { margin-bottom: 0; }
     @media (max-width: 600px) {
       .field-row { grid-template-columns: 1fr; }
-      .card { padding: 20px; }
     }
     label {
       display: block;
-      font-size: 13px;
+      font-size: 14.5px;
       font-weight: 600;
       color: var(--text2);
-      margin-bottom: 7px;
+      margin-bottom: 8px;
     }
     label span.req { color: var(--danger); margin-left: 3px; }
-    label .num { color: var(--accent); margin-right: 4px; }
+    label .num { color: var(--accent); margin-right: 5px; font-weight: 700; }
     input[type="text"],
     input[type="number"],
     input[type="date"],
@@ -151,12 +194,12 @@
     textarea {
       width: 100%;
       background: var(--surface2);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(232,160,32,.22);
       border-radius: var(--radius-sm);
       color: var(--text);
       font-family: inherit;
-      font-size: 14px;
-      padding: 10px 14px;
+      font-size: 15px;
+      padding: 11px 15px;
       transition: var(--transition);
       outline: none;
       appearance: none;
@@ -164,18 +207,18 @@
     }
     input:focus, select:focus, textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(91,141,238,.18);
+      box-shadow: 0 0 0 3px rgba(232,160,32,.18);
       background: var(--surface3);
     }
-    input::placeholder, textarea::placeholder { color: var(--text2); opacity: .7; }
+    input::placeholder, textarea::placeholder { color: var(--text2); opacity: .6; }
     select {
       cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%239aa5b4' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23E8A020' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 12px center;
       padding-right: 36px;
     }
-    select option { background: #1a1d27; color: var(--text); }
+    select option { background: #112240; color: var(--text); }
     input[type="number"] { -moz-appearance: textfield; }
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
@@ -206,34 +249,65 @@
       position: absolute;
       top: calc(100% + 4px);
       left: 0; right: 0;
-      background: var(--surface3);
+      background: #163565;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      max-height: 220px;
+      max-height: 240px;
       overflow-y: auto;
       z-index: 100;
       display: none;
-      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+      box-shadow: 0 10px 40px rgba(0,0,0,.6);
     }
     .dropdown-list.open { display: block; }
     .dropdown-list::-webkit-scrollbar { width: 5px; }
     .dropdown-list::-webkit-scrollbar-track { background: transparent; }
     .dropdown-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     .dropdown-item {
-      padding: 9px 14px;
-      font-size: 13.5px;
+      padding: 10px 15px;
+      font-size: 14.5px;
       cursor: pointer;
       transition: var(--transition);
-      border-bottom: 1px solid var(--border2);
+      border-bottom: 1px solid rgba(232,160,32,.1);
     }
     .dropdown-item:last-child { border-bottom: none; }
-    .dropdown-item:hover, .dropdown-item.active { background: rgba(91,141,238,.2); color: var(--accent); }
+    .dropdown-item:hover, .dropdown-item.active { background: rgba(232,160,32,.18); color: var(--accent); }
     .dropdown-item.no-result { color: var(--text2); cursor: default; font-style: italic; }
     .dropdown-item.no-result:hover { background: none; color: var(--text2); }
     /* Hidden value input */
     .hidden-val { display: none !important; }
     /* ===================== CHECKLIST (CHECKBOXES) ===================== */
     .checklist-items { display: flex; flex-direction: column; gap: 12px; }
+    /* select-all button */
+    .select-all-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .select-all-bar .req-note {
+      font-size: 11.5px;
+      color: var(--danger);
+    }
+    .btn-select-all {
+      background: rgba(91,141,238,.12);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-family: inherit;
+      font-size: 12.5px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .btn-select-all:hover { background: rgba(91,141,238,.22); border-color: var(--accent); }
+    .checklist-error-msg {
+      color: var(--danger);
+      font-size: 11.5px;
+      margin-top: 8px;
+      display: none;
+    }
+    .checklist-error .checklist-error-msg { display: block; }
     .check-item {
       display: flex;
       align-items: flex-start;
@@ -398,18 +472,19 @@
       align-items: center;
       gap: 10px;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: white;
+      color: #0b1a2e;
       border: none;
-      padding: 14px 48px;
+      padding: 15px 52px;
       border-radius: 99px;
       font-family: inherit;
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 17px;
+      font-weight: 800;
       cursor: pointer;
-      box-shadow: 0 4px 20px rgba(91,141,238,.35);
+      box-shadow: 0 4px 24px rgba(232,160,32,.40);
       transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
       position: relative;
       overflow: hidden;
+      letter-spacing: 0.3px;
     }
     .btn-submit::before {
       content: '';
@@ -419,7 +494,7 @@
       opacity: 0;
       transition: opacity .15s;
     }
-    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(91,141,238,.45); }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(232,160,32,.55); }
     .btn-submit:active { transform: translateY(0); }
     .btn-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
     /* ===================== TOAST ===================== */
@@ -518,6 +593,15 @@
 <div class="page-wrapper">
   <!-- Header -->
   <div class="form-header">
+    <!-- Hospital Logo (CSS diamonds) -->
+    <div class="hospital-logo">
+      <div class="logo-diamond-top"></div>
+      <div class="logo-diamond-main"></div>
+    </div>
+    <div class="hospital-name">
+      โรงพยาบาลศิริราช
+      <strong>ปิยมหาราชการุณย์</strong>
+    </div>
     <div class="badge">💊 ระบบบันทึกข้อมูล</div>
     <h1>Checklist สำหรับยา Diff ต่างจากเดิม</h1>
     <p>กรุณากรอกข้อมูลให้ครบถ้วน แล้วกดบันทึกเมื่อเสร็จสิ้น</p>
@@ -552,22 +636,28 @@
         <div class="field-error-msg">กรุณาเลือกห้องยา</div>
       </div>
       <!-- Q3: เภสัชกร -->
-      <div class="field-group">
+      <div class="field-group" id="field-q3">
         <label><span class="num">3.</span>เภสัชกรที่พบยา Diff<span class="req">*</span></label>
-        <select id="q3-pharmacist" name="q3_pharmacist" required>
-          <option value="" disabled selected>กำลังโหลด...</option>
-        </select>
+        <div class="search-select-wrap">
+          <input type="text" id="q3-pharmacist-search" class="search-input" placeholder="กำลังโหลด..." autocomplete="off" />
+          <button type="button" class="clear-btn" onclick="clearEmpSearch('q3')">✕</button>
+          <div class="dropdown-list" id="q3-dropdown"></div>
+        </div>
+        <input type="hidden" id="q3-pharmacist" name="q3_pharmacist" />
         <div class="loading-indicator" id="load-pharmacist">
           <div class="spinner"></div> กำลังโหลดรายชื่อเภสัชกร...
         </div>
         <div class="field-error-msg">กรุณาเลือกเภสัชกร</div>
       </div>
       <!-- Q4: ผู้ช่วยเภสัชกร -->
-      <div class="field-group">
+      <div class="field-group" id="field-q4">
         <label><span class="num">4.</span>ผู้ช่วยเภสัชกรที่นับยา<span class="req">*</span></label>
-        <select id="q4-assistant" name="q4_assistant" required>
-          <option value="" disabled selected>กำลังโหลด...</option>
-        </select>
+        <div class="search-select-wrap">
+          <input type="text" id="q4-assistant-search" class="search-input" placeholder="กำลังโหลด..." autocomplete="off" />
+          <button type="button" class="clear-btn" onclick="clearEmpSearch('q4')">✕</button>
+          <div class="dropdown-list" id="q4-dropdown"></div>
+        </div>
+        <input type="hidden" id="q4-assistant" name="q4_assistant" />
         <div class="loading-indicator" id="load-assistant">
           <div class="spinner"></div> กำลังโหลดรายชื่อผู้ช่วยเภสัชกร...
         </div>
@@ -619,7 +709,12 @@
         <div class="icon">🔍</div>
         การตรวจสอบในห้องยาที่นับ
       </div>
-      <div class="checklist-items">
+      <!-- Select All bar -->
+      <div class="select-all-bar">
+        <span class="req-note">* ต้องเลือกทุกรายการ (ข้อ 9.1–9.8)</span>
+        <button type="button" class="btn-select-all" id="btn-select-all" onclick="toggleSelectAll()">☑ เลือกทั้งหมด</button>
+      </div>
+      <div class="checklist-items" id="checklist-wrap">
         <!-- 9.1 นับซ้ำ -->
         <label class="check-item" id="ci-9-1">
           <input type="checkbox" name="check_recount" value="1" onchange="toggleCheck(this)" />
@@ -644,9 +739,12 @@
             <div class="check-label">9.3 เปลี่ยนคนนับ</div>
             <div class="sub-field" id="sub-change-counter">
               <label>ผู้นับคนใหม่<span class="req">*</span></label>
-              <select id="q9-3-counter" name="q9_3_counter">
-                <option value="" disabled selected>กำลังโหลด...</option>
-              </select>
+              <div class="search-select-wrap">
+                <input type="text" id="q9-3-counter-search" class="search-input" placeholder="พิมพ์ชื่อ..." autocomplete="off" />
+                <button type="button" class="clear-btn" onclick="clearEmpSearch('q9')">✕</button>
+                <div class="dropdown-list" id="q9-dropdown"></div>
+              </div>
+              <input type="hidden" id="q9-3-counter" name="q9_3_counter" />
             </div>
           </div>
         </label>
@@ -704,6 +802,7 @@
           </div>
         </label>
       </div><!-- end checklist-items -->
+      <div class="checklist-error-msg" id="checklist-error-msg">กรุณาเลือกทุกรายการในการตรวจสอบ (ข้อ 9.1–9.8) ให้ครบทุกข้อ</div>
     </div>
     <!-- ===== SECTION 4: ยาลักษณะคล้าย / หลายความแรง ===== -->
     <div class="card">
@@ -784,24 +883,33 @@ function setDefaultDate() {
   document.getElementById('q1-date').value = `${y}-${m}-${d}`;
 }
 // ================================================================
-//  LOAD GOOGLE SHEET DATA
+//  CACHE CONFIG
+// ================================================================
+const CACHE_KEY = 'diffChecklist_initData';
+const CACHE_TTL = 60 * 60 * 1000; // 1 ชั่วโมง
+// ================================================================
+//  LOAD GOOGLE SHEET DATA (with localStorage cache)
 // ================================================================
 async function loadSheetData() {
   showLoading(['load-pharmacist','load-assistant']);
   try {
-    const res = await fetch(`${GAS_URL}?action=getInitData`, {
-      method: 'GET',
-      credentials: 'omit',
-      cache: 'no-cache',
-      redirect: 'follow',
-    });
-    const data = await res.json();
+    // ลองโหลดจาก cache ก่อน
+    const cached = loadFromCache();
+    if (cached) {
+      masterData   = cached.master   || [];
+      employeeData = cached.employees || [];
+      initUI();
+      hideLoading(['load-pharmacist','load-assistant']);
+      // Refresh cache ใน background
+      refreshCacheInBackground();
+      return;
+    }
+    // ไม่มี cache → fetch ใหม่
+    const data = await fetchFromGAS();
     masterData   = data.master   || [];
     employeeData = data.employees || [];
-    populateEmployeeDropdown('q3-pharmacist',  'เภสัชกร');
-    populateEmployeeDropdown('q4-assistant',   'ผู้ช่วยเภสัชกร');
-    populateEmployeeDropdown('q9-3-counter',   null); // all employees
-    initDrugSearchable();
+    saveToCache(data);
+    initUI();
   } catch(e) {
     showToast('❌ โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า', 'error');
     console.error('GAS Fetch Error:', e);
@@ -809,22 +917,88 @@ async function loadSheetData() {
     hideLoading(['load-pharmacist','load-assistant']);
   }
 }
-function showLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.add('visible')); }
-function hideLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.remove('visible')); }
-function populateEmployeeDropdown(selectId, roleFilter) {
-  const sel = document.getElementById(selectId);
-  if (!sel) return;
-  sel.innerHTML = '<option value="" disabled selected>— เลือก —</option>';
-  const list = roleFilter
-    ? employeeData.filter(e => e.role === roleFilter)
-    : employeeData;
-  list.forEach(e => {
-    const opt = document.createElement('option');
-    opt.value = e.name;
-    opt.textContent = e.name;
-    sel.appendChild(opt);
+function loadFromCache() {
+  try {
+    const raw = localStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) return null;
+    return data;
+  } catch { return null; }
+}
+function saveToCache(data) {
+  try {
+    localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+  } catch {}
+}
+async function fetchFromGAS() {
+  const res = await fetch(`${GAS_URL}?action=getInitData`, {
+    method: 'GET',
+    credentials: 'omit',
+    cache: 'no-cache',
+    redirect: 'follow',
+  });
+  return res.json();
+}
+async function refreshCacheInBackground() {
+  try {
+    const data = await fetchFromGAS();
+    saveToCache(data);
+    // อัปเดตข้อมูลใน memory ด้วย (ไม่ re-render UI)
+    masterData   = data.master   || [];
+    employeeData = data.employees || [];
+  } catch {}
+}
+function initUI() {
+  initEmployeeSearch('q3', 'เภสัชกร',        document.getElementById('q3-pharmacist-search'), document.getElementById('q3-pharmacist'));
+  initEmployeeSearch('q4', 'ผู้ช่วยเภสัชกร', document.getElementById('q4-assistant-search'),  document.getElementById('q4-assistant'));
+  initEmployeeSearch('q9', null,               document.getElementById('q9-3-counter-search'),  document.getElementById('q9-3-counter'));
+  document.getElementById('q3-pharmacist-search').placeholder = 'พิมพ์ชื่อเภสัชกร...';
+  document.getElementById('q4-assistant-search').placeholder  = 'พิมพ์ชื่อผู้ช่วยเภสัชกร...';
+  initDrugSearchable();
+}
+// ================================================================
+//  SEARCHABLE EMPLOYEE (Q3, Q4, Q9)
+// ================================================================
+function initEmployeeSearch(prefix, roleFilter, inputEl, hiddenEl) {
+  const dropdown = document.getElementById(`${prefix}-dropdown`);
+  const list = roleFilter ? employeeData.filter(e => e.role === roleFilter) : employeeData;
+  inputEl.addEventListener('input', () => {
+    const query = inputEl.value.trim().toLowerCase();
+    if (!query) { dropdown.classList.remove('open'); return; }
+    const matches = list.filter(e => e.name.toLowerCase().includes(query)).slice(0, 30);
+    renderDropdown(dropdown, matches.map(e => e.name), (name) => {
+      inputEl.value  = name;
+      hiddenEl.value = name;
+      dropdown.classList.remove('open');
+    });
+    dropdown.classList.add('open');
+  });
+  inputEl.addEventListener('blur', () => setTimeout(() => dropdown.classList.remove('open'), 150));
+  inputEl.addEventListener('focus', () => { if (inputEl.value) inputEl.dispatchEvent(new Event('input')); });
+}
+function renderDropdown(dropdown, items, onSelect) {
+  dropdown.innerHTML = '';
+  if (!items.length) {
+    dropdown.innerHTML = '<div class="dropdown-item no-result">ไม่พบรายการ</div>';
+    return;
+  }
+  items.forEach(label => {
+    const item = document.createElement('div');
+    item.className = 'dropdown-item';
+    item.textContent = label;
+    item.addEventListener('mousedown', (e) => { e.preventDefault(); onSelect(label); });
+    dropdown.appendChild(item);
   });
 }
+function clearEmpSearch(prefix) {
+  const map = { q3: ['q3-pharmacist-search','q3-pharmacist'], q4: ['q4-assistant-search','q4-assistant'], q9: ['q9-3-counter-search','q9-3-counter'] };
+  const [searchId, hiddenId] = map[prefix] || [];
+  if (searchId) document.getElementById(searchId).value = '';
+  if (hiddenId) document.getElementById(hiddenId).value = '';
+}
+function showLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.add('visible')); }
+function hideLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.remove('visible')); }
 // ================================================================
 //  DRUG SEARCHABLE (Q5)
 // ================================================================
@@ -887,6 +1061,28 @@ function toggleCheck(chk) {
   const item = chk.closest('.check-item');
   if (chk.checked) item.classList.add('checked');
   else              item.classList.remove('checked');
+  updateSelectAllBtn();
+}
+// ================================================================
+//  SELECT ALL (9.1-9.8 only, excludes 9.9)
+// ================================================================
+const MAIN_CHECKS = ['check_recount','check_pending_prep','check_change_counter','check_expire','check_damaged','check_pending_req','check_qi','check_mrp'];
+function toggleSelectAll() {
+  const allChecked = MAIN_CHECKS.every(name => document.querySelector(`[name="${name}"]`).checked);
+  const newState = !allChecked;
+  MAIN_CHECKS.forEach(name => {
+    const chk = document.querySelector(`[name="${name}"]`);
+    chk.checked = newState;
+    toggleCheck(chk);
+    // trigger sub-fields
+    if (name === 'check_change_counter') toggleChangeCounter();
+  });
+  updateSelectAllBtn();
+}
+function updateSelectAllBtn() {
+  const allChecked = MAIN_CHECKS.every(name => document.querySelector(`[name="${name}"]`).checked);
+  const btn = document.getElementById('btn-select-all');
+  btn.textContent = allChecked ? '☐ ยกเลิกทั้งหมด' : '☑ เลือกทั้งหมด';
 }
 function toggleChangeCounter() {
   const chk = document.getElementById('chk-9-3');
@@ -1024,21 +1220,33 @@ function updateProgress() {
 function validate() {
   let ok = true;
   const required = [
-    { id: 'q1-date',       wrap: document.getElementById('q1-date').closest('.field-group') },
-    { id: 'q2-room',       wrap: document.getElementById('q2-room').closest('.field-group') },
-    { id: 'q3-pharmacist', wrap: document.getElementById('q3-pharmacist').closest('.field-group') },
-    { id: 'q4-assistant',  wrap: document.getElementById('q4-assistant').closest('.field-group') },
-    { id: 'q8-diff-new',   wrap: document.getElementById('q8-diff-new').closest('.field-group') },
+    { id: 'q1-date',     wrap: document.getElementById('q1-date').closest('.field-group') },
+    { id: 'q2-room',     wrap: document.getElementById('q2-room').closest('.field-group') },
+    { id: 'q3-pharmacist', wrap: document.getElementById('field-q3') },
+    { id: 'q4-assistant',  wrap: document.getElementById('field-q4') },
+    { id: 'q8-diff-new', wrap: document.getElementById('q8-diff-new').closest('.field-group') },
   ];
   required.forEach(({id, wrap}) => {
     const el = document.getElementById(id);
-    if (!el.value || el.value.trim() === '') {
-      wrap.classList.add('field-error');
+    if (!el || !el.value || el.value.trim() === '') {
+      wrap?.classList.add('field-error');
       ok = false;
     } else {
-      wrap.classList.remove('field-error');
+      wrap?.classList.remove('field-error');
     }
   });
+  // Checklist: ต้องเลือกทุกข้อ (9.1-9.8)
+  const allChecked = MAIN_CHECKS.every(name => document.querySelector(`[name="${name}"]`).checked);
+  const clWrap = document.getElementById('checklist-wrap');
+  const clErr  = document.getElementById('checklist-error-msg');
+  if (!allChecked) {
+    clWrap.classList.add('checklist-error');
+    clErr.style.display = 'block';
+    ok = false;
+  } else {
+    clWrap.classList.remove('checklist-error');
+    clErr.style.display = 'none';
+  }
   // Q5 drug
   const drugWrap = document.getElementById('field-q5');
   if (!document.getElementById('q5-drug-val').value) {
@@ -1108,16 +1316,16 @@ async function submitForm() {
       showSuccess();
       return;
     }
-    const res = await fetch(GAS_URL, {
+    // GAS doesn't support CORS preflight — ใช้ no-cors แทน
+    // ข้อมูลจะบันทึกลง Sheet สำเร็จ แต่อ่าน response ไม่ได้
+    await fetch(GAS_URL, {
       method: 'POST',
+      mode:   'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify({ action: 'saveRecord', data: payload }),
-      redirect: 'follow',
-      credentials: 'omit',
     });
-    const result = await res.json();
-    if (result.success) showSuccess();
-    else throw new Error(result.message || 'Unknown error');
+    // ไม่สามารถอ่าน response ด้วย no-cors → assume success
+    showSuccess();
   } catch(e) {
     console.error(e);
     showToast('❌ บันทึกไม่สำเร็จ: ' + e.message, 'error');
@@ -1132,9 +1340,15 @@ function showSuccess() {
 }
 function resetForm() {
   document.getElementById('main-form').reset();
+  // Clear drug search
   document.getElementById('q5-drug-search').value = '';
   document.getElementById('q5-drug-val').value    = '';
   document.getElementById('drug-name-label').textContent = '___';
+  // Clear employee searches
+  clearEmpSearch('q3');
+  clearEmpSearch('q4');
+  clearEmpSearch('q9');
+  // Clear similar drugs
   document.getElementById('similar-drug-list').innerHTML = '';
   similarDrugCount = 0;
   document.getElementById('similar-drugs-area').classList.remove('visible');
