@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Q2 change → update Q11 visibility
   document.getElementById('q2-room').addEventListener('change', updateQ11Visibility);
   updateQ11Visibility();
+  updateSubmitState();
 });
 
 function setDefaultDate() {
@@ -245,7 +246,9 @@ function selectDrug(d) {
   document.getElementById('q5-drug-search').value=d.drug;
   document.getElementById('q5-drug-val').value=d.drug;
   document.getElementById('q6-material').value=d.material||'';
-  document.getElementById('q7-diff-old').value=(d.diffOld!==undefined&&d.diffOld!=='')?d.diffOld:'';
+  const q7el = document.getElementById('q7-diff-old');
+  q7el.value=(d.diffOld!==undefined&&d.diffOld!=='')?d.diffOld:'';
+  styleDiffInput(q7el);
   const label=document.getElementById('drug-name-label');
   if(label)label.textContent=d.drug;
   const info=document.getElementById('selected-drug-info');
@@ -258,12 +261,40 @@ function clearDrugSearch() {
   document.getElementById('q5-drug-search').value='';
   document.getElementById('q5-drug-val').value='';
   document.getElementById('q6-material').value='';
-  document.getElementById('q7-diff-old').value='';
+  const q7 = document.getElementById('q7-diff-old');
+  q7.value=''; styleDiffInput(q7);
   const label=document.getElementById('drug-name-label');
   if(label)label.textContent='___';
   const info=document.getElementById('selected-drug-info');
   if(info)info.style.display='none';
   saveFormState();
+}
+
+// ================================================================
+//  DIFF COLOR CODING
+// ================================================================
+function styleDiffInput(input) {
+  const val = parseFloat(input.value);
+  // Remove all diff classes
+  input.classList.remove('diff-negative', 'diff-positive', 'diff-zero');
+  // Find or create hint element (sibling span.diff-hint)
+  let hint = input.nextElementSibling;
+  if (!hint || !hint.classList.contains('diff-hint')) hint = null;
+
+  if (isNaN(val) || input.value.trim() === '') {
+    if (hint) { hint.textContent = ''; hint.className = 'diff-hint'; }
+    return;
+  }
+  if (val < 0) {
+    input.classList.add('diff-negative');
+    if (hint) { hint.textContent = '▼ ของขาด'; hint.className = 'diff-hint negative'; }
+  } else if (val > 0) {
+    input.classList.add('diff-positive');
+    if (hint) { hint.textContent = '▲ ของเกิน'; hint.className = 'diff-hint positive'; }
+  } else {
+    input.classList.add('diff-zero');
+    if (hint) { hint.textContent = '● ตรงกัน'; hint.className = 'diff-hint zero'; }
+  }
 }
 
 // ================================================================
@@ -387,6 +418,19 @@ function toggleQ11None(chk) {
   saveFormState();
 }
 
+function toggleF4Help(chk) {
+  chk.closest('.check-item').classList.toggle('checked', chk.checked);
+  const diffWrap = document.getElementById('f4-diff-wrap');
+  if (diffWrap) {
+    diffWrap.style.display = chk.checked ? 'none' : '';
+    // Clear diff value when hiding
+    if (chk.checked) {
+      const diffInput = document.getElementById('q11-diff-f4');
+      if (diffInput) diffInput.value = '';
+    }
+  }
+  saveFormState();
+}
 // ================================================================
 //  Q12: SUSPECT CASES
 // ================================================================
@@ -550,6 +594,18 @@ function updateProgress(){
   const pct=Math.round((filled/req.length)*100);
   document.getElementById('progress-bar').style.width=pct+'%';
   document.getElementById('progress-text').textContent=`${filled} / ${req.length} รายการ`;
+  updateSubmitState();
+}
+
+function updateSubmitState(){
+  const req=['q1-date','q2-room','q3-pharmacist','q4-assistant','q5-drug-val','q8-diff-new'];
+  const allFieldsFilled = req.every(id => {
+    const el = document.getElementById(id);
+    return el && el.value && el.value.trim() !== '';
+  });
+  const allChecked = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = !(allFieldsFilled && allChecked);
 }
 
 // ================================================================
@@ -826,6 +882,7 @@ function saveFormState(){
       collectQ11Q12Q13State(state);
       localStorage.setItem(FORM_STATE_KEY,JSON.stringify(state));
     }catch{}
+    updateProgress();
   },300);
 }
 
@@ -875,8 +932,8 @@ function restoreFormState(){
       const info=document.getElementById('selected-drug-info');if(info)info.style.display='block';
     }
     if(s.q6)document.getElementById('q6-material').value=s.q6;
-    if(s.q7)document.getElementById('q7-diff-old').value=s.q7;
-    if(s.q8)document.getElementById('q8-diff-new').value=s.q8;
+    if(s.q7){const e=document.getElementById('q7-diff-old');e.value=s.q7;styleDiffInput(e);}
+    if(s.q8){const e=document.getElementById('q8-diff-new');e.value=s.q8;styleDiffInput(e);}
     // Restore checks
     if(s.checks){Object.keys(s.checks).forEach(n=>{
       const c=document.querySelector(`[name="${n}"]`);if(c){c.checked=s.checks[n];toggleCheck(c);}
@@ -910,7 +967,7 @@ function restoreFormState(){
           const chk = document.querySelector(`[name="${r.chkName}"]`);
           if (chk) { chk.checked = true; chk.closest('.check-item').classList.add('checked'); }
           const sub = document.getElementById(r.subId); if (sub) sub.classList.add('visible');
-          const diff = document.getElementById(r.diffId); if (diff && s.q11[r.key].diff) diff.value = s.q11[r.key].diff;
+          const diff = document.getElementById(r.diffId); if (diff && s.q11[r.key].diff) { diff.value = s.q11[r.key].diff; styleDiffInput(diff); }
         }
       });
       if (s.q11.none) {
@@ -920,6 +977,8 @@ function restoreFormState(){
       if (s.q11.f4_help) {
         const fh = document.getElementById('chk-q11-f4-help');
         if (fh) { fh.checked = true; fh.closest('.check-item').classList.add('checked'); }
+        const dw = document.getElementById('f4-diff-wrap');
+        if (dw) dw.style.display = 'none';
       }
       if (s.q11.remark) document.getElementById('q11-remark').value = s.q11.remark;
     }

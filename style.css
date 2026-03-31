@@ -307,6 +307,9 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .optional-item { background: var(--surface); border-style: dashed; }
 .optional-item.checked { border-style: solid; }
+.check-hint { font-weight: 400; color: var(--text3); font-size: var(--fs-xs); }
+.f4-help-item { background: linear-gradient(135deg, rgba(58,157,106,0.06), rgba(58,157,106,0.12)); border: 1px dashed var(--accent); }
+.f4-help-item.checked { background: var(--accent-bg); border-style: solid; border-color: var(--accent); }
 
 /* ===================== Q10 RADIO ===================== */
 .q10-note { font-size: var(--fs-xs); color: var(--text3); margin-bottom: 14px; }
@@ -321,17 +324,17 @@ textarea { resize: vertical; min-height: 80px; }
 .radio-item.selected { border-color: var(--accent); background: var(--accent-bg); }
 .radio-item input[type="checkbox"], .radio-item input[type="radio"] { display: none; }
 .radio-dot {
-  width: 18px; height: 18px; border: 2px solid var(--border-hover);
-  border-radius: 4px; flex-shrink: 0; display: flex; align-items: center;
+  width: 20px; height: 20px; border: 2px solid var(--border-hover);
+  border-radius: 50%; flex-shrink: 0; display: flex; align-items: center;
   justify-content: center; transition: var(--transition);
 }
 .radio-item.selected .radio-dot { background: var(--accent); border-color: var(--accent); }
 .radio-dot::after {
-  content: ''; width: 4px; height: 7px;
-  border-right: 2px solid white; border-bottom: 2px solid white;
-  transform: rotate(45deg) translateY(-1px); opacity: 0; transition: var(--transition);
+  content: ''; width: 8px; height: 8px;
+  background: white; border-radius: 50%;
+  opacity: 0; transition: var(--transition); transform: scale(0);
 }
-.radio-item.selected .radio-dot::after { opacity: 1; }
+.radio-item.selected .radio-dot::after { opacity: 1; transform: scale(1); }
 
 /* ===================== SIMILAR DRUGS ===================== */
 .similar-drugs-area { margin-top: 16px; display: none; }
@@ -376,9 +379,25 @@ textarea { resize: vertical; min-height: 80px; }
   cursor: pointer; box-shadow: 0 4px 20px var(--accent-glow);
   transition: transform .15s ease, box-shadow .15s ease; letter-spacing: .3px;
 }
-.btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(58,157,106,.35); }
-.btn-submit:active { transform: translateY(0); }
-.btn-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(58,157,106,.35); }
+.btn-submit:active:not(:disabled) { transform: translateY(0); }
+.btn-submit:disabled {
+  background: linear-gradient(135deg, #b8c9c0, #97a8a0);
+  opacity: .6; cursor: not-allowed; transform: none;
+  box-shadow: none;
+}
+
+/* Suspect case select + other */
+.suspect-case-fields select {
+  width: 100%; padding: 9px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-family: inherit; font-size: var(--fs-sm);
+  background: var(--input-bg); color: var(--text); cursor: pointer;
+}
+.sc-other-input {
+  width: 100%; padding: 8px 12px; border: 1px dashed var(--accent);
+  border-radius: var(--radius-sm); font-family: inherit; font-size: var(--fs-sm);
+  background: rgba(58,157,106,0.04);
+}
 
 /* ===================== TOAST ===================== */
 #toast {
@@ -415,8 +434,21 @@ textarea { resize: vertical; min-height: 80px; }
   .similar-drug-entry { flex-direction: column; align-items: stretch; }
   .similar-drug-entry .diff-group { justify-content: flex-start; }
   .similar-drug-entry .remove-btn { align-self: flex-end; }
-  .suspect-case-fields .field-row { grid-template-columns: 1fr; }
+  .suspect-case-header { font-size: var(--fs-sm); }
+  .suspect-case-fields .field-row { flex-direction: column; }
 }
+
+/* ===================== DIFF COLOR CODING ===================== */
+.diff-hint {
+  display: block; font-size: var(--fs-xs); font-weight: 600;
+  margin-top: 4px; min-height: 18px; transition: all .2s ease;
+}
+.diff-hint.negative { color: var(--danger); }
+.diff-hint.positive { color: var(--success); }
+.diff-hint.zero     { color: var(--text3); }
+input.diff-negative { color: var(--danger) !important; border-color: rgba(220,53,69,0.4) !important; background: rgba(220,53,69,0.04) !important; }
+input.diff-positive { color: var(--success) !important; border-color: rgba(40,167,69,0.4) !important; background: rgba(40,167,69,0.04) !important; }
+input.diff-zero     { color: var(--text3) !important; }
 
 /* ===================== SUSPECT CASE (Q12) ===================== */
 .suspect-case-entry {

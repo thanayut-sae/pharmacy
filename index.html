@@ -131,11 +131,13 @@
       <div class="field-row">
         <div class="field-group" id="fg-q7">
           <label><span class="num">7.</span>Diff เดิม</label>
-          <input type="number" id="q7-diff-old" name="q7_diff_old" placeholder="Auto-fill" step="any" />
+          <input type="number" id="q7-diff-old" name="q7_diff_old" placeholder="Auto-fill" step="any" oninput="styleDiffInput(this)" />
+          <span class="diff-hint" id="hint-q7"></span>
         </div>
         <div class="field-group" id="fg-q8">
           <label><span class="num">8.</span>Diff ใหม่ที่นับได้<span class="req">*</span></label>
-          <input type="number" id="q8-diff-new" name="q8_diff_new" placeholder="+ หรือ − หรือ 0" step="any" required />
+          <input type="number" id="q8-diff-new" name="q8_diff_new" placeholder="+ หรือ − หรือ 0" step="any" required oninput="styleDiffInput(this)" />
+          <span class="diff-hint" id="hint-q8"></span>
           <div class="field-error-msg">กรุณากรอก Diff ใหม่</div>
         </div>
       </div>
@@ -159,10 +161,10 @@
           <span class="mini-progress-text" id="checklist-progress-text">0 / 8 รายการ</span>
         </div>
         <div class="checklist-items" id="checklist-wrap">
-          <label class="check-item" id="ci-9-1"><input type="checkbox" name="check_recount" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">🔄 9.1 นับซ้ำ</div></div></label>
-          <label class="check-item" id="ci-9-2"><input type="checkbox" name="check_pending_prep" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">📋 9.2 ยาค้างจัด</div></div></label>
+          <label class="check-item" id="ci-9-1"><input type="checkbox" name="check_recount" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.1 นับซ้ำ</div></div></label>
+          <label class="check-item" id="ci-9-2"><input type="checkbox" name="check_pending_prep" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.2 ยาค้างจัด</div></div></label>
           <label class="check-item" id="ci-9-3"><input type="checkbox" name="check_change_counter" value="1" id="chk-9-3" onchange="toggleCheck(this); toggleChangeCounter()" /><div class="check-box"></div>
-            <div style="flex:1;"><div class="check-label">🔁 9.3 เปลี่ยนคนนับ</div>
+            <div style="flex:1;"><div class="check-label">9.3 เปลี่ยนคนนับ</div>
               <div class="sub-field" id="sub-change-counter">
                 <label>ผู้นับคนใหม่<span class="req">*</span></label>
                 <div class="search-select-wrap">
@@ -177,12 +179,12 @@
               </div>
             </div>
           </label>
-          <label class="check-item" id="ci-9-4"><input type="checkbox" name="check_expire" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">⏰ 9.4 ยารอส่ง Expire</div></div></label>
-          <label class="check-item" id="ci-9-5"><input type="checkbox" name="check_damaged" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">📦 9.5 ยารอส่งชำรุด</div></div></label>
-          <label class="check-item" id="ci-9-6"><input type="checkbox" name="check_pending_req" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">📄 9.6 ใบเบิกค้างตัด</div></div></label>
-          <label class="check-item" id="ci-9-7"><input type="checkbox" name="check_qi" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">↩️ 9.7 ยาคืน QI</div></div></label>
+          <label class="check-item" id="ci-9-4"><input type="checkbox" name="check_expire" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.4 ยารอส่ง Expire</div></div></label>
+          <label class="check-item" id="ci-9-5"><input type="checkbox" name="check_damaged" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.5 ยารอส่งชำรุด</div></div></label>
+          <label class="check-item" id="ci-9-6"><input type="checkbox" name="check_pending_req" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.6 ใบเบิกค้างตัด</div></div></label>
+          <label class="check-item" id="ci-9-7"><input type="checkbox" name="check_qi" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.7 ยาคืน QI</div></div></label>
           <label class="check-item" id="ci-9-8"><input type="checkbox" name="check_mrp" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div>
-            <div><div class="check-label">📊 9.8 ยา MRP ที่ Run ขึ้น</div><div class="check-note">🕒 วันธรรมดาตัดยอด 15:00 น. | วันหยุด 12:00 น.</div></div>
+            <div><div class="check-label">9.8 ยา MRP ที่ Run ขึ้น</div><div class="check-note">🕒 วันธรรมดาตัดยอด 15:00 น. | วันหยุด 12:00 น.</div></div>
           </label>
         </div>
         <div class="checklist-error-msg" id="checklist-error-msg">⚠️ กรุณาเลือกทุกรายการ (ข้อ 9.1–9.8) ให้ครบทุกข้อ</div>
@@ -198,7 +200,7 @@
         </div>
         <div class="checklist-items">
           <label class="check-item optional-item" id="ci-9-9"><input type="checkbox" name="check_other" value="1" id="chk-9-9" onchange="toggleCheck(this); toggleOtherNote()" /><div class="check-box"></div>
-            <div style="flex:1;"><div class="check-label">🔎 9.9 การตรวจสอบอื่นๆ</div>
+            <div style="flex:1;"><div class="check-label">9.9 การตรวจสอบอื่นๆ</div>
               <div class="sub-field" id="sub-other-note">
                 <label>รายละเอียดเพิ่มเติม</label>
                 <textarea id="q9-9-note" name="q9_9_note" placeholder="กรอกรายละเอียด..."></textarea>
@@ -244,7 +246,8 @@
               <div class="check-label">ห้องยา ER</div>
               <div class="sub-field" id="sub-q11-er">
                 <label>Diff ที่นับได้จากห้องยา ER</label>
-                <input type="number" id="q11-diff-er" name="q11_diff_er" placeholder="±0" step="any" />
+                <input type="number" id="q11-diff-er" name="q11_diff_er" placeholder="±0" step="any" oninput="styleDiffInput(this)" />
+                <span class="diff-hint" id="hint-q11-er"></span>
               </div>
             </div>
           </label>
@@ -255,7 +258,8 @@
               <div class="check-label">ห้องยาชั้น 2</div>
               <div class="sub-field" id="sub-q11-f2">
                 <label>Diff ที่นับได้จากห้องยาชั้น 2</label>
-                <input type="number" id="q11-diff-f2" name="q11_diff_f2" placeholder="±0" step="any" />
+                <input type="number" id="q11-diff-f2" name="q11_diff_f2" placeholder="±0" step="any" oninput="styleDiffInput(this)" />
+                <span class="diff-hint" id="hint-q11-f2"></span>
               </div>
             </div>
           </label>
@@ -266,7 +270,8 @@
               <div class="check-label">ห้องยาชั้น 3</div>
               <div class="sub-field" id="sub-q11-f3">
                 <label>Diff ที่นับได้จากห้องยาชั้น 3</label>
-                <input type="number" id="q11-diff-f3" name="q11_diff_f3" placeholder="±0" step="any" />
+                <input type="number" id="q11-diff-f3" name="q11_diff_f3" placeholder="±0" step="any" oninput="styleDiffInput(this)" />
+                <span class="diff-hint" id="hint-q11-f3"></span>
               </div>
             </div>
           </label>
@@ -274,14 +279,17 @@
             <input type="checkbox" name="q11_f4" value="1" onchange="toggleQ11Room(this,'ชั้น 4')" />
             <div class="check-box"></div>
             <div style="flex:1;">
-              <div class="check-label">ห้องยาชั้น 4</div>
+              <div class="check-label">ห้องยาชั้น 4 <span class="check-hint">(ระบุยอด / แจ้งช่วยนับ)</span></div>
               <div class="sub-field" id="sub-q11-f4">
-                <label>Diff ที่นับได้จากห้องยาชั้น 4</label>
-                <input type="number" id="q11-diff-f4" name="q11_diff_f4" placeholder="±0" step="any" />
-                <label class="check-item" style="margin-top:10px; background: var(--surface-hover);" onclick="event.stopPropagation();">
-                  <input type="checkbox" name="q11_f4_help" id="chk-q11-f4-help" value="1" onchange="this.closest('.check-item').classList.toggle('checked', this.checked); saveFormState();" />
+                <div id="f4-diff-wrap">
+                  <label>Diff ที่นับได้จากห้องยาชั้น 4</label>
+                  <input type="number" id="q11-diff-f4" name="q11_diff_f4" placeholder="±0" step="any" oninput="styleDiffInput(this)" />
+                  <span class="diff-hint" id="hint-q11-f4"></span>
+                </div>
+                <label class="check-item f4-help-item" style="margin-top:10px;" onclick="event.stopPropagation();">
+                  <input type="checkbox" name="q11_f4_help" id="chk-q11-f4-help" value="1" onchange="toggleF4Help(this)" />
                   <div class="check-box"></div>
-                  <div class="check-label">ต้องการให้ชั้น 4 ช่วยนับ</div>
+                  <div class="check-label">ส่งเรื่องให้ห้องยาชั้น 4 ช่วยตรวจสอบ</div>
                 </label>
               </div>
             </div>
@@ -298,7 +306,8 @@
               <div class="check-label">คลังยา</div>
               <div class="sub-field" id="sub-q11-stock">
                 <label>Diff ที่นับได้จากคลังยา</label>
-                <input type="number" id="q11-diff-stock" name="q11_diff_stock" placeholder="±0" step="any" />
+                <input type="number" id="q11-diff-stock" name="q11_diff_stock" placeholder="±0" step="any" oninput="styleDiffInput(this)" />
+                <span class="diff-hint" id="hint-q11-stock"></span>
               </div>
             </div>
           </label>
@@ -356,8 +365,8 @@
   <!-- Success Screen -->
   <div id="success-screen">
     <div class="checkmark">✅</div>
-    <h2>บันทึกข้อมูลสำเร็จ!</h2>
-    <p>ข้อมูลถูกบันทึกลง Google Sheet เรียบร้อยแล้ว</p>
+    <h2>ขอบคุณค่ะ!</h2>
+    <p>ข้อมูลถูกบันทึกเรียบร้อยแล้ว ขอบคุณที่ตรวจสอบอย่างละเอียด</p>
     <button class="btn-reset" onclick="resetForm()">+ กรอกข้อมูลใหม่</button>
   </div>
 </div>
