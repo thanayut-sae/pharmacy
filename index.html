@@ -11,26 +11,26 @@
     /* ===================== CSS RESET & BASE ===================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      /* === Hospital Theme: Navy + Gold === */
-      --bg:        #0b1a2e;
-      --surface:   #112240;
-      --surface2:  #163565;
-      --surface3:  #1a4080;
-      --accent:    #E8A020;   /* gold-orange (bright diamond) */
-      --accent2:   #B8902A;   /* deeper gold */
-      --accent-blue: #4a90d9; /* mid-blue highlight */
+      /* === Hospital Theme: Pastel Navy + Gold === */
+      --bg:        #0d1f3c;
+      --surface:   #152844;
+      --surface2:  #1c3a62;
+      --surface3:  #204575;
+      --accent:    #F5B942;   /* warm gold */
+      --accent2:   #D4952A;   /* deep gold */
+      --accent-blue: #6AAEE8; /* soft sky blue */
       --navy:      #0e2347;
-      --success:   #22c55e;
-      --warning:   #F5A623;
-      --danger:    #f05252;
-      --text:      #EDF2FF;   /* bright white-blue */
-      --text2:     #A8BFDD;   /* muted blue-grey */
-      --border:    rgba(232,160,32,.30);
-      --border2:   rgba(232,160,32,.12);
-      --border-blue: rgba(74,144,217,.25);
+      --success:   #4ade80;
+      --warning:   #fbbf24;
+      --danger:    #fb7185;
+      --text:      #F0F5FF;   /* warm white */
+      --text2:     #B0C8E8;   /* soft blue-grey */
+      --border:    rgba(245,185,66,.28);
+      --border2:   rgba(245,185,66,.10);
+      --border-blue: rgba(106,174,232,.22);
       --radius:    14px;
       --radius-sm: 9px;
-      --shadow:    0 6px 32px rgba(0,0,0,.5);
+      --shadow:    0 6px 32px rgba(0,0,0,.45);
       --transition: .2s ease;
     }
     html { scroll-behavior: smooth; }
@@ -593,15 +593,6 @@
 <div class="page-wrapper">
   <!-- Header -->
   <div class="form-header">
-    <!-- Hospital Logo (CSS diamonds) -->
-    <div class="hospital-logo">
-      <div class="logo-diamond-top"></div>
-      <div class="logo-diamond-main"></div>
-    </div>
-    <div class="hospital-name">
-      โรงพยาบาลศิริราช
-      <strong>ปิยมหาราชการุณย์</strong>
-    </div>
     <div class="badge">💊 ระบบบันทึกข้อมูล</div>
     <h1>Checklist สำหรับยา Diff ต่างจากเดิม</h1>
     <p>กรุณากรอกข้อมูลให้ครบถ้วน แล้วกดบันทึกเมื่อเสร็จสิ้น</p>
@@ -690,8 +681,7 @@
       <div class="field-row">
         <div class="field-group">
           <label>
-            <span class="num">7.</span>Diff เดิมของ
-            <span class="diff-label-dynamic" id="drug-name-label">___</span><span class="req">*</span>
+            <span class="num">7.</span>Diff เดิม<span class="req">*</span>
           </label>
           <input type="number" id="q7-diff-old" name="q7_diff_old" placeholder="Auto-fill / แก้ไขได้" step="any" />
           <div class="field-error-msg">กรุณากรอก Diff เดิม</div>
@@ -805,7 +795,7 @@
       <div class="checklist-error-msg" id="checklist-error-msg">กรุณาเลือกทุกรายการในการตรวจสอบ (ข้อ 9.1–9.8) ให้ครบทุกข้อ</div>
     </div>
     <!-- ===== SECTION 4: ยาลักษณะคล้าย / หลายความแรง ===== -->
-    <div class="card">
+    <div class="card" id="field-q10">
       <div class="section-title">
         <div class="icon">⚠️</div>
         <span>10. ยามีหลายความแรงหรือมีลักษณะคล้ายคลึงกับตัวอื่น</span>
@@ -1246,6 +1236,36 @@ function validate() {
   } else {
     clWrap.classList.remove('checklist-error');
     clErr.style.display = 'none';
+  }
+  // Q10: ต้องเลือกอย่างน้อย 1 ตัวเลือก
+  const q10Checked = document.querySelectorAll('[name="q10"]:checked').length > 0;
+  const q10Err = document.getElementById('q10-error-msg');
+  const q10Card = document.getElementById('field-q10');
+  if (!q10Checked) {
+    q10Err.style.display = 'block';
+    ok = false;
+  } else {
+    q10Err.style.display = 'none';
+  }
+  // Q10: ถ้าเลือก multi/similar ต้องมีรายการยาอย่างน้อย 1
+  const needsSimilar = document.getElementById('opt-multi-strength').checked ||
+                       document.getElementById('opt-similar-look').checked;
+  const similarErr = document.getElementById('similar-error-msg');
+  if (needsSimilar) {
+    const entries = document.querySelectorAll('#similar-drug-list .similar-drug-entry');
+    const hasEntry = Array.from(entries).some(entry => {
+      const idMatch = entry.id.match(/\d+/);
+      if (!idMatch) return false;
+      return (document.getElementById(`sim-drug-val-${idMatch[0]}`)?.value || '').trim() !== '';
+    });
+    if (!hasEntry) {
+      if (similarErr) similarErr.style.display = 'block';
+      ok = false;
+    } else {
+      if (similarErr) similarErr.style.display = 'none';
+    }
+  } else {
+    if (similarErr) similarErr.style.display = 'none';
   }
   // Q5 drug
   const drugWrap = document.getElementById('field-q5');
