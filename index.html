@@ -205,6 +205,7 @@
         <div class="field-error-msg" id="similar-error-msg">⚠️ กรุณาเพิ่มรายการยาอย่างน้อย 1 รายการ</div>
       </div>
     </div>
+    </div>
 
     <!-- === SECTION 5: การตรวจสอบระหว่างห้องยา === -->
     <div class="card" id="section-cross-room">
@@ -254,6 +255,11 @@
               <div class="sub-field" id="sub-q11-f4">
                 <label>Diff ที่นับได้จากห้องยาชั้น 4</label>
                 <input type="number" id="q11-diff-f4" name="q11_diff_f4" placeholder="±0" step="any" />
+                <label class="check-item" style="margin-top:10px; background: var(--surface-hover);" onclick="event.stopPropagation();">
+                  <input type="checkbox" name="q11_f4_help" id="chk-q11-f4-help" value="1" onchange="this.closest('.check-item').classList.toggle('checked', this.checked); saveFormState();" />
+                  <div class="check-box"></div>
+                  <div class="check-label">ต้องการให้ชั้น 4 ช่วยนับ</div>
+                </label>
               </div>
             </div>
           </label>
@@ -290,9 +296,14 @@
         <label><span class="num">12.</span>เคสที่มีความเป็นไปได้ <span style="font-weight:400; color:var(--text-dim);">(จะระบุหรือไม่ก็ได้)</span></label>
         <div class="radio-group" style="margin-bottom:16px;">
           <label class="radio-item" id="ri-has-case">
-            <input type="checkbox" id="chk-has-case" name="q12_has_case" value="1" onchange="toggleSuspectCases()" />
+            <input type="radio" name="q12_case" value="has_case" id="chk-has-case" onchange="handleQ12Change()" />
             <div class="radio-dot"></div>
-            <span>A: มีเคสน่าสงสัย</span>
+            <span>มีเคสน่าสงสัย</span>
+          </label>
+          <label class="radio-item" id="ri-no-case">
+            <input type="radio" name="q12_case" value="no_case" id="chk-no-case" onchange="handleQ12Change()" />
+            <div class="radio-dot"></div>
+            <span>ไม่มีเคสน่าสงสัย</span>
           </label>
         </div>
         <div class="similar-drugs-area" id="suspect-cases-area">

@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzmxRbgK_8iEIMFDpTYcmMqXTRjF-TAxuBJrwPiE9Hm1O9zaNbFInMFmz1bNK7FYejj/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyd8KSFSiCAom2P-evr7BvWRZ-VlnQcLO_RMUKZM-3Z9Fy7nHAlTcUR5nInjPpLDWg/exec';
 
 // ================================================================
 //  STATE
@@ -335,15 +335,16 @@ function toggleQ11None(chk) {
 // ================================================================
 let suspectCaseCount = 0;
 
-function toggleSuspectCases() {
+function handleQ12Change() {
   const hasCase = document.getElementById('chk-has-case').checked;
-  const ri = document.getElementById('ri-has-case');
-  ri.classList.toggle('selected', hasCase);
+  const noCase = document.getElementById('chk-no-case').checked;
+  document.getElementById('ri-has-case').classList.toggle('selected', hasCase);
+  document.getElementById('ri-no-case').classList.toggle('selected', noCase);
   document.getElementById('suspect-cases-area').classList.toggle('visible', hasCase);
   if (hasCase && !document.getElementById('suspect-case-list').children.length) {
     addSuspectCase();
   }
-  if (!hasCase) {
+  if (noCase) {
     document.getElementById('suspect-case-list').innerHTML = '';
     suspectCaseCount = 0;
   }
@@ -575,10 +576,12 @@ async function submitForm(){
     }
   });
   q11.none = document.getElementById('chk-q11-none')?.checked || false;
+  q11.f4_help = document.getElementById('chk-q11-f4-help')?.checked || false;
   q11.remark = document.getElementById('q11-remark')?.value || '';
 
-  // Q12 data
-  const q12 = { has_case: document.getElementById('chk-has-case')?.checked || false, cases: [] };
+  // Q12 data (radio-based)
+  const q12radio = document.querySelector('[name="q12_case"]:checked');
+  const q12 = { selection: q12radio ? q12radio.value : '', cases: [] };
   document.querySelectorAll('#suspect-case-list .suspect-case-entry').forEach(entry => {
     const m = entry.id.match(/\d+/); if(!m) return;
     const id = m[0];
@@ -647,6 +650,9 @@ function resetForm(){
   document.getElementById('suspect-case-list').innerHTML = '';
   suspectCaseCount = 0;
   document.getElementById('suspect-cases-area').classList.remove('visible');
+  document.querySelectorAll('[name="q12_case"]').forEach(r => r.checked = false);
+  document.getElementById('ri-has-case')?.classList.remove('selected');
+  document.getElementById('ri-no-case')?.classList.remove('selected');
   // Q13 reset
   document.getElementById('q13-remark').value = '';
   const btn=document.getElementById('btn-submit');btn.disabled=false;btn.innerHTML='<span>💾</span> บันทึกข้อมูล';
@@ -742,9 +748,11 @@ function collectQ11Q12Q13State(state) {
     };
   });
   state.q11.none = document.getElementById('chk-q11-none')?.checked || false;
+  state.q11.f4_help = document.getElementById('chk-q11-f4-help')?.checked || false;
   state.q11.remark = document.getElementById('q11-remark')?.value || '';
-  // Q12
-  state.q12 = { has_case: document.getElementById('chk-has-case')?.checked || false, cases: [] };
+  // Q12 (radio-based)
+  const q12radio = document.querySelector('[name="q12_case"]:checked');
+  state.q12 = { selection: q12radio ? q12radio.value : '', cases: [] };
   document.querySelectorAll('#suspect-case-list .suspect-case-entry').forEach(entry => {
     const m = entry.id.match(/\d+/); if(!m) return;
     const id = m[0];
@@ -816,14 +824,18 @@ function restoreFormState(){
         const nc = document.getElementById('chk-q11-none');
         if (nc) { nc.checked = true; nc.closest('.check-item').classList.add('checked'); }
       }
+      if (s.q11.f4_help) {
+        const fh = document.getElementById('chk-q11-f4-help');
+        if (fh) { fh.checked = true; fh.closest('.check-item').classList.add('checked'); }
+      }
       if (s.q11.remark) document.getElementById('q11-remark').value = s.q11.remark;
     }
     updateQ11Visibility();
-    // Q12
-    if (s.q12?.has_case) {
-      document.getElementById('chk-has-case').checked = true;
-      toggleSuspectCases();
-      if (s.q12.cases?.length) {
+    // Q12 (radio-based)
+    if (s.q12?.selection) {
+      const radio = document.querySelector(`[name="q12_case"][value="${s.q12.selection}"]`);
+      if (radio) { radio.checked = true; handleQ12Change(); }
+      if (s.q12.selection === 'has_case' && s.q12.cases?.length) {
         document.getElementById('suspect-case-list').innerHTML = ''; suspectCaseCount = 0;
         s.q12.cases.forEach(sc => {
           addSuspectCase();

@@ -260,7 +260,7 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .radio-item:hover { border-color: var(--border-hover); }
 .radio-item.selected { border-color: var(--accent); background: var(--accent-bg); }
-.radio-item input[type="checkbox"] { display: none; }
+.radio-item input[type="checkbox"], .radio-item input[type="radio"] { display: none; }
 .radio-dot {
   width: 18px; height: 18px; border: 2px solid var(--border-hover);
   border-radius: 4px; flex-shrink: 0; display: flex; align-items: center;
