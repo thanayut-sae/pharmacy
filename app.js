@@ -103,18 +103,18 @@ function initEmployeeSearch(prefix, roleFilter, inputEl, hiddenEl) {
   inputEl.addEventListener('input', () => {
     const q = inputEl.value.trim().toLowerCase();
     const list = getList();
-    const matches = q ? list.filter(e=>e.name.toLowerCase().includes(q)).slice(0,30) : list.slice(0,30);
-    if (!q && !dropdown.classList.contains('open')) { dropdown.classList.remove('open'); return; }
+    const matches = q ? list.filter(e=>e.name.toLowerCase().includes(q)).slice(0,40) : list.slice(0,40);
     renderDropdown(dropdown, matches.map(e=>e.name), name=>{
       inputEl.value=name; hiddenEl.value=name; dropdown.classList.remove('open');
       setToggleBtnState(prefix, false);
       saveFormState();
     });
     dropdown.classList.add('open');
+    setToggleBtnState(prefix, true);
   });
 
-  inputEl.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState(prefix,false);},180));
-  inputEl.addEventListener('focus',()=>{if(inputEl.value)inputEl.dispatchEvent(new Event('input'));});
+  inputEl.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState(prefix,false);},200));
+  inputEl.addEventListener('focus',()=>{inputEl.dispatchEvent(new Event('input'));});
 }
 
 function toggleDropdownAll(prefix) {
@@ -181,8 +181,7 @@ function initDrugSearchable() {
   const dropdown=document.getElementById('q5-dropdown');
   input.addEventListener('input',()=>{
     const q=input.value.trim().toLowerCase();
-    if(!q){dropdown.classList.remove('open');return;}
-    const matches=masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,50);
+    const matches=q ? masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,50) : masterData.slice(0,50);
     dropdown.innerHTML='';
     if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
     else{matches.forEach(d=>{
@@ -192,8 +191,8 @@ function initDrugSearchable() {
     });}
     dropdown.classList.add('open');
   });
-  input.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState('q5',false);},180));
-  input.addEventListener('focus',()=>{if(input.value)input.dispatchEvent(new Event('input'));});
+  input.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState('q5',false);},200));
+  input.addEventListener('focus',()=>{input.dispatchEvent(new Event('input'));});
 }
 
 function selectDrug(d) {
@@ -282,7 +281,7 @@ function addSimilarDrug(){
     <div class="search-select-wrap" style="position:relative;">
       <input type="text" id="sim-drug-search-${id}" class="search-input" placeholder="ค้นหาชื่อยา..." autocomplete="off" data-entry="${id}" />
       <div class="input-actions">
-        <button type="button" class="toggle-btn" onclick="toggleSimDropdown(${id})" title="แสดงรายการ"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg></button>
+        <button type="button" class="toggle-btn" onmousedown="event.preventDefault(); toggleSimDropdown(${id})" title="แสดงรายการ"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg></button>
       </div>
       <div class="dropdown-list" id="sim-dropdown-${id}"></div>
     </div>
@@ -300,8 +299,7 @@ function initSimilarDrugSearch(id){
   const dropdown=document.getElementById(`sim-dropdown-${id}`);
   input.addEventListener('input',()=>{
     const q=input.value.trim().toLowerCase();
-    if(!q){dropdown.classList.remove('open');return;}
-    const matches=masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40);
+    const matches=q ? masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40) : masterData.slice(0,40);
     dropdown.innerHTML='';
     if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
     else{matches.forEach(d=>{
@@ -311,7 +309,8 @@ function initSimilarDrugSearch(id){
     });}
     dropdown.classList.add('open');
   });
-  input.addEventListener('blur',()=>setTimeout(()=>dropdown.classList.remove('open'),180));
+  input.addEventListener('blur',()=>setTimeout(()=>dropdown.classList.remove('open'),200));
+  input.addEventListener('focus',()=>{input.dispatchEvent(new Event('input'));});
 }
 
 function toggleSimDropdown(id){
@@ -372,6 +371,19 @@ function validate(){
   const clErr=document.getElementById('checklist-error-msg');
   if(!allCh){clErr.style.display='block';ok=false;if(!firstError)firstError=document.getElementById('checklist-wrap');}
   else{clErr.style.display='none';}
+  // 9.9 Other note validation
+  const checkOther = document.querySelector('[name="check_other"]');
+  const otherNote = document.getElementById('q9-9-note');
+  const otherWrap = document.getElementById('sub-other-note');
+  if (checkOther && checkOther.checked) {
+    if (!otherNote.value || otherNote.value.trim() === '') {
+      if (otherWrap) otherWrap.classList.add('field-error');
+      ok = false;
+      if (!firstError) firstError = otherWrap;
+    } else {
+      if (otherWrap) otherWrap.classList.remove('field-error');
+    }
+  }
   // Q10
   const q10Chk=document.querySelectorAll('[name="q10"]:checked').length>0;
   const q10Err=document.getElementById('q10-error-msg');

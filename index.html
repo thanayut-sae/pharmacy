@@ -31,9 +31,6 @@
 <div class="page-wrapper">
   <!-- Header -->
   <div class="form-header">
-    <div class="header-icon">
-      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-    </div>
     <h1>Checklist สำหรับยา Diff ต่างจากเดิม</h1>
     <p>กรุณากรอกข้อมูลให้ครบถ้วน แล้วกดบันทึกเมื่อเสร็จสิ้น</p>
   </div>
@@ -71,10 +68,10 @@
         <div class="search-select-wrap">
           <input type="text" id="q3-pharmacist-search" class="search-input" placeholder="กำลังโหลด..." autocomplete="off" />
           <div class="input-actions">
-            <button type="button" class="toggle-btn" onclick="toggleDropdownAll('q3')" title="แสดงรายการ">
+            <button type="button" class="toggle-btn" onmousedown="event.preventDefault(); toggleDropdownAll('q3')" title="แสดงรายการ">
               <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg>
             </button>
-            <button type="button" class="clear-btn" onclick="clearEmpSearch('q3')" title="ล้าง">✕</button>
+            <button type="button" class="clear-btn" onmousedown="event.preventDefault(); clearEmpSearch('q3')" title="ล้าง">✕</button>
           </div>
           <div class="dropdown-list" id="q3-dropdown"></div>
         </div>
@@ -88,10 +85,10 @@
         <div class="search-select-wrap">
           <input type="text" id="q4-assistant-search" class="search-input" placeholder="กำลังโหลด..." autocomplete="off" />
           <div class="input-actions">
-            <button type="button" class="toggle-btn" onclick="toggleDropdownAll('q4')" title="แสดงรายการ">
+            <button type="button" class="toggle-btn" onmousedown="event.preventDefault(); toggleDropdownAll('q4')" title="แสดงรายการ">
               <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg>
             </button>
-            <button type="button" class="clear-btn" onclick="clearEmpSearch('q4')" title="ล้าง">✕</button>
+            <button type="button" class="clear-btn" onmousedown="event.preventDefault(); clearEmpSearch('q4')" title="ล้าง">✕</button>
           </div>
           <div class="dropdown-list" id="q4-dropdown"></div>
         </div>
@@ -110,10 +107,10 @@
         <div class="search-select-wrap">
           <input type="text" id="q5-drug-search" class="search-input" placeholder="พิมพ์เพื่อค้นหาชื่อยา..." autocomplete="off" />
           <div class="input-actions">
-            <button type="button" class="toggle-btn" onclick="toggleDropdownAll('q5')" title="แสดงรายการยา">
+            <button type="button" class="toggle-btn" onmousedown="event.preventDefault(); toggleDropdownAll('q5')" title="แสดงรายการยา">
               <svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg>
             </button>
-            <button type="button" class="clear-btn" onclick="clearDrugSearch()" title="ล้าง">✕</button>
+            <button type="button" class="clear-btn" onmousedown="event.preventDefault(); clearDrugSearch()" title="ล้าง">✕</button>
           </div>
           <div class="dropdown-list" id="q5-dropdown"></div>
         </div>
@@ -160,8 +157,8 @@
               <div class="search-select-wrap">
                 <input type="text" id="q9-3-counter-search" class="search-input" placeholder="พิมพ์ชื่อ..." autocomplete="off" />
                 <div class="input-actions">
-                  <button type="button" class="toggle-btn" onclick="toggleDropdownAll('q9')" title="แสดงรายการ"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg></button>
-                  <button type="button" class="clear-btn" onclick="clearEmpSearch('q9')" title="ล้าง">✕</button>
+                  <button type="button" class="toggle-btn" onmousedown="event.preventDefault(); toggleDropdownAll('q9')" title="แสดงรายการ"><svg width="10" height="6" viewBox="0 0 10 6"><path d="M0 0l5 5 5-5" fill="currentColor"/></svg></button>
+                  <button type="button" class="clear-btn" onmousedown="event.preventDefault(); clearEmpSearch('q9')" title="ล้าง">✕</button>
                 </div>
                 <div class="dropdown-list" id="q9-dropdown"></div>
               </div>
@@ -186,11 +183,11 @@
         </label>
       </div>
       <div class="checklist-error-msg" id="checklist-error-msg">⚠️ กรุณาเลือกทุกรายการ (ข้อ 9.1–9.8) ให้ครบทุกข้อ</div>
-    </div>
 
-    <!-- === SECTION 4: Q10 === -->
-    <div class="card" id="fg-q10">
-      <div class="section-title"><div class="icon">⚠️</div><span>10. ยามีหลายความแรง / ลักษณะคล้ายคลึง</span></div>
+      <!-- === SECTION 4: Q10 (Moved inside Q9 card) === -->
+      <hr class="divider" style="margin: 32px 0 24px;" />
+      <div id="fg-q10">
+        <div class="section-title" style="border-bottom:none; padding-bottom:0; margin-bottom:12px;"><div class="icon" style="background:var(--warning); color:#fff;">⚠️</div><span>10. ยามีหลายความแรง / ลักษณะคล้ายคลึง</span></div>
       <p class="q10-note">เลือกได้ไม่เกิน 2 รายการ (ตัวเลือกสุดท้ายไม่สามารถเลือกร่วมกับตัวเลือกอื่น)</p>
       <div class="radio-group" id="q10-group">
         <label class="radio-item" id="ri-multi-strength"><input type="checkbox" name="q10" value="multi_strength" id="opt-multi-strength" onchange="handleQ10Change()" /><div class="radio-dot"></div><span>เป็นยาที่มีหลายความแรง</span></label>

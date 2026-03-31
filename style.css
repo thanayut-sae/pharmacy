@@ -97,12 +97,6 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
 
 /* ===================== HEADER ===================== */
 .form-header { text-align: center; margin-bottom: 32px; }
-.header-icon {
-  display: inline-flex; align-items: center; justify-content: center;
-  width: 60px; height: 60px; border-radius: 16px;
-  background: var(--accent-bg); color: var(--accent);
-  margin-bottom: 16px;
-}
 .form-header h1 {
   font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800;
   color: var(--text); line-height: 1.35; margin-bottom: 8px;
@@ -118,12 +112,13 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
 .card {
   background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 28px 32px; margin-bottom: 20px;
-  box-shadow: var(--shadow); position: relative; overflow: hidden;
+  box-shadow: var(--shadow); position: relative;
 }
 .card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--accent-light), var(--accent-dark));
   opacity: 0; transition: var(--transition);
+  border-radius: var(--radius) var(--radius) 0 0;
 }
 .card:focus-within::before { opacity: 1; }
 @media (max-width: 600px) { .card { padding: 20px 16px; } }
@@ -353,7 +348,7 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ===================== ERROR STATES ===================== */
 .field-error-msg { color: var(--danger); font-size: var(--fs-xs); margin-top: 5px; display: none; }
-.field-error input, .field-error select, .field-error .search-input { border-color: var(--danger) !important; }
+.field-error input, .field-error select, .field-error textarea, .field-error .search-input { border-color: var(--danger) !important; box-shadow: 0 0 0 2px rgba(220,53,69,0.1) !important; }
 .field-error .field-error-msg { display: block; }
 
 /* ===================== RESPONSIVE ===================== */
