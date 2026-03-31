@@ -25,6 +25,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   restoreFormState();
   initProgressBar();
   initAutoSave();
+  // Q2 change → update Q11 visibility
+  document.getElementById('q2-room').addEventListener('change', updateQ11Visibility);
+  updateQ11Visibility();
 });
 
 function setDefaultDate() {
@@ -270,6 +273,118 @@ function handleQ10Change(){
 }
 
 // ================================================================
+//  Q11: CROSS-ROOM VERIFICATION
+// ================================================================
+const Q11_ROOMS = [
+  { key:'er',    room:'ER',    subId:'sub-q11-er',    diffId:'q11-diff-er',    ciId:'ci-q11-er',    chkName:'q11_er' },
+  { key:'f2',    room:'ชั้น 2', subId:'sub-q11-f2',    diffId:'q11-diff-f2',    ciId:'ci-q11-f2',    chkName:'q11_f2' },
+  { key:'f3',    room:'ชั้น 3', subId:'sub-q11-f3',    diffId:'q11-diff-f3',    ciId:'ci-q11-f3',    chkName:'q11_f3' },
+  { key:'f4',    room:'ชั้น 4', subId:'sub-q11-f4',    diffId:'q11-diff-f4',    ciId:'ci-q11-f4',    chkName:'q11_f4' },
+  { key:'stock', room:'คลังยา',subId:'sub-q11-stock', diffId:'q11-diff-stock', ciId:'ci-q11-stock', chkName:'q11_stock' },
+];
+
+function updateQ11Visibility() {
+  const selectedRoom = document.getElementById('q2-room').value;
+  Q11_ROOMS.forEach(r => {
+    const el = document.getElementById(r.ciId);
+    if (r.room === selectedRoom) {
+      el.style.display = 'none';
+      // Uncheck & hide sub-field if hidden
+      const chk = document.querySelector(`[name="${r.chkName}"]`);
+      if (chk) { chk.checked = false; el.classList.remove('checked'); }
+      const sub = document.getElementById(r.subId);
+      if (sub) sub.classList.remove('visible');
+    } else {
+      el.style.display = '';
+    }
+  });
+}
+
+function toggleQ11Room(chk, room) {
+  const item = chk.closest('.check-item');
+  item.classList.toggle('checked', chk.checked);
+  // Find the matching room config
+  const cfg = Q11_ROOMS.find(r => r.room === room);
+  if (cfg) {
+    document.getElementById(cfg.subId).classList.toggle('visible', chk.checked);
+  }
+  // If checking a room, uncheck "none"
+  if (chk.checked) {
+    const noneChk = document.getElementById('chk-q11-none');
+    if (noneChk) { noneChk.checked = false; noneChk.closest('.check-item').classList.remove('checked'); }
+  }
+  saveFormState();
+}
+
+function toggleQ11None(chk) {
+  chk.closest('.check-item').classList.toggle('checked', chk.checked);
+  if (chk.checked) {
+    // Uncheck all rooms & hide sub-fields
+    Q11_ROOMS.forEach(r => {
+      const c = document.querySelector(`[name="${r.chkName}"]`);
+      if (c) { c.checked = false; c.closest('.check-item').classList.remove('checked'); }
+      const sub = document.getElementById(r.subId);
+      if (sub) sub.classList.remove('visible');
+    });
+  }
+  saveFormState();
+}
+
+// ================================================================
+//  Q12: SUSPECT CASES
+// ================================================================
+let suspectCaseCount = 0;
+
+function toggleSuspectCases() {
+  const hasCase = document.getElementById('chk-has-case').checked;
+  const ri = document.getElementById('ri-has-case');
+  ri.classList.toggle('selected', hasCase);
+  document.getElementById('suspect-cases-area').classList.toggle('visible', hasCase);
+  if (hasCase && !document.getElementById('suspect-case-list').children.length) {
+    addSuspectCase();
+  }
+  if (!hasCase) {
+    document.getElementById('suspect-case-list').innerHTML = '';
+    suspectCaseCount = 0;
+  }
+  saveFormState();
+}
+
+function addSuspectCase() {
+  suspectCaseCount++;
+  const id = suspectCaseCount;
+  const entry = document.createElement('div');
+  entry.className = 'similar-drug-entry suspect-case-entry';
+  entry.id = `suspect-entry-${id}`;
+  entry.innerHTML = `
+    <div class="suspect-case-header">เคสที่ ${id}
+      <button type="button" class="remove-btn" onclick="removeSuspectCase(${id})">\u2715</button>
+    </div>
+    <div class="suspect-case-fields">
+      <div class="field-row">
+        <div class="field-group"><label>\u0e27\u0e31\u0e19\u0e17\u0e35\u0e48</label><input type="date" id="sc-date-${id}" /></div>
+        <div class="field-group"><label>HN</label><input type="text" id="sc-hn-${id}" placeholder="\u0e23\u0e30\u0e1a\u0e38 HN..." /></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><label>\u0e08\u0e33\u0e19\u0e27\u0e19</label><input type="number" id="sc-qty-${id}" placeholder="\u00b10" step="any" /></div>
+        <div class="field-group"><label>\u0e1c\u0e39\u0e49\u0e08\u0e31\u0e14\u0e22\u0e32</label><input type="text" id="sc-prep-${id}" placeholder="\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e08\u0e31\u0e14" /></div>
+      </div>
+      <div class="field-row">
+        <div class="field-group"><label>\u0e1c\u0e39\u0e49\u0e40\u0e0a\u0e47\u0e04</label><input type="text" id="sc-chk-${id}" placeholder="\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e40\u0e0a\u0e47\u0e04" /></div>
+        <div class="field-group"><label>\u0e1c\u0e39\u0e49\u0e08\u0e48\u0e32\u0e22</label><input type="text" id="sc-disp-${id}" placeholder="\u0e0a\u0e37\u0e48\u0e2d\u0e1c\u0e39\u0e49\u0e08\u0e48\u0e32\u0e22" /></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('suspect-case-list').appendChild(entry);
+  saveFormState();
+}
+
+function removeSuspectCase(id) {
+  document.getElementById(`suspect-entry-${id}`)?.remove();
+  saveFormState();
+}
+
+// ================================================================
 //  SIMILAR DRUGS
 // ================================================================
 function addSimilarDrug(){
@@ -403,11 +518,29 @@ function validate(){
   return ok;
 }
 
+function validateQ11() {
+  const anyRoom = Q11_ROOMS.some(r => {
+    const chk = document.querySelector(`[name="${r.chkName}"]`);
+    return chk && chk.checked;
+  });
+  const noneChk = document.getElementById('chk-q11-none');
+  const ok = anyRoom || (noneChk && noneChk.checked);
+  const err = document.getElementById('q11-error-msg');
+  if (err) err.style.display = ok ? 'none' : 'block';
+  return ok;
+}
+
 // ================================================================
 //  SUBMIT
 // ================================================================
 async function submitForm(){
   if(!validate()){showToast('⚠️ กรุณากรอกข้อมูลที่จำเป็นให้ครบ','error');return;}
+  // Validate Q11 separately
+  if(!validateQ11()){
+    showToast('⚠️ กรุณาเลือกตำแหน่งที่ต้องตรวจสอบ (ข้อ 11)','error');
+    document.getElementById('fg-q11')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
   const btn=document.getElementById('btn-submit');
   btn.disabled=true;
   btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2.5px;"></div> กำลังบันทึก...';
@@ -432,6 +565,36 @@ async function submitForm(){
     if(drug)similarDrugs.push({drug,diff});
   });
   const q10Sel=[];document.querySelectorAll('[name="q10"]:checked').forEach(cb=>q10Sel.push(cb.value));
+
+  // Q11 data
+  const q11 = {};
+  Q11_ROOMS.forEach(r => {
+    const chk = document.querySelector(`[name="${r.chkName}"]`);
+    if (chk && chk.checked) {
+      q11[r.key] = { checked: true, diff: document.getElementById(r.diffId)?.value || '' };
+    }
+  });
+  q11.none = document.getElementById('chk-q11-none')?.checked || false;
+  q11.remark = document.getElementById('q11-remark')?.value || '';
+
+  // Q12 data
+  const q12 = { has_case: document.getElementById('chk-has-case')?.checked || false, cases: [] };
+  document.querySelectorAll('#suspect-case-list .suspect-case-entry').forEach(entry => {
+    const m = entry.id.match(/\d+/); if(!m) return;
+    const id = m[0];
+    q12.cases.push({
+      date: document.getElementById(`sc-date-${id}`)?.value || '',
+      hn: document.getElementById(`sc-hn-${id}`)?.value || '',
+      qty: document.getElementById(`sc-qty-${id}`)?.value || '',
+      prep: document.getElementById(`sc-prep-${id}`)?.value || '',
+      checker: document.getElementById(`sc-chk-${id}`)?.value || '',
+      dispenser: document.getElementById(`sc-disp-${id}`)?.value || '',
+    });
+  });
+
+  // Q13
+  const q13_remark = document.getElementById('q13-remark')?.value || '';
+
   const payload={
     date:document.getElementById('q1-date').value,
     room:document.getElementById('q2-room').value,
@@ -442,6 +605,7 @@ async function submitForm(){
     diff_old:document.getElementById('q7-diff-old').value,
     diff_new:document.getElementById('q8-diff-new').value,
     checks,q10:q10Sel,similar_drugs:similarDrugs,
+    q11, q12, q13_remark,
   };
   try{
     await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveRecord',data:payload})});
@@ -471,8 +635,20 @@ function resetForm(){
   document.querySelectorAll('.sub-field').forEach(el=>el.classList.remove('visible'));
   document.querySelectorAll('.radio-item').forEach(el=>el.classList.remove('selected'));
   document.querySelectorAll('.field-error').forEach(el=>el.classList.remove('field-error'));
-  document.querySelectorAll('.field-error-msg').forEach(el=>el.style.display='none');
+  document.querySelectorAll('.field-error-msg, .checklist-error-msg').forEach(el=>el.style.display='none');
   document.getElementById('checklist-error-msg').style.display='none';
+  // Q11 reset
+  Q11_ROOMS.forEach(r => {
+    const sub = document.getElementById(r.subId); if(sub) sub.classList.remove('visible');
+    const diffEl = document.getElementById(r.diffId); if(diffEl) diffEl.value = '';
+  });
+  document.getElementById('q11-remark').value = '';
+  // Q12 reset
+  document.getElementById('suspect-case-list').innerHTML = '';
+  suspectCaseCount = 0;
+  document.getElementById('suspect-cases-area').classList.remove('visible');
+  // Q13 reset
+  document.getElementById('q13-remark').value = '';
   const btn=document.getElementById('btn-submit');btn.disabled=false;btn.innerHTML='<span>💾</span> บันทึกข้อมูล';
   document.getElementById('main-form').style.display='block';
   document.querySelector('.progress-bar-wrap').style.display='';
@@ -482,6 +658,7 @@ function resetForm(){
   document.getElementById('progress-bar').style.width='0%';
   localStorage.removeItem(FORM_STATE_KEY);
   updateSelectAllBtn();
+  updateQ11Visibility();
 }
 
 // ================================================================
@@ -547,9 +724,41 @@ function saveFormState(){
           diff:document.getElementById(`sim-diff-${m[0]}`)?.value||'',
         });
       });
+      // Save Q11, Q12, Q13
+      collectQ11Q12Q13State(state);
       localStorage.setItem(FORM_STATE_KEY,JSON.stringify(state));
     }catch{}
   },300);
+}
+
+function collectQ11Q12Q13State(state) {
+  // Q11
+  state.q11 = {};
+  Q11_ROOMS.forEach(r => {
+    const chk = document.querySelector(`[name="${r.chkName}"]`);
+    state.q11[r.key] = {
+      checked: chk ? chk.checked : false,
+      diff: document.getElementById(r.diffId)?.value || '',
+    };
+  });
+  state.q11.none = document.getElementById('chk-q11-none')?.checked || false;
+  state.q11.remark = document.getElementById('q11-remark')?.value || '';
+  // Q12
+  state.q12 = { has_case: document.getElementById('chk-has-case')?.checked || false, cases: [] };
+  document.querySelectorAll('#suspect-case-list .suspect-case-entry').forEach(entry => {
+    const m = entry.id.match(/\d+/); if(!m) return;
+    const id = m[0];
+    state.q12.cases.push({
+      date: document.getElementById(`sc-date-${id}`)?.value || '',
+      hn: document.getElementById(`sc-hn-${id}`)?.value || '',
+      qty: document.getElementById(`sc-qty-${id}`)?.value || '',
+      prep: document.getElementById(`sc-prep-${id}`)?.value || '',
+      checker: document.getElementById(`sc-chk-${id}`)?.value || '',
+      dispenser: document.getElementById(`sc-disp-${id}`)?.value || '',
+    });
+  });
+  // Q13
+  state.q13 = document.getElementById('q13-remark')?.value || '';
 }
 
 function restoreFormState(){
@@ -593,6 +802,43 @@ function restoreFormState(){
     }
     updateSelectAllBtn();
     updateProgress();
+    // Q11
+    if (s.q11) {
+      Q11_ROOMS.forEach(r => {
+        if (s.q11[r.key]?.checked) {
+          const chk = document.querySelector(`[name="${r.chkName}"]`);
+          if (chk) { chk.checked = true; chk.closest('.check-item').classList.add('checked'); }
+          const sub = document.getElementById(r.subId); if (sub) sub.classList.add('visible');
+          const diff = document.getElementById(r.diffId); if (diff && s.q11[r.key].diff) diff.value = s.q11[r.key].diff;
+        }
+      });
+      if (s.q11.none) {
+        const nc = document.getElementById('chk-q11-none');
+        if (nc) { nc.checked = true; nc.closest('.check-item').classList.add('checked'); }
+      }
+      if (s.q11.remark) document.getElementById('q11-remark').value = s.q11.remark;
+    }
+    updateQ11Visibility();
+    // Q12
+    if (s.q12?.has_case) {
+      document.getElementById('chk-has-case').checked = true;
+      toggleSuspectCases();
+      if (s.q12.cases?.length) {
+        document.getElementById('suspect-case-list').innerHTML = ''; suspectCaseCount = 0;
+        s.q12.cases.forEach(sc => {
+          addSuspectCase();
+          const id = suspectCaseCount;
+          if (sc.date) document.getElementById(`sc-date-${id}`).value = sc.date;
+          if (sc.hn) document.getElementById(`sc-hn-${id}`).value = sc.hn;
+          if (sc.qty) document.getElementById(`sc-qty-${id}`).value = sc.qty;
+          if (sc.prep) document.getElementById(`sc-prep-${id}`).value = sc.prep;
+          if (sc.checker) document.getElementById(`sc-chk-${id}`).value = sc.checker;
+          if (sc.dispenser) document.getElementById(`sc-disp-${id}`).value = sc.dispenser;
+        });
+      }
+    }
+    // Q13
+    if (s.q13) document.getElementById('q13-remark').value = s.q13;
   }catch(e){console.warn('Restore failed:',e);}
 }
 

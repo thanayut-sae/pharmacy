@@ -59,6 +59,7 @@
           <option value="ER">ER</option>
           <option value="ชั้น 2">ชั้น 2</option>
           <option value="ชั้น 3">ชั้น 3</option>
+          <option value="ชั้น 4">ชั้น 4</option>
         </select>
         <div class="field-error-msg">กรุณาเลือกห้องยา</div>
       </div>
@@ -202,6 +203,111 @@
         <div id="similar-drug-list"></div>
         <button type="button" class="add-entry-btn" onclick="addSimilarDrug()">＋ เพิ่มรายการยา</button>
         <div class="field-error-msg" id="similar-error-msg">⚠️ กรุณาเพิ่มรายการยาอย่างน้อย 1 รายการ</div>
+      </div>
+    </div>
+
+    <!-- === SECTION 5: การตรวจสอบระหว่างห้องยา === -->
+    <div class="card" id="section-cross-room">
+      <div class="section-title"><div class="icon">🏥</div>การตรวจสอบระหว่างห้องยาที่นับ</div>
+      <div class="field-group" id="fg-q11">
+        <label><span class="num">11.</span>ตำแหน่งที่ต้องตรวจสอบ<span class="req">*</span></label>
+        <p class="q10-note" style="margin-bottom:12px;">หากตรวจสอบแล้วให้ทำเครื่องหมายถูก (ห้องยาที่เลือกในข้อ 2 จะไม่แสดง)</p>
+        <div class="checklist-items" id="q11-room-checks">
+          <label class="check-item" id="ci-q11-er" data-room="ER">
+            <input type="checkbox" name="q11_er" value="1" onchange="toggleQ11Room(this,'ER')" />
+            <div class="check-box"></div>
+            <div style="flex:1;">
+              <div class="check-label">ห้องยา ER</div>
+              <div class="sub-field" id="sub-q11-er">
+                <label>Diff ที่นับได้จากห้องยา ER</label>
+                <input type="number" id="q11-diff-er" name="q11_diff_er" placeholder="±0" step="any" />
+              </div>
+            </div>
+          </label>
+          <label class="check-item" id="ci-q11-f2" data-room="ชั้น 2">
+            <input type="checkbox" name="q11_f2" value="1" onchange="toggleQ11Room(this,'ชั้น 2')" />
+            <div class="check-box"></div>
+            <div style="flex:1;">
+              <div class="check-label">ห้องยาชั้น 2</div>
+              <div class="sub-field" id="sub-q11-f2">
+                <label>Diff ที่นับได้จากห้องยาชั้น 2</label>
+                <input type="number" id="q11-diff-f2" name="q11_diff_f2" placeholder="±0" step="any" />
+              </div>
+            </div>
+          </label>
+          <label class="check-item" id="ci-q11-f3" data-room="ชั้น 3">
+            <input type="checkbox" name="q11_f3" value="1" onchange="toggleQ11Room(this,'ชั้น 3')" />
+            <div class="check-box"></div>
+            <div style="flex:1;">
+              <div class="check-label">ห้องยาชั้น 3</div>
+              <div class="sub-field" id="sub-q11-f3">
+                <label>Diff ที่นับได้จากห้องยาชั้น 3</label>
+                <input type="number" id="q11-diff-f3" name="q11_diff_f3" placeholder="±0" step="any" />
+              </div>
+            </div>
+          </label>
+          <label class="check-item" id="ci-q11-f4" data-room="ชั้น 4">
+            <input type="checkbox" name="q11_f4" value="1" onchange="toggleQ11Room(this,'ชั้น 4')" />
+            <div class="check-box"></div>
+            <div style="flex:1;">
+              <div class="check-label">ห้องยาชั้น 4</div>
+              <div class="sub-field" id="sub-q11-f4">
+                <label>Diff ที่นับได้จากห้องยาชั้น 4</label>
+                <input type="number" id="q11-diff-f4" name="q11_diff_f4" placeholder="±0" step="any" />
+              </div>
+            </div>
+          </label>
+          <label class="check-item" id="ci-q11-stock" data-room="คลังยา">
+            <input type="checkbox" name="q11_stock" value="1" onchange="toggleQ11Room(this,'คลังยา')" />
+            <div class="check-box"></div>
+            <div style="flex:1;">
+              <div class="check-label">คลังยา</div>
+              <div class="sub-field" id="sub-q11-stock">
+                <label>Diff ที่นับได้จากคลังยา</label>
+                <input type="number" id="q11-diff-stock" name="q11_diff_stock" placeholder="±0" step="any" />
+              </div>
+            </div>
+          </label>
+          <label class="check-item" id="ci-q11-none">
+            <input type="checkbox" name="q11_none" value="1" id="chk-q11-none" onchange="toggleQ11None(this)" />
+            <div class="check-box"></div>
+            <div><div class="check-label">ไม่มีการ Stock ที่ห้องยาชั้นอื่น</div></div>
+          </label>
+        </div>
+        <div class="checklist-error-msg" id="q11-error-msg">⚠️ กรุณาเลือกอย่างน้อย 1 ตำแหน่ง</div>
+      </div>
+      <!-- Q11 Remarks -->
+      <div class="field-group" style="margin-top:20px;">
+        <label>หมายเหตุข้อ 11 (ถ้ามี)</label>
+        <textarea id="q11-remark" name="q11_remark" placeholder="กรอกหมายเหตุเพิ่มเติม…" rows="2"></textarea>
+      </div>
+    </div>
+
+    <!-- === SECTION 6: การตรวจสอบจากยาที่ตัดจ่าย === -->
+    <div class="card" id="section-suspect">
+      <div class="section-title"><div class="icon">🔎</div>การตรวจสอบจากยาที่ตัดจ่ายผู้ป่วย</div>
+      <div class="field-group" id="fg-q12">
+        <label><span class="num">12.</span>เคสที่มีความเป็นไปได้ <span style="font-weight:400; color:var(--text-dim);">(จะระบุหรือไม่ก็ได้)</span></label>
+        <div class="radio-group" style="margin-bottom:16px;">
+          <label class="radio-item" id="ri-has-case">
+            <input type="checkbox" id="chk-has-case" name="q12_has_case" value="1" onchange="toggleSuspectCases()" />
+            <div class="radio-dot"></div>
+            <span>A: มีเคสน่าสงสัย</span>
+          </label>
+        </div>
+        <div class="similar-drugs-area" id="suspect-cases-area">
+          <div id="suspect-case-list"></div>
+          <button type="button" class="add-entry-btn" onclick="addSuspectCase()">＋ เพิ่มเคส</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- === SECTION 7: Q13 หมายเหตุ === -->
+    <div class="card" id="section-incharge">
+      <div class="section-title"><div class="icon">📝</div>หมายเหตุเพิ่มเติมสำหรับแจ้ง Incharge</div>
+      <div class="field-group" id="fg-q13">
+        <label><span class="num">13.</span>หมายเหตุเพิ่มเติม <span style="font-weight:400; color:var(--text-dim);">(ระบุหรือไม่ก็ได้)</span></label>
+        <textarea id="q13-remark" name="q13_remark" placeholder="ระบุหมายเหตุที่ต้องการแจ้ง Incharge ประจำห้อง…" rows="3"></textarea>
       </div>
     </div>
 

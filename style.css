@@ -356,4 +356,28 @@ textarea { resize: vertical; min-height: 80px; }
   .similar-drug-entry { flex-direction: column; align-items: stretch; }
   .similar-drug-entry .diff-group { justify-content: flex-start; }
   .similar-drug-entry .remove-btn { align-self: flex-end; }
+  .suspect-case-fields .field-row { grid-template-columns: 1fr; }
 }
+
+/* ===================== SUSPECT CASE (Q12) ===================== */
+.suspect-case-entry {
+  display: block; padding: 16px; margin-bottom: 14px;
+  background: var(--input-bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); animation: slideIn .2s ease;
+}
+.suspect-case-header {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: var(--fs-sm); font-weight: 700; color: var(--accent-dark);
+  margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.suspect-case-header .remove-btn {
+  background: var(--danger-bg); border: 1px solid rgba(220,53,69,.2);
+  color: var(--danger); border-radius: var(--radius-sm);
+  padding: 5px 8px; cursor: pointer; font-size: 13px; line-height: 1; transition: var(--transition);
+}
+.suspect-case-header .remove-btn:hover { background: rgba(220,53,69,.15); }
+.suspect-case-fields .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+.suspect-case-fields .field-row:last-child { margin-bottom: 0; }
+.suspect-case-fields .field-group { margin-bottom: 0; }
+.suspect-case-fields label { font-size: var(--fs-xs); margin-bottom: 4px; }
+.suspect-case-fields input { font-size: var(--fs-sm); padding: 8px 12px; }
