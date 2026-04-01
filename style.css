@@ -602,7 +602,7 @@ input.diff-zero     { color: var(--text3) !important; }
 }
 .btn-step-minus { border-right: 1px solid var(--border); color: #dc3545; }
 .btn-step-minus:hover { background: #feebee; }
-.btn-step-plus { border-left: 1px solid var(--border); color: #198754; }
+.btn-step-plus { border-right: 1px solid var(--border); color: #198754; }
 .btn-step-plus:hover { background: #e8f5e9; }
 .btn-step:active { transform: scale(0.95); }
 .btn-step:disabled { opacity: 0.3; cursor: not-allowed; background: var(--surface) !important; filter: grayscale(1); transform: none; }

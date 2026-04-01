@@ -9,6 +9,8 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbyMOHEKSdL47F-b_fy514eW
 let masterData = [];
 let employeeData = [];
 let similarDrugCount = 0;
+let isSubmitVisible = false;
+let isSubmitting = false;
 const CACHE_KEY = 'diffChecklist_initData';
 const CACHE_TTL = 60 * 60 * 1000;
 const FORM_STATE_KEY = 'diffChecklist_formState';
@@ -44,6 +46,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       else fab.classList.remove('visible');
     });
     fab.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  // Observe main submit button to toggle floating button
+  const submitWrap = document.querySelector('.submit-wrap');
+  if (submitWrap) {
+    const observer = new IntersectionObserver((entries) => {
+      isSubmitVisible = entries[0].isIntersecting;
+      updateSubmitState();
+    }, { root: null, rootMargin: '0px', threshold: 0.1 });
+    observer.observe(submitWrap);
   }
 });
 
@@ -157,9 +169,9 @@ function initDiffSteppers() {
     btnPlus.tabIndex = -1;
     btnPlus.onclick = () => toggleDiffSign(input, 1);
     
+    wrap.appendChild(btnPlus);
     wrap.appendChild(btnMinus);
     wrap.appendChild(input);
-    wrap.appendChild(btnPlus);
     
     input.addEventListener('input', function() {
        this.value = this.value.replace(/[^-\d]/g, '');
@@ -826,6 +838,8 @@ function updateProgress() {
 }
 
 function updateSubmitState() {
+  if (isSubmitting) return; // Lock state while submitting
+
   const stats = getProgressStats();
   const btn = document.getElementById('btn-submit');
   const floatBtn = document.getElementById('btn-floating-submit');
@@ -836,7 +850,7 @@ function updateSubmitState() {
   
   if (floatBtn) {
     floatBtn.disabled = !isReady;
-    if (isReady) { floatBtn.classList.add('show'); }
+    if (isReady && !isSubmitVisible) { floatBtn.classList.add('show'); }
     else { floatBtn.classList.remove('show'); }
   }
 }
@@ -845,6 +859,7 @@ function updateSubmitState() {
 //  VALIDATION
 // ================================================================
 function validate() {
+  if (isSubmitting) return false;
   let ok = true; let firstError = null;
   const fields = [
     { id: 'q1-date', wrap: 'fg-q1' },
@@ -997,6 +1012,7 @@ function clearImageUpload(e) {
 //  SUBMIT
 // ================================================================
 async function submitForm() {
+  if (isSubmitting) return;
   if (!validate()) { showToast('⚠️ กรุณากรอกข้อมูลที่จำเป็นให้ครบ', 'error'); return; }
   // Validate Q11 separately
   if (!validateQ11()) {
@@ -1004,9 +1020,23 @@ async function submitForm() {
     document.getElementById('fg-q11')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
+  
+  isSubmitting = true;
+  
   const btn = document.getElementById('btn-submit');
-  btn.disabled = true;
-  btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2.5px;"></div> กำลังบันทึก...';
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2.5px;"></div> กำลังบันทึก...';
+  }
+  
+  const floatBtn = document.getElementById('btn-floating-submit');
+  if (floatBtn) {
+    floatBtn.disabled = true;
+    floatBtn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2.5px;margin-right:8px;"></div> กำลังบันทึก...';
+    // Optionally keep it visible to show loading, but user requested it to disappear/lock. 
+    // We already disabled it, which is the most critical part for stopping double-submits.
+  }
+  
   const checks = {
     recount: document.querySelector('[name="check_recount"]').checked,
     pending_prep: document.querySelector('[name="check_pending_prep"]').checked,
@@ -1081,7 +1111,18 @@ async function submitForm() {
   } catch (e) {
     console.error(e);
     showToast('❌ บันทึกไม่สำเร็จ: ' + e.message, 'error');
-    btn.disabled = false; btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
+    isSubmitting = false;
+    const btn = document.getElementById('btn-submit');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
+    }
+    const floatBtn = document.getElementById('btn-floating-submit');
+    if (floatBtn) {
+      floatBtn.disabled = false;
+      floatBtn.innerHTML = '<span>🚀</span> บันทึกข้อมูล';
+    }
+    updateSubmitState();
   }
 }
 
@@ -1089,6 +1130,8 @@ function showSuccess() {
   document.getElementById('main-form').style.display = 'none';
   document.querySelector('.progress-bar-wrap').style.display = 'none';
   document.querySelector('.progress-text').style.display = 'none';
+  const floatBtn = document.getElementById('btn-floating-submit');
+  if (floatBtn) floatBtn.classList.remove('show');
   document.getElementById('success-screen').style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1119,7 +1162,20 @@ function resetForm() {
   document.getElementById('ri-no-case')?.classList.remove('selected');
   // Q13 reset
   document.getElementById('q13-remark').value = '';
-  const btn = document.getElementById('btn-submit'); btn.disabled = false; btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
+  
+  isSubmitting = false;
+  const btn = document.getElementById('btn-submit');
+  if (btn) {
+    btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
+    btn.disabled = true;
+  }
+  const floatBtn = document.getElementById('btn-floating-submit');
+  if (floatBtn) {
+    floatBtn.innerHTML = '<span>🚀</span> บันทึกข้อมูล';
+    floatBtn.disabled = true;
+  }
+  updateSubmitState();
+
   document.getElementById('main-form').style.display = 'block';
   document.querySelector('.progress-bar-wrap').style.display = '';
   document.querySelector('.progress-text').style.display = '';
