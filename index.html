@@ -38,8 +38,12 @@
   <div class="progress-bar-wrap">
     <div class="progress-bar-fill" id="progress-bar"></div>
   </div>
-  <div class="progress-text" id="progress-text">0 / 6 รายการ</div>
+  <div class="progress-text" id="progress-text">0 / 9 รายการ</div>
 
+  <!-- === OFFLINE BANNER === -->
+  <div id="offline-banner" class="offline-banner">
+    ⚠️ ขาดการเชื่อมต่ออินเทอร์เน็ต กรุณาเชื่อมต่อก่อนกดบันทึก
+  </div>
   <!-- ============ FORM ============ -->
   <form id="main-form" novalidate>
     <!-- === SECTION 1: ข้อมูลพื้นฐาน === -->
@@ -280,13 +284,17 @@
             <div style="flex:1;">
               <div class="check-label">ห้องยาชั้น 4 <span class="check-hint">(ระบุยอด / แจ้งช่วยนับ)</span></div>
               <div class="sub-field" id="sub-q11-f4">
-                <div class="f4-toggle-wrap" onclick="event.stopPropagation();">
-                  <label class="toggle-switch">
+                <label class="f4-toggle-wrap" onclick="event.stopPropagation();">
+                  <span class="f4-toggle-icon">🚨</span>
+                  <div class="toggle-text-wrap">
+                    <span class="toggle-label">ขอความช่วยเหลือจากชั้น 4 (Investigate)</span>
+                    <span class="toggle-desc">เปิดแผงนี้เมื่อต้องการให้ชั้น 4 ตรวจสอบ</span>
+                  </div>
+                  <div class="toggle-switch">
                     <input type="checkbox" name="q11_f4_help" id="chk-q11-f4-help" value="1" onchange="toggleF4Help(this)" />
                     <span class="toggle-slider"></span>
-                  </label>
-                  <span class="toggle-label">ส่งเรื่องให้ห้องยาชั้น 4 ช่วยตรวจสอบ</span>
-                </div>
+                  </div>
+                </label>
                 <div id="f4-diff-wrap">
                   <label>Diff ที่นับได้จากห้องยาชั้น 4</label>
                   <input type="number" id="q11-diff-f4" name="q11_diff_f4" placeholder="±0" step="any" oninput="styleDiffInput(this)" />
@@ -371,10 +379,13 @@
     <button class="btn-reset" onclick="resetForm()">+ กรอกข้อมูลใหม่</button>
   </div>
 </div>
+<!-- Floating Go To Top Button -->
+<button class="fab-go-top" id="btn-go-top" aria-label="กลับขึ้นบน">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
 
 <!-- Toast -->
 <div id="toast"></div>
-
 <script src="app.js"></script>
 </body>
 </html>
