@@ -207,7 +207,7 @@ textarea { resize: vertical; min-height: 80px; }
 .selected-drug-info strong { color: var(--accent-dark); }
 
 /* ===================== SEARCHABLE SELECT ===================== */
-.search-select-wrap { position: relative; }
+.search-select-wrap { position: relative; z-index: 200; }
 .search-select-wrap .search-input { padding-right: 72px; }
 .input-actions {
   position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
@@ -230,7 +230,7 @@ textarea { resize: vertical; min-height: 80px; }
   position: absolute; top: calc(100% + 4px); left: 0; right: 0;
   background: #fff; border: 1px solid var(--border-hover);
   border-radius: var(--radius-sm); max-height: 260px; overflow-y: auto;
-  z-index: 100; display: none; box-shadow: var(--shadow-lg);
+  z-index: 500; display: none; box-shadow: var(--shadow-lg);
 }
 .dropdown-list.open { display: block; }
 .dropdown-list::-webkit-scrollbar { width: 5px; }
@@ -303,7 +303,7 @@ textarea { resize: vertical; min-height: 80px; }
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   cursor: pointer; transition: all .25s cubic-bezier(.4,0,.2,1);
 }
-#ci-9-3 { overflow: visible; cursor: default; }
+#ci-9-3 { overflow: visible; cursor: default; position: relative; z-index: 200; }
 .check-item:hover { border-color: var(--border-hover); background: var(--surface-hover); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(26,47,35,.06); }
 .check-item.checked { border-color: var(--accent); background: var(--accent-bg); }
 .check-item.checked:hover { background: rgba(58,157,106,0.12); }

@@ -521,19 +521,25 @@ function handleQ10Change(clickedEl) {
   const ms = document.getElementById('opt-multi-strength');
   const sl = document.getElementById('opt-similar-look');
   const no = document.getElementById('opt-none');
-  
-  if (clickedEl && (clickedEl.id === 'opt-multi-strength' || clickedEl.id === 'opt-similar-look') && clickedEl.checked) {
+
+  // If user clicks option 1 or 2, always uncheck option 3
+  if (clickedEl && (clickedEl.id === 'opt-multi-strength' || clickedEl.id === 'opt-similar-look')) {
     no.checked = false;
   }
+  // If user clicks option 3, always uncheck option 1 and 2
   if (clickedEl && clickedEl.id === 'opt-none' && clickedEl.checked) {
     ms.checked = false;
     sl.checked = false;
+  }
+  // If no clickedEl (restore from localStorage), resolve conflict: if both "none" and others are set, prefer others
+  if (!clickedEl && no.checked && (ms.checked || sl.checked)) {
+    no.checked = false;
   }
 
   ['ri-multi-strength', 'ri-similar-look', 'ri-none'].forEach(id => {
     const ri = document.getElementById(id); ri.classList.toggle('selected', ri.querySelector('input').checked);
   });
-  
+
   const showSim = ms.checked || sl.checked;
   document.getElementById('similar-drugs-area').classList.toggle('visible', showSim);
   if (!showSim) { document.getElementById('similar-drug-list').innerHTML = ''; similarDrugCount = 0; }
@@ -1291,8 +1297,7 @@ async function submitForm() {
 
 function showSuccess() {
   document.getElementById('main-form').style.display = 'none';
-  document.querySelector('.progress-bar-wrap').style.display = 'none';
-  document.querySelector('.progress-text').style.display = 'none';
+  const fh = document.getElementById('form-header'); if (fh) fh.style.display = 'none';
   const floatBtn = document.getElementById('btn-floating-submit');
   if (floatBtn) floatBtn.classList.remove('show');
   document.getElementById('success-screen').style.display = 'block';
@@ -1338,8 +1343,7 @@ function resetForm() {
   updateSubmitState();
 
   document.getElementById('main-form').style.display = 'block';
-  document.querySelector('.progress-bar-wrap').style.display = '';
-  document.querySelector('.progress-text').style.display = '';
+  const fh = document.getElementById('form-header'); if (fh) fh.style.display = '';
   document.getElementById('success-screen').style.display = 'none';
   setDefaultDate();
   document.querySelectorAll('.progress-bar-fill').forEach(bar => bar.style.transform = 'scaleX(0)');
