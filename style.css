@@ -38,6 +38,22 @@
   --fs-lg: 17px;
   --fs-input: 15px;
 }
+[data-theme="dark"] {
+  --bg: #121A15;
+  --surface: #1B2620;
+  --surface-hover: #223028;
+  --text: #E5ECE6;
+  --text2: #A3C2B1;
+  --text3: #6F8D7E;
+  --input-bg: #141C18;
+  --input-focus: #18221D;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(255, 255, 255, 0.15);
+  --border-focus: #4FBD7E;
+  --accent-glow: rgba(79, 189, 126, 0.2);
+  --accent-bg: rgba(79, 189, 126, 0.1);
+  --danger-bg: rgba(220, 53, 69, 0.15);
+}
 html { scroll-behavior: smooth; }
 body {
   font-family: 'Sarabun', sans-serif;
@@ -53,7 +69,7 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
 /* ===================== TOP BAR ===================== */
 .top-bar {
   position: sticky; top: 0; z-index: 1000;
-  background: rgba(255,255,255,0.88);
+  background: var(--surface);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
   display: flex; flex-direction: column; padding: 0;
@@ -67,8 +83,13 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
   display: block;
 }
 .top-badge { font-size: var(--fs-sm); font-weight: 700; color: var(--accent-dark); }
-.autosave-badge { font-size: 11px; margin-left: 10px; color: var(--text3); font-weight: 500; opacity: 0; transition: opacity 0.5s ease; white-space: nowrap; }
-.autosave-badge.visible { opacity: 1; }
+.autosave-badge { font-size: 11px; margin-left: 10px; color: var(--accent-dark); font-weight: 600; opacity: 0; transition: opacity 0.5s ease, color 0.5s ease; white-space: nowrap; }
+.autosave-badge.visible { opacity: 1; animation: autosaveFlash 2s ease forwards; }
+@keyframes autosaveFlash {
+  0% { color: var(--accent); opacity: 1; }
+  50% { color: var(--accent-dark); opacity: 1; }
+  100% { color: var(--text3); opacity: 0.7; }
+}
 .top-bar-right { display: flex; align-items: center; gap: 12px; }
 .font-size-group {
   display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
@@ -107,10 +128,10 @@ html { scroll-behavior: smooth; scroll-padding-top: 66px; }
 /* ===================== HEADER ===================== */
 .form-header { text-align: center; margin-bottom: 32px; }
 .form-header h1 {
-  font-size: clamp(1.4rem, 4vw, 2rem); font-weight: 800;
-  color: var(--text); line-height: 1.35; margin-bottom: 8px;
+  font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 800;
+  color: var(--accent-dark); line-height: 1.35; margin-bottom: 6px;
 }
-.form-header p { color: var(--text2); font-size: var(--fs-sm); }
+.form-header p { color: var(--text3); font-size: var(--fs-xs); }
 
 /* ===================== PROGRESS ===================== */
 .progress-bar-wrap { height: 4px; background: rgba(58,157,106,0.12); border-radius: 4px; overflow: hidden; margin-bottom: 6px; }
@@ -509,11 +530,11 @@ kbd { background: #fff; padding: 2px 8px; border-radius: 4px; font-family: inher
 
 /* ===================== TOAST ===================== */
 #toast {
-  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+  position: fixed; top: 76px; left: 50%; transform: translateX(-50%) translateY(-20px);
   background: var(--surface); border: 1px solid var(--border); color: var(--text);
   padding: 12px 24px; border-radius: 99px; font-size: var(--fs-sm); font-weight: 500;
   opacity: 0; transition: opacity .25s, transform .25s; pointer-events: none;
-  z-index: 999; min-width: 220px; text-align: center; box-shadow: var(--shadow-lg);
+  z-index: 1500; min-width: 220px; text-align: center; box-shadow: var(--shadow-lg);
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 #toast.success { border-color: var(--success); color: var(--success); }

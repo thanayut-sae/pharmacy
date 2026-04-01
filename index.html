@@ -18,6 +18,9 @@
       <span class="autosave-badge" id="autosave-badge"></span>
     </div>
     <div class="top-bar-right">
+      <div class="font-size-group" title="เปิด/ปิดโหมดกลางคืน">
+        <button class="font-btn" id="theme-toggle" onclick="toggleTheme()">🌙</button>
+      </div>
       <div class="font-size-group" title="ปรับขนาดตัวอักษร">
         <button class="font-btn" data-size="small" onclick="setFontSize('small')">A</button>
         <button class="font-btn active" data-size="medium" onclick="setFontSize('medium')">A</button>
@@ -25,7 +28,7 @@
       </div>
       <button class="btn-clear-all" onclick="clearAll()" title="ล้างข้อมูลทั้งหมด">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/></svg>
-        <span>Clear All</span>
+        <span>ล้างข้อมูล</span>
       </button>
     </div>
   </div>
@@ -37,7 +40,7 @@
 <div class="page-wrapper">
   <!-- Header -->
   <div class="form-header" id="form-header">
-    <h1>📋 Checklist<br>เมื่อพบยา Diff</h1>
+    <h1>📋 Checklist เมื่อพบยา Diff</h1>
     <p>กรุณากรอกข้อมูลให้ครบถ้วน แล้วกดบันทึกเมื่อเสร็จสิ้น</p>
   </div>
   <div class="progress-text" id="progress-text" style="display:none;">0 / 9 รายการ</div>
@@ -131,7 +134,7 @@
       <!-- Q6 -->
       <div class="field-group" id="fg-q6">
         <label><span class="num">6.</span>เลข Material</label>
-        <input type="text" id="q6-material" name="q6_material" placeholder="ใส่ข้อมูลอัตโนมัติจากข้อ 5 (หรือพิมพ์เองได้)" />
+        <input type="text" id="q6-material" name="q6_material" placeholder="กรุณาเลือกยาในข้อ 5 ก่อน" disabled />
       </div>
       <!-- Q7 & Q8 -->
       <div class="field-row">
@@ -349,7 +352,7 @@
       </div>
 
       <div class="field-group" id="fg-q13">
-        <label><span class="num">13.</span>เคสที่มีความเป็นไปได้ <span style="font-weight:400; color:var(--text-dim);">(จะระบุหรือไม่ก็ได้)</span></label>
+        <label><span class="num">12.1</span>เคสที่มีความเป็นไปได้ <span style="font-weight:400; color:var(--text-dim);">(จะระบุหรือไม่ก็ได้)</span></label>
         <div class="radio-group" style="margin-bottom:16px;">
           <label class="radio-item" id="ri-has-case">
             <input type="radio" name="q12_case" value="has_case" id="chk-has-case" onchange="handleQ12Change()" />
@@ -373,7 +376,7 @@
     <div class="card" id="section-incharge">
       <div class="section-title"><div class="icon">📝</div>หมายเหตุเพิ่มเติมสำหรับแจ้ง Incharge</div>
       <div class="field-group" id="fg-q14">
-        <label><span class="num">14.</span>หมายเหตุเพิ่มเติม <span style="font-weight:400; color:var(--text-dim);">(ระบุหรือไม่ก็ได้)</span></label>
+        <label><span class="num">13.</span>หมายเหตุเพิ่มเติม <span style="font-weight:400; color:var(--text-dim);">(ระบุหรือไม่ก็ได้)</span></label>
         <textarea id="q13-remark" name="q13_remark" placeholder="ระบุหมายเหตุที่ต้องการแจ้ง Incharge ประจำห้อง…" rows="3"></textarea>
       </div>
     </div>

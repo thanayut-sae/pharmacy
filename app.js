@@ -15,12 +15,14 @@ const CACHE_KEY = 'diffChecklist_initData';
 const CACHE_TTL = 60 * 60 * 1000;
 const FORM_STATE_KEY = 'diffChecklist_formState';
 const FONT_KEY = 'diffChecklist_fontSize';
+const THEME_KEY = 'diffChecklist_theme';
 const MAIN_CHECKS = ['check_recount', 'check_pending_prep', 'check_change_counter', 'check_expire', 'check_damaged', 'check_pending_req', 'check_qi', 'check_mrp'];
 
 // ================================================================
 //  INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', async () => {
+  restoreTheme();
   restoreFontSize();
   setDefaultDate();
 
@@ -57,6 +59,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     }, { root: null, rootMargin: '0px', threshold: 0.1 });
     observer.observe(submitWrap);
   }
+  // Scroll fallback for floating button
+  window.addEventListener('scroll', () => {
+    updateSubmitState();
+  }, { passive: true });
+
+  // Enter key navigation for numeric (diff) inputs
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && e.target.type === 'number') {
+      e.preventDefault();
+      const numInputs = Array.from(document.querySelectorAll('input[type="number"]'))
+        .filter(el => el.offsetWidth > 0 || el.offsetHeight > 0);
+      const idx = numInputs.indexOf(e.target);
+      if (idx > -1 && idx + 1 < numInputs.length) {
+        numInputs[idx + 1].focus();
+      } else {
+        e.target.blur();
+      }
+    }
+  });
 });
 
 function updateOnlineStatus() {
@@ -71,10 +92,10 @@ function updateOnlineStatus() {
 
 function setDefaultDate() {
   const el = document.getElementById('q1-date');
-  if (!el.value) {
-    const t = new Date();
-    el.value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
-  }
+  const t = new Date();
+  const today = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
+  el.max = today; // Prevent future dates
+  if (!el.value) el.value = today;
 }
 
 // ================================================================
@@ -385,12 +406,16 @@ function selectDrug(d) {
   document.getElementById('q5-drug-search').value = d.drug;
   document.getElementById('q5-drug-val').value = d.drug;
   document.getElementById('q6-material').value = d.material || '';
+  const q6el = document.getElementById('q6-material');
+  q6el.disabled = false;
+  q6el.placeholder = "ใส่ข้อมูลอัตโนมัติจากข้อ 5 (หรือพิมพ์เองได้)";
   const q7el = document.getElementById('q7-diff-old');
   q7el.value = (d.diffOld !== undefined && d.diffOld !== '') ? d.diffOld : '';
   styleDiffInput(q7el);
+  updateDiffButtons(q7el);
   // Clear Q8 (Diff ใหม่) — เปลี่ยนตัวยาแล้วค่าเดิมไม่เกี่ยว
   const q8el = document.getElementById('q8-diff-new');
-  q8el.value = ''; styleDiffInput(q8el);
+  q8el.value = ''; styleDiffInput(q8el); updateDiffButtons(q8el);
   const label = document.getElementById('drug-name-label');
   if (label) label.textContent = d.drug;
   const info = document.getElementById('selected-drug-info');
@@ -411,11 +436,14 @@ function selectDrug(d) {
 function clearDrugSearch() {
   document.getElementById('q5-drug-search').value = '';
   document.getElementById('q5-drug-val').value = '';
-  document.getElementById('q6-material').value = '';
+  const q6el = document.getElementById('q6-material');
+  q6el.value = '';
+  q6el.disabled = true;
+  q6el.placeholder = "กรุณาเลือกยาในข้อ 5 ก่อน";
   const q7 = document.getElementById('q7-diff-old');
-  q7.value = ''; styleDiffInput(q7);
+  q7.value = ''; styleDiffInput(q7); updateDiffButtons(q7);
   const q8 = document.getElementById('q8-diff-new');
-  q8.value = ''; styleDiffInput(q8);
+  q8.value = ''; styleDiffInput(q8); updateDiffButtons(q8);
   const label = document.getElementById('drug-name-label');
   if (label) label.textContent = '___';
   const info = document.getElementById('selected-drug-info');
@@ -887,17 +915,15 @@ function updateProgress() {
 function updateSubmitState() {
   if (isSubmitting) return; // Lock state while submitting
 
-  const stats = getProgressStats();
-  const btn = document.getElementById('btn-submit');
   const floatBtn = document.getElementById('btn-floating-submit');
+  const successScreen = document.getElementById('success-screen');
+  const isSuccess = successScreen && successScreen.style.display === 'block';
 
-  const isReady = (stats.allTextFilled && stats.allChecked && stats.q10Filled && stats.q11Filled && stats.q12Filled) && navigator.onLine;
-
-  // if (btn) btn.disabled = !isReady;
-  
-  if (floatBtn) {
+  if (floatBtn && !isSuccess) {
     if (!isSubmitVisible) { floatBtn.classList.add('show'); }
     else { floatBtn.classList.remove('show'); }
+  } else if (floatBtn && isSuccess) {
+    floatBtn.classList.remove('show');
   }
 }
 
@@ -1128,18 +1154,26 @@ function confirmSubmit() {
   // Populate Confirm Modal
   const drug = document.getElementById('q5-drug-val').value || '-';
   const room = document.getElementById('q2-room').value || '-';
+  const diffOld = document.getElementById('q7-diff-old')?.value || '0';
+  const diffNew = document.getElementById('q8-diff-new')?.value || '0';
+  const stats = getProgressStats();
   const q12Radio = document.querySelector('[name="q12_case"]:checked');
-  let caseCountText = 'ไม่มีเคส';
+  let caseCountText = 'ไม่ระบุ';
   if (q12Radio && q12Radio.value === 'has_case') {
     const cases = document.querySelectorAll('#suspect-case-list .suspect-case-entry').length;
-    caseCountText = `${cases} เคส`;
+    caseCountText = `มี ${cases} เคส`;
+  } else if (q12Radio && q12Radio.value === 'no_case') {
+    caseCountText = 'ไม่มีเคส';
   }
 
   const list = document.getElementById('confirm-list');
   list.innerHTML = `
-    <li><span>ห้องยา:</span> <strong>${room}</strong></li>
-    <li><span>รายการยา Diff:</span> <strong>${drug}</strong></li>
-    <li><span>จำนวนเคสที่บันทึก:</span> <strong>${caseCountText}</strong></li>
+    <li><span>📅 วันที่พบ:</span> <strong>${document.getElementById('q1-date').value || '-'}</strong></li>
+    <li><span>🏥 ห้องยา:</span> <strong>${room}</strong></li>
+    <li><span>💊 รายการยา:</span> <strong>${drug}</strong></li>
+    <li><span>📊 Diff เดิม → ใหม่:</span> <strong>${diffOld} → ${diffNew}</strong></li>
+    <li><span>✅ Checklist:</span> <strong>${stats.filled} / ${stats.total} รายการ</strong></li>
+    <li><span>🔎 เคสน่าสงสัย:</span> <strong>${caseCountText}</strong></li>
   `;
   document.getElementById('confirm-modal-overlay').classList.add('visible');
 }
@@ -1383,6 +1417,36 @@ function restoreFontSize() {
 }
 
 // ================================================================
+//  THEME TOGGLE
+// ================================================================
+function restoreTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved === 'dark') document.body.setAttribute('data-theme', 'dark');
+    else document.body.removeAttribute('data-theme');
+    updateThemeIcon();
+  } catch(e) {}
+}
+
+function toggleTheme() {
+  const isDark = document.body.getAttribute('data-theme') === 'dark';
+  if (isDark) {
+    document.body.removeAttribute('data-theme');
+    try { localStorage.setItem(THEME_KEY, 'light'); } catch (e) {}
+  } else {
+    document.body.setAttribute('data-theme', 'dark');
+    try { localStorage.setItem(THEME_KEY, 'dark'); } catch (e) {}
+  }
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  const isDark = document.body.getAttribute('data-theme') === 'dark';
+  const btn = document.getElementById('theme-toggle');
+  if (btn) btn.textContent = isDark ? '☀️' : '🌙';
+}
+
+// ================================================================
 //  FORM STATE PERSISTENCE (localStorage)
 // ================================================================
 let saveTimer;
@@ -1485,10 +1549,13 @@ function restoreFormState() {
       document.getElementById('q5-drug-val').value = s.q5h; document.getElementById('q5-drug-search').value = s.q5s || s.q5h;
       const label = document.getElementById('drug-name-label'); if (label) label.textContent = s.q5h;
       const info = document.getElementById('selected-drug-info'); if (info) info.style.display = 'block';
+      const q6el = document.getElementById('q6-material');
+      q6el.disabled = false;
+      q6el.placeholder = "ใส่ข้อมูลอัตโนมัติจากข้อ 5 (หรือพิมพ์เองได้)";
     }
     if (s.q6) document.getElementById('q6-material').value = s.q6;
-    if (s.q7) { const e = document.getElementById('q7-diff-old'); e.value = s.q7; styleDiffInput(e); }
-    if (s.q8) { const e = document.getElementById('q8-diff-new'); e.value = s.q8; styleDiffInput(e); }
+    if (s.q7) { const e = document.getElementById('q7-diff-old'); e.value = s.q7; styleDiffInput(e); updateDiffButtons(e); }
+    if (s.q8) { const e = document.getElementById('q8-diff-new'); e.value = s.q8; styleDiffInput(e); updateDiffButtons(e); }
     // Restore checks
     if (s.checks) {
       Object.keys(s.checks).forEach(n => {
@@ -1524,7 +1591,7 @@ function restoreFormState() {
           const chk = document.querySelector(`[name="${r.chkName}"]`);
           if (chk) { chk.checked = true; chk.closest('.check-item').classList.add('checked'); }
           const sub = document.getElementById(r.subId); if (sub) sub.classList.add('visible');
-          const diff = document.getElementById(r.diffId); if (diff && s.q11[r.key].diff) { diff.value = s.q11[r.key].diff; styleDiffInput(diff); }
+          const diff = document.getElementById(r.diffId); if (diff && s.q11[r.key].diff) { diff.value = s.q11[r.key].diff; styleDiffInput(diff); updateDiffButtons(diff); }
         }
       });
       if (s.q11.none) {
