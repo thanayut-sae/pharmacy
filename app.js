@@ -13,7 +13,7 @@ const CACHE_KEY = 'diffChecklist_initData';
 const CACHE_TTL = 60 * 60 * 1000;
 const FORM_STATE_KEY = 'diffChecklist_formState';
 const FONT_KEY = 'diffChecklist_fontSize';
-const MAIN_CHECKS = ['check_recount','check_pending_prep','check_change_counter','check_expire','check_damaged','check_pending_req','check_qi','check_mrp'];
+const MAIN_CHECKS = ['check_recount', 'check_pending_prep', 'check_change_counter', 'check_expire', 'check_damaged', 'check_pending_req', 'check_qi', 'check_mrp'];
 
 // ================================================================
 //  INIT
@@ -61,7 +61,7 @@ function setDefaultDate() {
   const el = document.getElementById('q1-date');
   if (!el.value) {
     const t = new Date();
-    el.value = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+    el.value = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
   }
 }
 
@@ -69,14 +69,14 @@ function setDefaultDate() {
 //  DATA LOADING (with cache)
 // ================================================================
 async function loadSheetData() {
-  showLoading(['load-pharmacist','load-assistant']);
+  showLoading(['load-pharmacist', 'load-assistant']);
   try {
     const cached = loadFromCache();
     if (cached) {
       masterData = cached.master || [];
       employeeData = cached.employees || [];
       initUI();
-      hideLoading(['load-pharmacist','load-assistant']);
+      hideLoading(['load-pharmacist', 'load-assistant']);
       refreshCacheInBackground();
       return;
     }
@@ -85,41 +85,41 @@ async function loadSheetData() {
     employeeData = data.employees || [];
     saveToCache(data);
     initUI();
-  } catch(e) {
+  } catch (e) {
     showToast('❌ โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรช', 'error');
     console.error('GAS Error:', e);
   } finally {
-    hideLoading(['load-pharmacist','load-assistant']);
+    hideLoading(['load-pharmacist', 'load-assistant']);
   }
 }
 function loadFromCache() {
-  try { const r = localStorage.getItem(CACHE_KEY); if(!r) return null; const {ts,data}=JSON.parse(r); return Date.now()-ts>CACHE_TTL?null:data; } catch{return null;}
+  try { const r = localStorage.getItem(CACHE_KEY); if (!r) return null; const { ts, data } = JSON.parse(r); return Date.now() - ts > CACHE_TTL ? null : data; } catch { return null; }
 }
-function saveToCache(data) { try{localStorage.setItem(CACHE_KEY,JSON.stringify({ts:Date.now(),data}));}catch{} }
+function saveToCache(data) { try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch { } }
 async function fetchFromGAS() {
-  const res = await fetch(`${GAS_URL}?action=getInitData`,{method:'GET',credentials:'omit',cache:'no-cache',redirect:'follow'});
+  const res = await fetch(`${GAS_URL}?action=getInitData`, { method: 'GET', credentials: 'omit', cache: 'no-cache', redirect: 'follow' });
   return res.json();
 }
 async function refreshCacheInBackground() {
-  try { const data = await fetchFromGAS(); saveToCache(data); masterData=data.master||[]; employeeData=data.employees||[]; } catch{}
+  try { const data = await fetchFromGAS(); saveToCache(data); masterData = data.master || []; employeeData = data.employees || []; } catch { }
 }
-function showLoading(ids){ids.forEach(id=>document.getElementById(id)?.classList.add('visible'));}
-function hideLoading(ids){ids.forEach(id=>document.getElementById(id)?.classList.remove('visible'));}
+function showLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.add('visible')); }
+function hideLoading(ids) { ids.forEach(id => document.getElementById(id)?.classList.remove('visible')); }
 
 // ================================================================
 //  UI INIT
 // ================================================================
 function initUI() {
-  initEmployeeSearch('q3','เภสัชกร',document.getElementById('q3-pharmacist-search'),document.getElementById('q3-pharmacist'));
-  initEmployeeSearch('q4','ผู้ช่วยเภสัชกร',document.getElementById('q4-assistant-search'),document.getElementById('q4-assistant'));
-  initEmployeeSearch('q9',null,document.getElementById('q9-3-counter-search'),document.getElementById('q9-3-counter'));
-  document.getElementById('q3-pharmacist-search').placeholder='พิมพ์ชื่อเภสัชกร...';
-  document.getElementById('q4-assistant-search').placeholder='พิมพ์ชื่อผู้ช่วยเภสัชกร...';
+  initEmployeeSearch('q3', 'เภสัชกร', document.getElementById('q3-pharmacist-search'), document.getElementById('q3-pharmacist'));
+  initEmployeeSearch('q4', 'ผู้ช่วยเภสัชกร', document.getElementById('q4-assistant-search'), document.getElementById('q4-assistant'));
+  initEmployeeSearch('q9', null, document.getElementById('q9-3-counter-search'), document.getElementById('q9-3-counter'));
+  document.getElementById('q3-pharmacist-search').placeholder = 'พิมพ์ชื่อเภสัชกร...';
+  document.getElementById('q4-assistant-search').placeholder = 'พิมพ์ชื่อผู้ช่วยเภสัชกร...';
   initDrugSearchable();
   // Q6 material reverse lookup
-  document.getElementById('q6-material').addEventListener('change',function(){
-    const mat=this.value.trim(); if(!mat)return;
-    const found=masterData.find(d=>d.material===mat); if(found) selectDrug(found);
+  document.getElementById('q6-material').addEventListener('change', function () {
+    const mat = this.value.trim(); if (!mat) return;
+    const found = masterData.find(d => d.material === mat); if (found) selectDrug(found);
   });
 }
 
@@ -129,7 +129,7 @@ function initUI() {
 let empSearchTimeout = {};
 function initEmployeeSearch(prefix, roleFilter, inputEl, hiddenEl) {
   const dropdown = document.getElementById(`${prefix}-dropdown`);
-  const getList = () => roleFilter ? employeeData.filter(e=>e.role===roleFilter) : employeeData;
+  const getList = () => roleFilter ? employeeData.filter(e => e.role === roleFilter) : employeeData;
   const isEmpDropdown = prefix !== 'q5';
 
   inputEl.addEventListener('input', () => {
@@ -137,20 +137,20 @@ function initEmployeeSearch(prefix, roleFilter, inputEl, hiddenEl) {
     empSearchTimeout[prefix] = setTimeout(() => {
       const q = inputEl.value.trim().toLowerCase();
       const list = getList();
-      const matches = q ? list.filter(e=>e.name.toLowerCase().includes(q)).slice(0,40) : list.slice(0,40);
-      renderDropdown(dropdown, matches.map(e=>e.name), name=>{
+      const matches = q ? list.filter(e => e.name.toLowerCase().includes(q)).slice(0, 40) : list.slice(0, 40);
+      renderDropdown(dropdown, matches.map(e => e.name), name => {
         if (name === '__other__') {
           inputEl.value = ''; hiddenEl.value = '__other__';
           inputEl.placeholder = 'ระบุชื่อพนักงานด้วยตนเอง...';
           inputEl.dataset.otherMode = '1';
         } else {
-          inputEl.value=name; hiddenEl.value=name;
+          inputEl.value = name; hiddenEl.value = name;
           inputEl.dataset.otherMode = '';
         }
         dropdown.classList.remove('open');
         setToggleBtnState(prefix, false);
         saveFormState();
-      }, isEmpDropdown ? {addOther:true} : undefined);
+      }, isEmpDropdown ? { addOther: true } : undefined);
       dropdown.classList.add('open');
       setToggleBtnState(prefix, true);
     }, 150);
@@ -163,51 +163,51 @@ function initEmployeeSearch(prefix, roleFilter, inputEl, hiddenEl) {
     }
   });
 
-  inputEl.addEventListener('blur',()=>setTimeout(()=>{
-    dropdown.classList.remove('open');setToggleBtnState(prefix,false);
+  inputEl.addEventListener('blur', () => setTimeout(() => {
+    dropdown.classList.remove('open'); setToggleBtnState(prefix, false);
     // Sync other mode value on blur
     if (inputEl.dataset.otherMode === '1' && inputEl.value.trim()) {
       hiddenEl.value = inputEl.value.trim();
     }
-  },200));
-  inputEl.addEventListener('focus',()=>{inputEl.dispatchEvent(new Event('input'));});
+  }, 200));
+  inputEl.addEventListener('focus', () => { inputEl.dispatchEvent(new Event('input')); });
 }
 
 function toggleDropdownAll(prefix) {
   const dropdown = document.getElementById(`${prefix}-dropdown`);
   const isOpen = dropdown.classList.contains('open');
-  if (isOpen) { dropdown.classList.remove('open'); setToggleBtnState(prefix,false); return; }
+  if (isOpen) { dropdown.classList.remove('open'); setToggleBtnState(prefix, false); return; }
 
   let list = [];
-  const map = {q3:'เภสัชกร',q4:'ผู้ช่วยเภสัชกร',q9:null,q5:null};
-  const inputMap = {q3:'q3-pharmacist-search',q4:'q4-assistant-search',q9:'q9-3-counter-search',q5:'q5-drug-search'};
-  const hiddenMap = {q3:'q3-pharmacist',q4:'q4-assistant',q9:'q9-3-counter',q5:'q5-drug-val'};
+  const map = { q3: 'เภสัชกร', q4: 'ผู้ช่วยเภสัชกร', q9: null, q5: null };
+  const inputMap = { q3: 'q3-pharmacist-search', q4: 'q4-assistant-search', q9: 'q9-3-counter-search', q5: 'q5-drug-search' };
+  const hiddenMap = { q3: 'q3-pharmacist', q4: 'q4-assistant', q9: 'q9-3-counter', q5: 'q5-drug-val' };
 
   if (prefix === 'q5') {
-    list = masterData.slice(0,60).map(d=>d.drug);
+    list = masterData.slice(0, 60).map(d => d.drug);
   } else {
     const role = map[prefix];
-    list = (role ? employeeData.filter(e=>e.role===role) : employeeData).map(e=>e.name);
+    list = (role ? employeeData.filter(e => e.role === role) : employeeData).map(e => e.name);
   }
 
   const inputEl = document.getElementById(inputMap[prefix]);
   const hiddenEl = document.getElementById(hiddenMap[prefix]);
   const isEmpDropdown = prefix !== 'q5';
 
-  renderDropdown(dropdown, list, val=>{
+  renderDropdown(dropdown, list, val => {
     if (val === '__other__') {
       inputEl.value = ''; hiddenEl.value = '__other__';
       inputEl.placeholder = 'ระบุชื่อด้วยตนเอง...';
       inputEl.dataset.otherMode = '1';
     } else {
-      inputEl.value=val; hiddenEl.value=val;
+      inputEl.value = val; hiddenEl.value = val;
       inputEl.dataset.otherMode = '';
-      if(prefix==='q5'){const d=masterData.find(x=>x.drug===val);if(d)selectDrug(d);}
+      if (prefix === 'q5') { const d = masterData.find(x => x.drug === val); if (d) selectDrug(d); }
     }
     dropdown.classList.remove('open');
-    setToggleBtnState(prefix,false);
+    setToggleBtnState(prefix, false);
     saveFormState();
-  }, isEmpDropdown ? {addOther:true} : undefined);
+  }, isEmpDropdown ? { addOther: true } : undefined);
   dropdown.classList.add('open');
   setToggleBtnState(prefix, true);
   inputEl.focus();
@@ -222,33 +222,33 @@ function setToggleBtnState(prefix, open) {
 
 function renderDropdown(dropdown, items, onSelect, opts) {
   dropdown.innerHTML = '';
-  if (!items.length) { dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>'; return; }
-    const frag = document.createDocumentFragment();
-    items.forEach(label=>{
-      const item=document.createElement('div'); item.className='dropdown-item'; item.textContent=label;
-      item.addEventListener('mousedown',e=>{e.preventDefault();onSelect(label);});
-      frag.appendChild(item);
-    });
-    // Add "อื่นๆ" for employee dropdowns
-    if (opts && opts.addOther) {
-      const sep = document.createElement('div');
-      sep.style.cssText = 'border-top:1px dashed var(--border); margin:4px 0;';
-      frag.appendChild(sep);
-      const otherItem = document.createElement('div');
-      otherItem.className = 'dropdown-item other-option';
-      otherItem.textContent = '✏️ ไม่พบในระบบ (ระบุชื่อเอง)';
-      otherItem.style.color = 'var(--text3)';
-      otherItem.addEventListener('mousedown', e => { e.preventDefault(); onSelect('__other__'); });
-      frag.appendChild(otherItem);
-    }
-    dropdown.appendChild(frag);
+  if (!items.length) { dropdown.innerHTML = '<div class="dropdown-item no-result">ไม่พบรายการ</div>'; return; }
+  const frag = document.createDocumentFragment();
+  items.forEach(label => {
+    const item = document.createElement('div'); item.className = 'dropdown-item'; item.textContent = label;
+    item.addEventListener('mousedown', e => { e.preventDefault(); onSelect(label); });
+    frag.appendChild(item);
+  });
+  // Add "อื่นๆ" for employee dropdowns
+  if (opts && opts.addOther) {
+    const sep = document.createElement('div');
+    sep.style.cssText = 'border-top:1px dashed var(--border); margin:4px 0;';
+    frag.appendChild(sep);
+    const otherItem = document.createElement('div');
+    otherItem.className = 'dropdown-item other-option';
+    otherItem.textContent = '✏️ ไม่พบในระบบ (ระบุชื่อเอง)';
+    otherItem.style.color = 'var(--text3)';
+    otherItem.addEventListener('mousedown', e => { e.preventDefault(); onSelect('__other__'); });
+    frag.appendChild(otherItem);
+  }
+  dropdown.appendChild(frag);
 }
 
 function clearEmpSearch(prefix) {
-  const map={q3:['q3-pharmacist-search','q3-pharmacist','พิมพ์ชื่อเภสัชกร...'],q4:['q4-assistant-search','q4-assistant','พิมพ์ชื่อผู้ช่วยเภสัชกร...'],q9:['q9-3-counter-search','q9-3-counter','พิมพ์ชื่อ...']};
-  const [sId,hId,ph]=map[prefix]||[];
-  if(sId){const el=document.getElementById(sId); el.value=''; el.dataset.otherMode=''; el.placeholder=ph||'พิมพ์ชื่อ...';}
-  if(hId)document.getElementById(hId).value='';
+  const map = { q3: ['q3-pharmacist-search', 'q3-pharmacist', 'พิมพ์ชื่อเภสัชกร...'], q4: ['q4-assistant-search', 'q4-assistant', 'พิมพ์ชื่อผู้ช่วยเภสัชกร...'], q9: ['q9-3-counter-search', 'q9-3-counter', 'พิมพ์ชื่อ...'] };
+  const [sId, hId, ph] = map[prefix] || [];
+  if (sId) { const el = document.getElementById(sId); el.value = ''; el.dataset.otherMode = ''; el.placeholder = ph || 'พิมพ์ชื่อ...'; }
+  if (hId) document.getElementById(hId).value = '';
   saveFormState();
 }
 
@@ -257,20 +257,20 @@ function clearEmpSearch(prefix) {
 // ================================================================
 let drugSearchTimeout;
 function initDrugSearchable() {
-  const input=document.getElementById('q5-drug-search');
-  const dropdown=document.getElementById('q5-dropdown');
-  input.addEventListener('input',()=>{
+  const input = document.getElementById('q5-drug-search');
+  const dropdown = document.getElementById('q5-dropdown');
+  input.addEventListener('input', () => {
     clearTimeout(drugSearchTimeout);
     drugSearchTimeout = setTimeout(() => {
-      const q=input.value.trim().toLowerCase();
-      const matches=q ? masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,50) : masterData.slice(0,50);
-      dropdown.innerHTML='';
-      if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
-      else{
+      const q = input.value.trim().toLowerCase();
+      const matches = q ? masterData.filter(d => d.drug.toLowerCase().includes(q)).slice(0, 50) : masterData.slice(0, 50);
+      dropdown.innerHTML = '';
+      if (!matches.length) { dropdown.innerHTML = '<div class="dropdown-item no-result">ไม่พบรายการ</div>'; }
+      else {
         const frag = document.createDocumentFragment();
-        matches.forEach(d=>{
-          const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
-          item.addEventListener('mousedown',e=>{e.preventDefault();selectDrug(d);});
+        matches.forEach(d => {
+          const item = document.createElement('div'); item.className = 'dropdown-item'; item.textContent = d.drug;
+          item.addEventListener('mousedown', e => { e.preventDefault(); selectDrug(d); });
           frag.appendChild(item);
         });
         dropdown.appendChild(frag);
@@ -278,27 +278,27 @@ function initDrugSearchable() {
       dropdown.classList.add('open');
     }, 150); // Debounce
   });
-  input.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState('q5',false);},200));
-  input.addEventListener('focus',()=>{input.dispatchEvent(new Event('input'));});
+  input.addEventListener('blur', () => setTimeout(() => { dropdown.classList.remove('open'); setToggleBtnState('q5', false); }, 200));
+  input.addEventListener('focus', () => { input.dispatchEvent(new Event('input')); });
 }
 
 function selectDrug(d) {
-  document.getElementById('q5-drug-search').value=d.drug;
-  document.getElementById('q5-drug-val').value=d.drug;
-  document.getElementById('q6-material').value=d.material||'';
+  document.getElementById('q5-drug-search').value = d.drug;
+  document.getElementById('q5-drug-val').value = d.drug;
+  document.getElementById('q6-material').value = d.material || '';
   const q7el = document.getElementById('q7-diff-old');
-  q7el.value=(d.diffOld!==undefined&&d.diffOld!=='')?d.diffOld:'';
+  q7el.value = (d.diffOld !== undefined && d.diffOld !== '') ? d.diffOld : '';
   styleDiffInput(q7el);
   // Clear Q8 (Diff ใหม่) — เปลี่ยนตัวยาแล้วค่าเดิมไม่เกี่ยว
   const q8el = document.getElementById('q8-diff-new');
   q8el.value = ''; styleDiffInput(q8el);
-  const label=document.getElementById('drug-name-label');
-  if(label)label.textContent=d.drug;
-  const info=document.getElementById('selected-drug-info');
-  if(info)info.style.display='block';
+  const label = document.getElementById('drug-name-label');
+  if (label) label.textContent = d.drug;
+  const info = document.getElementById('selected-drug-info');
+  if (info) info.style.display = 'block';
   document.getElementById('q5-dropdown').classList.remove('open');
   saveFormState();
-  
+
   // Feature: Smart Auto-Scroll to Q8 (Diff ใหม่)
   setTimeout(() => {
     const nextSection = document.getElementById('fg-q8');
@@ -310,17 +310,17 @@ function selectDrug(d) {
 }
 
 function clearDrugSearch() {
-  document.getElementById('q5-drug-search').value='';
-  document.getElementById('q5-drug-val').value='';
-  document.getElementById('q6-material').value='';
+  document.getElementById('q5-drug-search').value = '';
+  document.getElementById('q5-drug-val').value = '';
+  document.getElementById('q6-material').value = '';
   const q7 = document.getElementById('q7-diff-old');
-  q7.value=''; styleDiffInput(q7);
+  q7.value = ''; styleDiffInput(q7);
   const q8 = document.getElementById('q8-diff-new');
-  q8.value=''; styleDiffInput(q8);
-  const label=document.getElementById('drug-name-label');
-  if(label)label.textContent='___';
-  const info=document.getElementById('selected-drug-info');
-  if(info)info.style.display='none';
+  q8.value = ''; styleDiffInput(q8);
+  const label = document.getElementById('drug-name-label');
+  if (label) label.textContent = '___';
+  const info = document.getElementById('selected-drug-info');
+  if (info) info.style.display = 'none';
   saveFormState();
 }
 
@@ -377,68 +377,68 @@ function styleDiffComparison() {
 // ================================================================
 //  CHECKLIST
 // ================================================================
-function toggleCheck(chk){
-  const item=chk.closest('.check-item');
-  item.classList.toggle('checked',chk.checked);
+function toggleCheck(chk) {
+  const item = chk.closest('.check-item');
+  item.classList.toggle('checked', chk.checked);
   updateSelectAllBtn();
   updateChecklistProgress();
   saveFormState();
 }
 
-function toggleSelectAll(){
-  const allChecked=MAIN_CHECKS.every(n=>document.querySelector(`[name="${n}"]`).checked);
-  MAIN_CHECKS.forEach(n=>{const c=document.querySelector(`[name="${n}"]`);c.checked=!allChecked;toggleCheck(c);if(n==='check_change_counter')toggleChangeCounter();});
+function toggleSelectAll() {
+  const allChecked = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
+  MAIN_CHECKS.forEach(n => { const c = document.querySelector(`[name="${n}"]`); c.checked = !allChecked; toggleCheck(c); if (n === 'check_change_counter') toggleChangeCounter(); });
   updateSelectAllBtn(); updateChecklistProgress(); saveFormState();
 }
 
-function updateSelectAllBtn(){
-  const all=MAIN_CHECKS.every(n=>document.querySelector(`[name="${n}"]`).checked);
-  const btn=document.getElementById('btn-select-all');
-  const boxSvg='<svg class="sa-icon" viewBox="0 0 16 16" width="14" height="14"><rect x="1" y="1" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>';
-  const checkPath='<path class="sa-check" d="M4 8l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+function updateSelectAllBtn() {
+  const all = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
+  const btn = document.getElementById('btn-select-all');
+  const boxSvg = '<svg class="sa-icon" viewBox="0 0 16 16" width="14" height="14"><rect x="1" y="1" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>';
+  const checkPath = '<path class="sa-check" d="M4 8l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
   btn.innerHTML = all
     ? `${boxSvg}</svg> ยกเลิกทั้งหมด`
     : `${boxSvg}${checkPath}</svg> เลือกทั้งหมด`;
 }
 
-function updateChecklistProgress(){
+function updateChecklistProgress() {
   const done = MAIN_CHECKS.filter(n => document.querySelector(`[name="${n}"]`).checked).length;
   const total = MAIN_CHECKS.length;
   const pct = Math.round((done / total) * 100);
   const fill = document.getElementById('checklist-progress-fill');
   const text = document.getElementById('checklist-progress-text');
-  if (fill) fill.style.transform = `scaleX(${pct/100})`;
+  if (fill) fill.style.transform = `scaleX(${pct / 100})`;
   if (text) {
     text.textContent = `${done} / ${total} รายการ`;
     text.style.color = done === total ? 'var(--success)' : 'var(--accent-dark)';
   }
 }
 
-function toggleChangeCounter(){
-  document.getElementById('sub-change-counter').classList.toggle('visible',document.getElementById('chk-9-3').checked);
+function toggleChangeCounter() {
+  document.getElementById('sub-change-counter').classList.toggle('visible', document.getElementById('chk-9-3').checked);
 }
-function toggleOtherNote(){
-  document.getElementById('sub-other-note').classList.toggle('visible',document.getElementById('chk-9-9').checked);
+function toggleOtherNote() {
+  document.getElementById('sub-other-note').classList.toggle('visible', document.getElementById('chk-9-9').checked);
 }
 
 // ================================================================
 //  Q10 LOGIC
 // ================================================================
-function handleQ10Change(){
-  const ms=document.getElementById('opt-multi-strength');
-  const sl=document.getElementById('opt-similar-look');
-  const no=document.getElementById('opt-none');
-  ['ri-multi-strength','ri-similar-look','ri-none'].forEach(id=>{
-    const ri=document.getElementById(id);ri.classList.toggle('selected',ri.querySelector('input').checked);
+function handleQ10Change() {
+  const ms = document.getElementById('opt-multi-strength');
+  const sl = document.getElementById('opt-similar-look');
+  const no = document.getElementById('opt-none');
+  ['ri-multi-strength', 'ri-similar-look', 'ri-none'].forEach(id => {
+    const ri = document.getElementById(id); ri.classList.toggle('selected', ri.querySelector('input').checked);
   });
-  if(no.checked){ms.checked=false;sl.checked=false;document.getElementById('ri-multi-strength').classList.remove('selected');document.getElementById('ri-similar-look').classList.remove('selected');}
-  if(ms.checked||sl.checked){no.checked=false;document.getElementById('ri-none').classList.remove('selected');}
-  const showSim=ms.checked||sl.checked;
-  document.getElementById('similar-drugs-area').classList.toggle('visible',showSim);
-  if(!showSim){document.getElementById('similar-drug-list').innerHTML='';similarDrugCount=0;}
-  else if(!document.getElementById('similar-drug-list').children.length)addSimilarDrug();
+  if (no.checked) { ms.checked = false; sl.checked = false; document.getElementById('ri-multi-strength').classList.remove('selected'); document.getElementById('ri-similar-look').classList.remove('selected'); }
+  if (ms.checked || sl.checked) { no.checked = false; document.getElementById('ri-none').classList.remove('selected'); }
+  const showSim = ms.checked || sl.checked;
+  document.getElementById('similar-drugs-area').classList.toggle('visible', showSim);
+  if (!showSim) { document.getElementById('similar-drug-list').innerHTML = ''; similarDrugCount = 0; }
+  else if (!document.getElementById('similar-drug-list').children.length) addSimilarDrug();
   // Clear error
-  const err=document.getElementById('q10-error-msg');if(err)err.style.display='none';
+  const err = document.getElementById('q10-error-msg'); if (err) err.style.display = 'none';
   saveFormState();
 }
 
@@ -446,11 +446,11 @@ function handleQ10Change(){
 //  Q11: CROSS-ROOM VERIFICATION
 // ================================================================
 const Q11_ROOMS = [
-  { key:'er',    room:'ER',    subId:'sub-q11-er',    diffId:'q11-diff-er',    ciId:'ci-q11-er',    chkName:'q11_er' },
-  { key:'f2',    room:'ชั้น 2', subId:'sub-q11-f2',    diffId:'q11-diff-f2',    ciId:'ci-q11-f2',    chkName:'q11_f2' },
-  { key:'f3',    room:'ชั้น 3', subId:'sub-q11-f3',    diffId:'q11-diff-f3',    ciId:'ci-q11-f3',    chkName:'q11_f3' },
-  { key:'f4',    room:'ชั้น 4', subId:'sub-q11-f4',    diffId:'q11-diff-f4',    ciId:'ci-q11-f4',    chkName:'q11_f4' },
-  { key:'stock', room:'คลังยา',subId:'sub-q11-stock', diffId:'q11-diff-stock', ciId:'ci-q11-stock', chkName:'q11_stock' },
+  { key: 'er', room: 'ER', subId: 'sub-q11-er', diffId: 'q11-diff-er', ciId: 'ci-q11-er', chkName: 'q11_er' },
+  { key: 'f2', room: 'ชั้น 2', subId: 'sub-q11-f2', diffId: 'q11-diff-f2', ciId: 'ci-q11-f2', chkName: 'q11_f2' },
+  { key: 'f3', room: 'ชั้น 3', subId: 'sub-q11-f3', diffId: 'q11-diff-f3', ciId: 'ci-q11-f3', chkName: 'q11_f3' },
+  { key: 'f4', room: 'ชั้น 4', subId: 'sub-q11-f4', diffId: 'q11-diff-f4', ciId: 'ci-q11-f4', chkName: 'q11_f4' },
+  { key: 'stock', room: 'คลังยา', subId: 'sub-q11-stock', diffId: 'q11-diff-stock', ciId: 'ci-q11-stock', chkName: 'q11_stock' },
 ];
 
 function updateQ11Visibility() {
@@ -603,12 +603,12 @@ function removeSuspectCase(id) {
 // ================================================================
 //  SIMILAR DRUGS
 // ================================================================
-function addSimilarDrug(){
+function addSimilarDrug() {
   similarDrugCount++;
-  const id=similarDrugCount;
-  const entry=document.createElement('div');
-  entry.className='similar-drug-entry';entry.id=`similar-entry-${id}`;
-  entry.innerHTML=`
+  const id = similarDrugCount;
+  const entry = document.createElement('div');
+  entry.className = 'similar-drug-entry'; entry.id = `similar-entry-${id}`;
+  entry.innerHTML = `
     <div class="search-select-wrap" style="position:relative;">
       <input type="text" id="sim-drug-search-${id}" class="search-input" placeholder="ค้นหาชื่อยา..." autocomplete="off" data-entry="${id}" />
       <div class="input-actions">
@@ -623,7 +623,7 @@ function addSimilarDrug(){
   initSimilarDrugSearch(id);
 }
 
-function removeSimilarDrug(id){document.getElementById(`similar-entry-${id}`)?.remove();saveFormState();}
+function removeSimilarDrug(id) { document.getElementById(`similar-entry-${id}`)?.remove(); saveFormState(); }
 
 function getSelectedSimilarDrugs(excludeId) {
   const selected = new Set();
@@ -641,23 +641,23 @@ function getSelectedSimilarDrugs(excludeId) {
 }
 
 let simDrugSearchTimeout = {};
-function initSimilarDrugSearch(id){
-  const input=document.getElementById(`sim-drug-search-${id}`);
-  const dropdown=document.getElementById(`sim-dropdown-${id}`);
-  input.addEventListener('input',()=>{
+function initSimilarDrugSearch(id) {
+  const input = document.getElementById(`sim-drug-search-${id}`);
+  const dropdown = document.getElementById(`sim-dropdown-${id}`);
+  input.addEventListener('input', () => {
     clearTimeout(simDrugSearchTimeout[id]);
     simDrugSearchTimeout[id] = setTimeout(() => {
-      const q=input.value.trim().toLowerCase();
+      const q = input.value.trim().toLowerCase();
       const used = getSelectedSimilarDrugs(id);
       const filtered = masterData.filter(d => !used.has(d.drug));
-      const matches=q ? filtered.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40) : filtered.slice(0,40);
-      dropdown.innerHTML='';
-      if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
+      const matches = q ? filtered.filter(d => d.drug.toLowerCase().includes(q)).slice(0, 40) : filtered.slice(0, 40);
+      dropdown.innerHTML = '';
+      if (!matches.length) { dropdown.innerHTML = '<div class="dropdown-item no-result">ไม่พบรายการ</div>'; }
       else {
         const frag = document.createDocumentFragment();
-        matches.forEach(d=>{
-          const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
-          item.addEventListener('mousedown',e=>{e.preventDefault();input.value=d.drug;document.getElementById(`sim-drug-val-${id}`).value=d.drug;dropdown.classList.remove('open');saveFormState();});
+        matches.forEach(d => {
+          const item = document.createElement('div'); item.className = 'dropdown-item'; item.textContent = d.drug;
+          item.addEventListener('mousedown', e => { e.preventDefault(); input.value = d.drug; document.getElementById(`sim-drug-val-${id}`).value = d.drug; dropdown.classList.remove('open'); saveFormState(); });
           frag.appendChild(item);
         });
         dropdown.appendChild(frag);
@@ -665,20 +665,20 @@ function initSimilarDrugSearch(id){
       dropdown.classList.add('open');
     }, 150); // Debounce
   });
-  input.addEventListener('blur',()=>setTimeout(()=>dropdown.classList.remove('open'),200));
-  input.addEventListener('focus',()=>{input.dispatchEvent(new Event('input'));});
+  input.addEventListener('blur', () => setTimeout(() => dropdown.classList.remove('open'), 200));
+  input.addEventListener('focus', () => { input.dispatchEvent(new Event('input')); });
 }
 
-function toggleSimDropdown(id){
-  const dropdown=document.getElementById(`sim-dropdown-${id}`);
-  const input=document.getElementById(`sim-drug-search-${id}`);
-  if(dropdown.classList.contains('open')){dropdown.classList.remove('open');return;}
+function toggleSimDropdown(id) {
+  const dropdown = document.getElementById(`sim-dropdown-${id}`);
+  const input = document.getElementById(`sim-drug-search-${id}`);
+  if (dropdown.classList.contains('open')) { dropdown.classList.remove('open'); return; }
   const used = getSelectedSimilarDrugs(id);
-  const list=masterData.filter(d => !used.has(d.drug)).slice(0,60);
-  dropdown.innerHTML='';
-  list.forEach(d=>{
-    const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
-    item.addEventListener('mousedown',e=>{e.preventDefault();input.value=d.drug;document.getElementById(`sim-drug-val-${id}`).value=d.drug;dropdown.classList.remove('open');saveFormState();});
+  const list = masterData.filter(d => !used.has(d.drug)).slice(0, 60);
+  dropdown.innerHTML = '';
+  list.forEach(d => {
+    const item = document.createElement('div'); item.className = 'dropdown-item'; item.textContent = d.drug;
+    item.addEventListener('mousedown', e => { e.preventDefault(); input.value = d.drug; document.getElementById(`sim-drug-val-${id}`).value = d.drug; dropdown.classList.remove('open'); saveFormState(); });
     dropdown.appendChild(item);
   });
   dropdown.classList.add('open');
@@ -688,15 +688,15 @@ function toggleSimDropdown(id){
 // ================================================================
 //  PROGRESS BAR
 // ================================================================
-function initProgressBar(){
-  const form=document.getElementById('main-form');
-  form.addEventListener('change',updateProgress);
-  form.addEventListener('input',updateProgress);
+function initProgressBar() {
+  const form = document.getElementById('main-form');
+  form.addEventListener('change', updateProgress);
+  form.addEventListener('input', updateProgress);
   updateProgress();
 }
 function getProgressStats() {
-  const req=['q1-date','q2-room','q3-pharmacist','q4-assistant','q5-drug-val','q8-diff-new'];
-  let filled = req.filter(id=>{const el=document.getElementById(id);return el&&el.value&&el.value.trim()!=='';}).length;
+  const req = ['q1-date', 'q2-room', 'q3-pharmacist', 'q4-assistant', 'q5-drug-val', 'q8-diff-new'];
+  let filled = req.filter(id => { const el = document.getElementById(id); return el && el.value && el.value.trim() !== ''; }).length;
   let total = req.length + 3; // +3 for Checklist, Q10, Q11
 
   const allChecked = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
@@ -713,51 +713,66 @@ function getProgressStats() {
   const q11Filled = anyRoom || (noneChk && noneChk.checked);
   if (q11Filled) filled++;
 
-  const allTextFilled = req.length === (filled - (allChecked?1:0) - (q10Filled?1:0) - (q11Filled?1:0));
+  const allTextFilled = req.length === (filled - (allChecked ? 1 : 0) - (q10Filled ? 1 : 0) - (q11Filled ? 1 : 0));
 
   return { filled, total, allTextFilled, allChecked, q10Filled, q11Filled };
 }
 
-function updateProgress(){
+function updateProgress() {
   const stats = getProgressStats();
   const pct = Math.round((stats.filled / stats.total) * 100);
-  document.getElementById('progress-bar').style.transform = `scaleX(${pct/100})`;
+  
+  document.querySelectorAll('.progress-bar-fill').forEach(bar => {
+    bar.style.transform = `scaleX(${pct / 100})`;
+  });
+  
   document.getElementById('progress-text').textContent = `${stats.filled} / ${stats.total} รายการ`;
+  
   updateSubmitState();
 }
 
-function updateSubmitState(){
+function updateSubmitState() {
   const stats = getProgressStats();
   const btn = document.getElementById('btn-submit');
-  btn.disabled = !(stats.allTextFilled && stats.allChecked && stats.q10Filled && stats.q11Filled) || !navigator.onLine;
+  const floatBtn = document.getElementById('btn-floating-submit');
+
+  const isReady = (stats.allTextFilled && stats.allChecked && stats.q10Filled && stats.q11Filled) && navigator.onLine;
+
+  if (btn) btn.disabled = !isReady;
+  
+  if (floatBtn) {
+    floatBtn.disabled = !isReady;
+    if (isReady) { floatBtn.classList.add('show'); }
+    else { floatBtn.classList.remove('show'); }
+  }
 }
 
 // ================================================================
 //  VALIDATION
 // ================================================================
-function validate(){
-  let ok=true; let firstError=null;
-  const fields=[
-    {id:'q1-date',wrap:'fg-q1'},
-    {id:'q2-room',wrap:'fg-q2'},
-    {id:'q3-pharmacist',wrap:'fg-q3'},
-    {id:'q4-assistant',wrap:'fg-q4'},
-    {id:'q5-drug-val',wrap:'fg-q5'},
-    {id:'q8-diff-new',wrap:'fg-q8'},
+function validate() {
+  let ok = true; let firstError = null;
+  const fields = [
+    { id: 'q1-date', wrap: 'fg-q1' },
+    { id: 'q2-room', wrap: 'fg-q2' },
+    { id: 'q3-pharmacist', wrap: 'fg-q3' },
+    { id: 'q4-assistant', wrap: 'fg-q4' },
+    { id: 'q5-drug-val', wrap: 'fg-q5' },
+    { id: 'q8-diff-new', wrap: 'fg-q8' },
   ];
-  fields.forEach(({id,wrap})=>{
-    const el=document.getElementById(id);
-    const w=document.getElementById(wrap);
-    if(!el||!el.value||el.value.trim()===''){
-      w?.classList.add('field-error');ok=false;
-      if(!firstError)firstError=w;
-    }else{w?.classList.remove('field-error');}
+  fields.forEach(({ id, wrap }) => {
+    const el = document.getElementById(id);
+    const w = document.getElementById(wrap);
+    if (!el || !el.value || el.value.trim() === '') {
+      w?.classList.add('field-error'); ok = false;
+      if (!firstError) firstError = w;
+    } else { w?.classList.remove('field-error'); }
   });
   // Checklist 9.1-9.8
-  const allCh=MAIN_CHECKS.every(n=>document.querySelector(`[name="${n}"]`).checked);
-  const clErr=document.getElementById('checklist-error-msg');
-  if(!allCh){clErr.style.display='block';ok=false;if(!firstError)firstError=document.getElementById('checklist-wrap');}
-  else{clErr.style.display='none';}
+  const allCh = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
+  const clErr = document.getElementById('checklist-error-msg');
+  if (!allCh) { clErr.style.display = 'block'; ok = false; if (!firstError) firstError = document.getElementById('checklist-wrap'); }
+  else { clErr.style.display = 'none'; }
   // 9.9 Other note validation
   const checkOther = document.querySelector('[name="check_other"]');
   const otherNote = document.getElementById('q9-9-note');
@@ -772,21 +787,21 @@ function validate(){
     }
   }
   // Q10
-  const q10Chk=document.querySelectorAll('[name="q10"]:checked').length>0;
-  const q10Err=document.getElementById('q10-error-msg');
-  if(!q10Chk){if(q10Err)q10Err.style.display='block';ok=false;if(!firstError)firstError=document.getElementById('fg-q10');}
-  else{if(q10Err)q10Err.style.display='none';}
+  const q10Chk = document.querySelectorAll('[name="q10"]:checked').length > 0;
+  const q10Err = document.getElementById('q10-error-msg');
+  if (!q10Chk) { if (q10Err) q10Err.style.display = 'block'; ok = false; if (!firstError) firstError = document.getElementById('fg-q10'); }
+  else { if (q10Err) q10Err.style.display = 'none'; }
   // Similar drugs validation
-  const needsSim=document.getElementById('opt-multi-strength').checked||document.getElementById('opt-similar-look').checked;
-  const simErr=document.getElementById('similar-error-msg');
-  if(needsSim){
-    const entries=document.querySelectorAll('#similar-drug-list .similar-drug-entry');
-    const hasEntry=Array.from(entries).some(entry=>{const m=entry.id.match(/\d+/);return m&&(document.getElementById(`sim-drug-val-${m[0]}`)?.value||'').trim()!=='';});
-    if(!hasEntry){if(simErr)simErr.style.display='block';ok=false;if(!firstError)firstError=document.getElementById('similar-drugs-area');}
-    else{if(simErr)simErr.style.display='none';}
-  }else{if(simErr)simErr.style.display='none';}
+  const needsSim = document.getElementById('opt-multi-strength').checked || document.getElementById('opt-similar-look').checked;
+  const simErr = document.getElementById('similar-error-msg');
+  if (needsSim) {
+    const entries = document.querySelectorAll('#similar-drug-list .similar-drug-entry');
+    const hasEntry = Array.from(entries).some(entry => { const m = entry.id.match(/\d+/); return m && (document.getElementById(`sim-drug-val-${m[0]}`)?.value || '').trim() !== ''; });
+    if (!hasEntry) { if (simErr) simErr.style.display = 'block'; ok = false; if (!firstError) firstError = document.getElementById('similar-drugs-area'); }
+    else { if (simErr) simErr.style.display = 'none'; }
+  } else { if (simErr) simErr.style.display = 'none'; }
   // Scroll to first error
-  if(firstError)firstError.scrollIntoView({behavior:'smooth',block:'center'});
+  if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
   return ok;
 }
 
@@ -810,7 +825,7 @@ let currentImageBase64 = null;
 function initImageUploader() {
   const uploadArea = document.getElementById('upload-area');
   const fileInput = document.getElementById('q12-file');
-  if(!uploadArea || !fileInput) return;
+  if (!uploadArea || !fileInput) return;
 
   uploadArea.addEventListener('click', () => fileInput.click());
   uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = 'var(--accent)'; });
@@ -819,7 +834,7 @@ function initImageUploader() {
     e.preventDefault(); uploadArea.style.borderColor = '';
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) processImageFile(e.dataTransfer.files[0]);
   });
-  
+
   // Local paste listener for area
   uploadArea.addEventListener('paste', handleImagePaste);
   // Global paste listener
@@ -858,9 +873,9 @@ function processImageFile(file) {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, w, h);
       ctx.drawImage(img, 0, 0, w, h);
-      
+
       currentImageBase64 = canvas.toDataURL('image/jpeg', 0.85); // Compress to limit payload size
-      
+
       const preview = document.getElementById('upload-preview');
       preview.src = currentImageBase64;
       preview.style.display = 'block';
@@ -874,7 +889,7 @@ function processImageFile(file) {
 }
 
 function clearImageUpload(e) {
-  if(e) e.stopPropagation();
+  if (e) e.stopPropagation();
   currentImageBase64 = null;
   document.getElementById('q12-file').value = '';
   const preview = document.getElementById('upload-preview');
@@ -887,38 +902,38 @@ function clearImageUpload(e) {
 // ================================================================
 //  SUBMIT
 // ================================================================
-async function submitForm(){
-  if(!validate()){showToast('⚠️ กรุณากรอกข้อมูลที่จำเป็นให้ครบ','error');return;}
+async function submitForm() {
+  if (!validate()) { showToast('⚠️ กรุณากรอกข้อมูลที่จำเป็นให้ครบ', 'error'); return; }
   // Validate Q11 separately
-  if(!validateQ11()){
-    showToast('⚠️ กรุณาเลือกตำแหน่งที่ต้องตรวจสอบ (ข้อ 11)','error');
-    document.getElementById('fg-q11')?.scrollIntoView({behavior:'smooth',block:'center'});
+  if (!validateQ11()) {
+    showToast('⚠️ กรุณาเลือกตำแหน่งที่ต้องตรวจสอบ (ข้อ 11)', 'error');
+    document.getElementById('fg-q11')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
-  const btn=document.getElementById('btn-submit');
-  btn.disabled=true;
-  btn.innerHTML='<div class="spinner" style="width:20px;height:20px;border-width:2.5px;"></div> กำลังบันทึก...';
-  const checks={
-    recount:document.querySelector('[name="check_recount"]').checked,
-    pending_prep:document.querySelector('[name="check_pending_prep"]').checked,
-    change_counter:document.querySelector('[name="check_change_counter"]').checked,
-    counter_name:document.getElementById('q9-3-counter').value,
-    expire:document.querySelector('[name="check_expire"]').checked,
-    damaged:document.querySelector('[name="check_damaged"]').checked,
-    pending_req:document.querySelector('[name="check_pending_req"]').checked,
-    qi:document.querySelector('[name="check_qi"]').checked,
-    mrp:document.querySelector('[name="check_mrp"]').checked,
-    other:document.querySelector('[name="check_other"]').checked,
-    other_note:document.getElementById('q9-9-note').value,
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2.5px;"></div> กำลังบันทึก...';
+  const checks = {
+    recount: document.querySelector('[name="check_recount"]').checked,
+    pending_prep: document.querySelector('[name="check_pending_prep"]').checked,
+    change_counter: document.querySelector('[name="check_change_counter"]').checked,
+    counter_name: document.getElementById('q9-3-counter').value,
+    expire: document.querySelector('[name="check_expire"]').checked,
+    damaged: document.querySelector('[name="check_damaged"]').checked,
+    pending_req: document.querySelector('[name="check_pending_req"]').checked,
+    qi: document.querySelector('[name="check_qi"]').checked,
+    mrp: document.querySelector('[name="check_mrp"]').checked,
+    other: document.querySelector('[name="check_other"]').checked,
+    other_note: document.getElementById('q9-9-note').value,
   };
-  const similarDrugs=[];
-  document.querySelectorAll('#similar-drug-list .similar-drug-entry').forEach(entry=>{
-    const m=entry.id.match(/\d+/);if(!m)return;
-    const drug=document.getElementById(`sim-drug-val-${m[0]}`)?.value||'';
-    const diff=document.getElementById(`sim-diff-${m[0]}`)?.value||'';
-    if(drug)similarDrugs.push({drug,diff});
+  const similarDrugs = [];
+  document.querySelectorAll('#similar-drug-list .similar-drug-entry').forEach(entry => {
+    const m = entry.id.match(/\d+/); if (!m) return;
+    const drug = document.getElementById(`sim-drug-val-${m[0]}`)?.value || '';
+    const diff = document.getElementById(`sim-diff-${m[0]}`)?.value || '';
+    if (drug) similarDrugs.push({ drug, diff });
   });
-  const q10Sel=[];document.querySelectorAll('[name="q10"]:checked').forEach(cb=>q10Sel.push(cb.value));
+  const q10Sel = []; document.querySelectorAll('[name="q10"]:checked').forEach(cb => q10Sel.push(cb.value));
 
   // Q11 data
   const q11 = {};
@@ -936,7 +951,7 @@ async function submitForm(){
   const q12radio = document.querySelector('[name="q12_case"]:checked');
   const q12 = { selection: q12radio ? q12radio.value : '', cases: [] };
   document.querySelectorAll('#suspect-case-list .suspect-case-entry').forEach(entry => {
-    const m = entry.id.match(/\d+/); if(!m) return;
+    const m = entry.id.match(/\d+/); if (!m) return;
     const id = m[0];
     q12.cases.push({
       date: document.getElementById(`sc-date-${id}`)?.value || '',
@@ -951,54 +966,54 @@ async function submitForm(){
   // Q14
   const q13_remark = document.getElementById('q13-remark')?.value || '';
 
-  const payload={
-    date:document.getElementById('q1-date').value,
-    room:document.getElementById('q2-room').value,
-    pharmacist:document.getElementById('q3-pharmacist').value,
-    assistant:document.getElementById('q4-assistant').value,
-    drug:document.getElementById('q5-drug-val').value,
-    material:document.getElementById('q6-material').value,
-    diff_old:document.getElementById('q7-diff-old').value,
-    diff_new:document.getElementById('q8-diff-new').value,
-    checks,q10:q10Sel,similar_drugs:similarDrugs,
+  const payload = {
+    date: document.getElementById('q1-date').value,
+    room: document.getElementById('q2-room').value,
+    pharmacist: document.getElementById('q3-pharmacist').value,
+    assistant: document.getElementById('q4-assistant').value,
+    drug: document.getElementById('q5-drug-val').value,
+    material: document.getElementById('q6-material').value,
+    diff_old: document.getElementById('q7-diff-old').value,
+    diff_new: document.getElementById('q8-diff-new').value,
+    checks, q10: q10Sel, similar_drugs: similarDrugs,
     q11, q12, q13_remark,
     // Add image payload
     image_upload: currentImageBase64
   };
-  try{
-    await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveRecord',data:payload})});
+  try {
+    await fetch(GAS_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ action: 'saveRecord', data: payload }) });
     localStorage.removeItem(FORM_STATE_KEY);
     showSuccess();
-  }catch(e){
+  } catch (e) {
     console.error(e);
-    showToast('❌ บันทึกไม่สำเร็จ: '+e.message,'error');
-    btn.disabled=false;btn.innerHTML='<span>💾</span> บันทึกข้อมูล';
+    showToast('❌ บันทึกไม่สำเร็จ: ' + e.message, 'error');
+    btn.disabled = false; btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
   }
 }
 
-function showSuccess(){
-  document.getElementById('main-form').style.display='none';
-  document.querySelector('.progress-bar-wrap').style.display='none';
-  document.querySelector('.progress-text').style.display='none';
-  document.getElementById('success-screen').style.display='block';
-  window.scrollTo({top:0,behavior:'smooth'});
+function showSuccess() {
+  document.getElementById('main-form').style.display = 'none';
+  document.querySelector('.progress-bar-wrap').style.display = 'none';
+  document.querySelector('.progress-text').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function resetForm(){
+function resetForm() {
   document.getElementById('main-form').reset();
-  clearDrugSearch();clearEmpSearch('q3');clearEmpSearch('q4');clearEmpSearch('q9');
-  document.getElementById('similar-drug-list').innerHTML='';similarDrugCount=0;
+  clearDrugSearch(); clearEmpSearch('q3'); clearEmpSearch('q4'); clearEmpSearch('q9');
+  document.getElementById('similar-drug-list').innerHTML = ''; similarDrugCount = 0;
   document.getElementById('similar-drugs-area').classList.remove('visible');
-  document.querySelectorAll('.check-item').forEach(el=>el.classList.remove('checked'));
-  document.querySelectorAll('.sub-field').forEach(el=>el.classList.remove('visible'));
-  document.querySelectorAll('.radio-item').forEach(el=>el.classList.remove('selected'));
-  document.querySelectorAll('.field-error').forEach(el=>el.classList.remove('field-error'));
-  document.querySelectorAll('.field-error-msg, .checklist-error-msg').forEach(el=>el.style.display='none');
-  document.getElementById('checklist-error-msg').style.display='none';
+  document.querySelectorAll('.check-item').forEach(el => el.classList.remove('checked'));
+  document.querySelectorAll('.sub-field').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.radio-item').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.field-error').forEach(el => el.classList.remove('field-error'));
+  document.querySelectorAll('.field-error-msg, .checklist-error-msg').forEach(el => el.style.display = 'none');
+  document.getElementById('checklist-error-msg').style.display = 'none';
   // Q11 reset
   Q11_ROOMS.forEach(r => {
-    const sub = document.getElementById(r.subId); if(sub) sub.classList.remove('visible');
-    const diffEl = document.getElementById(r.diffId); if(diffEl) diffEl.value = '';
+    const sub = document.getElementById(r.subId); if (sub) sub.classList.remove('visible');
+    const diffEl = document.getElementById(r.diffId); if (diffEl) diffEl.value = '';
   });
   document.getElementById('q11-remark').value = '';
   // Q12 reset
@@ -1010,13 +1025,13 @@ function resetForm(){
   document.getElementById('ri-no-case')?.classList.remove('selected');
   // Q13 reset
   document.getElementById('q13-remark').value = '';
-  const btn=document.getElementById('btn-submit');btn.disabled=false;btn.innerHTML='<span>💾</span> บันทึกข้อมูล';
-  document.getElementById('main-form').style.display='block';
-  document.querySelector('.progress-bar-wrap').style.display='';
-  document.querySelector('.progress-text').style.display='';
-  document.getElementById('success-screen').style.display='none';
+  const btn = document.getElementById('btn-submit'); btn.disabled = false; btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
+  document.getElementById('main-form').style.display = 'block';
+  document.querySelector('.progress-bar-wrap').style.display = '';
+  document.querySelector('.progress-text').style.display = '';
+  document.getElementById('success-screen').style.display = 'none';
   setDefaultDate();
-  document.getElementById('progress-bar').style.transform='scaleX(0)';
+  document.querySelectorAll('.progress-bar-fill').forEach(bar => bar.style.transform = 'scaleX(0)');
   localStorage.removeItem(FORM_STATE_KEY);
   updateSelectAllBtn();
   updateChecklistProgress();
@@ -1026,23 +1041,23 @@ function resetForm(){
 // ================================================================
 //  CLEAR ALL
 // ================================================================
-function clearAll(){
-  if(!confirm('ต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?'))return;
+function clearAll() {
+  if (!confirm('ต้องการล้างข้อมูลทั้งหมดใช่หรือไม่?')) return;
   resetForm();
-  showToast('🗑 ล้างข้อมูลทั้งหมดแล้ว','');
+  showToast('🗑 ล้างข้อมูลทั้งหมดแล้ว', '');
 }
 
 // ================================================================
 //  FONT SIZE
 // ================================================================
-function setFontSize(size){
-  document.body.classList.remove('font-small','font-medium','font-large');
-  if(size!=='medium')document.body.classList.add('font-'+size);
-  document.querySelectorAll('.font-btn').forEach(b=>b.classList.toggle('active',b.dataset.size===size));
-  localStorage.setItem(FONT_KEY,size);
+function setFontSize(size) {
+  document.body.classList.remove('font-small', 'font-medium', 'font-large');
+  if (size !== 'medium') document.body.classList.add('font-' + size);
+  document.querySelectorAll('.font-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size));
+  localStorage.setItem(FONT_KEY, size);
 }
-function restoreFontSize(){
-  const s=localStorage.getItem(FONT_KEY)||'medium';
+function restoreFontSize() {
+  const s = localStorage.getItem(FONT_KEY) || 'medium';
   setFontSize(s);
 }
 
@@ -1050,48 +1065,59 @@ function restoreFontSize(){
 //  FORM STATE PERSISTENCE (localStorage)
 // ================================================================
 let saveTimer;
-function saveFormState(){
+function saveFormState() {
   clearTimeout(saveTimer);
-  saveTimer=setTimeout(()=>{
-    try{
-      const state={
-        q1:document.getElementById('q1-date').value,
-        q2:document.getElementById('q2-room').value,
-        q3h:document.getElementById('q3-pharmacist').value,
-        q3s:document.getElementById('q3-pharmacist-search').value,
-        q4h:document.getElementById('q4-assistant').value,
-        q4s:document.getElementById('q4-assistant-search').value,
-        q5h:document.getElementById('q5-drug-val').value,
-        q5s:document.getElementById('q5-drug-search').value,
-        q6:document.getElementById('q6-material').value,
-        q7:document.getElementById('q7-diff-old').value,
-        q8:document.getElementById('q8-diff-new').value,
-        checks:{},
-        q93h:document.getElementById('q9-3-counter').value,
-        q93s:document.getElementById('q9-3-counter-search').value,
-        q99:document.getElementById('q9-9-note').value,
-        q10:[],
-        simDrugs:[],
+  saveTimer = setTimeout(() => {
+    try {
+      const state = {
+        q1: document.getElementById('q1-date').value,
+        q2: document.getElementById('q2-room').value,
+        q3h: document.getElementById('q3-pharmacist').value,
+        q3s: document.getElementById('q3-pharmacist-search').value,
+        q4h: document.getElementById('q4-assistant').value,
+        q4s: document.getElementById('q4-assistant-search').value,
+        q5h: document.getElementById('q5-drug-val').value,
+        q5s: document.getElementById('q5-drug-search').value,
+        q6: document.getElementById('q6-material').value,
+        q7: document.getElementById('q7-diff-old').value,
+        q8: document.getElementById('q8-diff-new').value,
+        checks: {},
+        q93h: document.getElementById('q9-3-counter').value,
+        q93s: document.getElementById('q9-3-counter-search').value,
+        q99: document.getElementById('q9-9-note').value,
+        q10: [],
+        simDrugs: [],
       };
       // Save checks
-      [...MAIN_CHECKS,'check_other'].forEach(n=>{state.checks[n]=document.querySelector(`[name="${n}"]`).checked;});
+      [...MAIN_CHECKS, 'check_other'].forEach(n => { state.checks[n] = document.querySelector(`[name="${n}"]`).checked; });
       // Save Q10
-      document.querySelectorAll('[name="q10"]:checked').forEach(c=>state.q10.push(c.value));
+      document.querySelectorAll('[name="q10"]:checked').forEach(c => state.q10.push(c.value));
       // Save similar drugs
-      document.querySelectorAll('#similar-drug-list .similar-drug-entry').forEach(entry=>{
-        const m=entry.id.match(/\d+/);if(!m)return;
+      document.querySelectorAll('#similar-drug-list .similar-drug-entry').forEach(entry => {
+        const m = entry.id.match(/\d+/); if (!m) return;
         state.simDrugs.push({
-          drug:document.getElementById(`sim-drug-val-${m[0]}`)?.value||'',
-          drugS:document.getElementById(`sim-drug-search-${m[0]}`)?.value||'',
-          diff:document.getElementById(`sim-diff-${m[0]}`)?.value||'',
+          drug: document.getElementById(`sim-drug-val-${m[0]}`)?.value || '',
+          drugS: document.getElementById(`sim-drug-search-${m[0]}`)?.value || '',
+          diff: document.getElementById(`sim-diff-${m[0]}`)?.value || '',
         });
       });
       // Save Q11, Q12, Q13
       collectQ11Q12Q13State(state);
-      localStorage.setItem(FORM_STATE_KEY,JSON.stringify(state));
-    }catch{}
+      localStorage.setItem(FORM_STATE_KEY, JSON.stringify(state));
+
+      // Show auto-save badge
+      const badge = document.getElementById('autosave-badge');
+      if (badge) {
+        const d = new Date();
+        const timeStr = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+        badge.textContent = `✅ บันทึกแล้ว ${timeStr}`;
+        badge.classList.add('visible');
+        clearTimeout(window.autosaveBadgeTimer);
+        window.autosaveBadgeTimer = setTimeout(() => badge.classList.remove('visible'), 4000);
+      }
+    } catch { }
     updateProgress();
-  },300);
+  }, 300);
 }
 
 function collectQ11Q12Q13State(state) {
@@ -1111,7 +1137,7 @@ function collectQ11Q12Q13State(state) {
   const q12radio = document.querySelector('[name="q12_case"]:checked');
   state.q12 = { selection: q12radio ? q12radio.value : '', cases: [] };
   document.querySelectorAll('#suspect-case-list .suspect-case-entry').forEach(entry => {
-    const m = entry.id.match(/\d+/); if(!m) return;
+    const m = entry.id.match(/\d+/); if (!m) return;
     const id = m[0];
     state.q12.cases.push({
       date: document.getElementById(`sc-date-${id}`)?.value || '',
@@ -1126,43 +1152,45 @@ function collectQ11Q12Q13State(state) {
   state.q13 = document.getElementById('q13-remark')?.value || '';
 }
 
-function restoreFormState(){
-  try{
-    const raw=localStorage.getItem(FORM_STATE_KEY);if(!raw)return;
-    const s=JSON.parse(raw);
-    if(s.q1)document.getElementById('q1-date').value=s.q1;
-    if(s.q2)document.getElementById('q2-room').value=s.q2;
-    if(s.q3h){document.getElementById('q3-pharmacist').value=s.q3h;document.getElementById('q3-pharmacist-search').value=s.q3s||s.q3h;}
-    if(s.q4h){document.getElementById('q4-assistant').value=s.q4h;document.getElementById('q4-assistant-search').value=s.q4s||s.q4h;}
-    if(s.q5h){
-      document.getElementById('q5-drug-val').value=s.q5h;document.getElementById('q5-drug-search').value=s.q5s||s.q5h;
-      const label=document.getElementById('drug-name-label');if(label)label.textContent=s.q5h;
-      const info=document.getElementById('selected-drug-info');if(info)info.style.display='block';
+function restoreFormState() {
+  try {
+    const raw = localStorage.getItem(FORM_STATE_KEY); if (!raw) return;
+    const s = JSON.parse(raw);
+    if (s.q1) document.getElementById('q1-date').value = s.q1;
+    if (s.q2) document.getElementById('q2-room').value = s.q2;
+    if (s.q3h) { document.getElementById('q3-pharmacist').value = s.q3h; document.getElementById('q3-pharmacist-search').value = s.q3s || s.q3h; }
+    if (s.q4h) { document.getElementById('q4-assistant').value = s.q4h; document.getElementById('q4-assistant-search').value = s.q4s || s.q4h; }
+    if (s.q5h) {
+      document.getElementById('q5-drug-val').value = s.q5h; document.getElementById('q5-drug-search').value = s.q5s || s.q5h;
+      const label = document.getElementById('drug-name-label'); if (label) label.textContent = s.q5h;
+      const info = document.getElementById('selected-drug-info'); if (info) info.style.display = 'block';
     }
-    if(s.q6)document.getElementById('q6-material').value=s.q6;
-    if(s.q7){const e=document.getElementById('q7-diff-old');e.value=s.q7;styleDiffInput(e);}
-    if(s.q8){const e=document.getElementById('q8-diff-new');e.value=s.q8;styleDiffInput(e);}
+    if (s.q6) document.getElementById('q6-material').value = s.q6;
+    if (s.q7) { const e = document.getElementById('q7-diff-old'); e.value = s.q7; styleDiffInput(e); }
+    if (s.q8) { const e = document.getElementById('q8-diff-new'); e.value = s.q8; styleDiffInput(e); }
     // Restore checks
-    if(s.checks){Object.keys(s.checks).forEach(n=>{
-      const c=document.querySelector(`[name="${n}"]`);if(c){c.checked=s.checks[n];toggleCheck(c);}
-    });}
-    if(s.checks?.check_change_counter)toggleChangeCounter();
-    if(s.checks?.check_other)toggleOtherNote();
-    if(s.q93h){document.getElementById('q9-3-counter').value=s.q93h;document.getElementById('q9-3-counter-search').value=s.q93s||s.q93h;}
-    if(s.q99)document.getElementById('q9-9-note').value=s.q99;
+    if (s.checks) {
+      Object.keys(s.checks).forEach(n => {
+        const c = document.querySelector(`[name="${n}"]`); if (c) { c.checked = s.checks[n]; toggleCheck(c); }
+      });
+    }
+    if (s.checks?.check_change_counter) toggleChangeCounter();
+    if (s.checks?.check_other) toggleOtherNote();
+    if (s.q93h) { document.getElementById('q9-3-counter').value = s.q93h; document.getElementById('q9-3-counter-search').value = s.q93s || s.q93h; }
+    if (s.q99) document.getElementById('q9-9-note').value = s.q99;
     // Restore Q10
-    if(s.q10?.length){
-      s.q10.forEach(v=>{const cb=document.querySelector(`[name="q10"][value="${v}"]`);if(cb)cb.checked=true;});
+    if (s.q10?.length) {
+      s.q10.forEach(v => { const cb = document.querySelector(`[name="q10"][value="${v}"]`); if (cb) cb.checked = true; });
       handleQ10Change();
     }
     // Restore similar drugs
-    if(s.simDrugs?.length){
-      s.simDrugs.forEach(sd=>{
+    if (s.simDrugs?.length) {
+      s.simDrugs.forEach(sd => {
         addSimilarDrug();
-        const id=similarDrugCount;
-        if(sd.drug)document.getElementById(`sim-drug-val-${id}`).value=sd.drug;
-        if(sd.drugS)document.getElementById(`sim-drug-search-${id}`).value=sd.drugS;
-        if(sd.diff)document.getElementById(`sim-diff-${id}`).value=sd.diff;
+        const id = similarDrugCount;
+        if (sd.drug) document.getElementById(`sim-drug-val-${id}`).value = sd.drug;
+        if (sd.drugS) document.getElementById(`sim-drug-search-${id}`).value = sd.drugS;
+        if (sd.diff) document.getElementById(`sim-diff-${id}`).value = sd.diff;
       });
     }
     updateSelectAllBtn();
@@ -1204,8 +1232,8 @@ function restoreFormState(){
           if (sc.hn) document.getElementById(`sc-hn-${id}`).value = sc.hn;
           if (sc.qty) document.getElementById(`sc-qty-${id}`).value = sc.qty;
           // Restore name fields (select + other)
-          ['prep','chk','disp'].forEach(field => {
-            const key = {prep:'prep',chk:'checker',disp:'dispenser'}[field];
+          ['prep', 'chk', 'disp'].forEach(field => {
+            const key = { prep: 'prep', chk: 'checker', disp: 'dispenser' }[field];
             const val = sc[key] || '';
             const sel = document.getElementById(`sc-${field}-${id}`);
             const otherInput = document.getElementById(`sc-${field}-other-${id}`);
@@ -1224,20 +1252,20 @@ function restoreFormState(){
     }
     // Q13
     if (s.q13) document.getElementById('q13-remark').value = s.q13;
-  }catch(e){console.warn('Restore failed:',e);}
+  } catch (e) { console.warn('Restore failed:', e); }
 }
 
-function initAutoSave(){
-  const form=document.getElementById('main-form');
-  form.addEventListener('change',saveFormState);
-  form.addEventListener('input',saveFormState);
+function initAutoSave() {
+  const form = document.getElementById('main-form');
+  form.addEventListener('change', saveFormState);
+  form.addEventListener('input', saveFormState);
 }
 
 // ================================================================
 //  TOAST
 // ================================================================
 let toastTimer;
-function showToast(msg,type=''){
-  const el=document.getElementById('toast');el.textContent=msg;el.className='show '+type;
-  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className='',3500);
+function showToast(msg, type = '') {
+  const el = document.getElementById('toast'); el.textContent = msg; el.className = 'show ' + type;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.className = '', 3500);
 }

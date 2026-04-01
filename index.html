@@ -12,19 +12,25 @@
 <body>
 <!-- ============ TOP BAR ============ -->
 <div class="top-bar" id="top-bar">
-  <div class="top-bar-left">
-    <span class="top-badge">💊 Diff Checklist</span>
-  </div>
-  <div class="top-bar-right">
-    <div class="font-size-group" title="ปรับขนาดตัวอักษร">
-      <button class="font-btn" data-size="small" onclick="setFontSize('small')">A</button>
-      <button class="font-btn active" data-size="medium" onclick="setFontSize('medium')">A</button>
-      <button class="font-btn" data-size="large" onclick="setFontSize('large')">A</button>
+  <div class="top-bar-inner">
+    <div class="top-bar-left" style="display:flex; align-items:center;">
+      <span class="top-badge">💊 Diff Checklist</span>
+      <span class="autosave-badge" id="autosave-badge"></span>
     </div>
-    <button class="btn-clear-all" onclick="clearAll()" title="ล้างข้อมูลทั้งหมด">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/></svg>
-      <span>Clear All</span>
-    </button>
+    <div class="top-bar-right">
+      <div class="font-size-group" title="ปรับขนาดตัวอักษร">
+        <button class="font-btn" data-size="small" onclick="setFontSize('small')">A</button>
+        <button class="font-btn active" data-size="medium" onclick="setFontSize('medium')">A</button>
+        <button class="font-btn" data-size="large" onclick="setFontSize('large')">A</button>
+      </div>
+      <button class="btn-clear-all" onclick="clearAll()" title="ล้างข้อมูลทั้งหมด">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14"/></svg>
+        <span>Clear All</span>
+      </button>
+    </div>
+  </div>
+  <div class="sticky-progress-wrap">
+    <div class="progress-bar-fill"></div>
   </div>
 </div>
 
@@ -36,7 +42,7 @@
   </div>
   <!-- Progress -->
   <div class="progress-bar-wrap">
-    <div class="progress-bar-fill" id="progress-bar"></div>
+    <div class="progress-bar-fill"></div>
   </div>
   <div class="progress-text" id="progress-text">0 / 9 รายการ</div>
 
@@ -395,6 +401,11 @@
 <!-- Floating Go To Top Button -->
 <button class="fab-go-top" id="btn-go-top" aria-label="กลับขึ้นบน">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- Floating Submit (Visible when 100%) -->
+<button type="button" class="btn-submit floating-submit" id="btn-floating-submit" onclick="submitForm()" disabled>
+  <span>🚀</span> บันทึกข้อมูล
 </button>
 
 <!-- Toast -->
