@@ -1422,26 +1422,26 @@ function restoreFontSize() {
 function restoreTheme() {
   try {
     const saved = localStorage.getItem(THEME_KEY);
-    if (saved === 'dark') document.body.setAttribute('data-theme', 'dark');
-    else document.body.removeAttribute('data-theme');
+    if (saved === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+    else document.documentElement.removeAttribute('data-theme');
     updateThemeIcon();
   } catch(e) {}
 }
 
 function toggleTheme() {
-  const isDark = document.body.getAttribute('data-theme') === 'dark';
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   if (isDark) {
-    document.body.removeAttribute('data-theme');
+    document.documentElement.removeAttribute('data-theme');
     try { localStorage.setItem(THEME_KEY, 'light'); } catch (e) {}
   } else {
-    document.body.setAttribute('data-theme', 'dark');
+    document.documentElement.setAttribute('data-theme', 'dark');
     try { localStorage.setItem(THEME_KEY, 'dark'); } catch (e) {}
   }
   updateThemeIcon();
 }
 
 function updateThemeIcon() {
-  const isDark = document.body.getAttribute('data-theme') === 'dark';
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const btn = document.getElementById('theme-toggle');
   if (btn) btn.textContent = isDark ? '☀️' : '🌙';
 }

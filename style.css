@@ -38,7 +38,7 @@
   --fs-lg: 17px;
   --fs-input: 15px;
 }
-[data-theme="dark"] {
+:root[data-theme="dark"] {
   --bg: #121A15;
   --surface: #1B2620;
   --surface-hover: #223028;
