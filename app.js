@@ -876,8 +876,7 @@ function updateSubmitState() {
   // if (btn) btn.disabled = !isReady;
   
   if (floatBtn) {
-    // floatBtn.disabled = !isReady;
-    if (isReady && !isSubmitVisible) { floatBtn.classList.add('show'); }
+    if (!isSubmitVisible) { floatBtn.classList.add('show'); }
     else { floatBtn.classList.remove('show'); }
   }
 }
@@ -1323,12 +1322,10 @@ function resetForm() {
   const btn = document.getElementById('btn-submit');
   if (btn) {
     btn.innerHTML = '<span>💾</span> บันทึกข้อมูล';
-    btn.disabled = true;
   }
   const floatBtn = document.getElementById('btn-floating-submit');
   if (floatBtn) {
     floatBtn.innerHTML = '<span>🚀</span> บันทึกข้อมูล';
-    floatBtn.disabled = true;
   }
   updateSubmitState();
 
