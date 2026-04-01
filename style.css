@@ -413,6 +413,19 @@ textarea { resize: vertical; min-height: 80px; }
 .add-entry-btn:hover { background: var(--accent-glow); border-color: var(--accent); }
 .divider { border: none; border-top: 1px solid var(--border); margin: 4px 0 20px; }
 
+/* ===================== UPLOAD AREA ===================== */
+.upload-area {
+  border: 2px dashed var(--border-hover); border-radius: var(--radius-sm);
+  padding: 30px 20px; text-align: center; cursor: pointer;
+  background: var(--surface-hover); transition: all .3s ease;
+  outline: none; position: relative;
+}
+.upload-area:hover, .upload-area:focus { border-color: var(--accent); background: var(--accent-bg); }
+.upload-icon { font-size: 32px; margin-bottom: 10px; display: block; }
+.upload-text { font-size: var(--fs-sm); color: var(--text2); line-height: 1.5; display: block; }
+kbd { background: #fff; padding: 2px 8px; border-radius: 4px; font-family: inherit; font-size: 0.9em; box-shadow: 0 1px 3px rgba(0,0,0,0.15); border: 1px solid #ddd; font-weight: 600; }
+
+
 /* ===================== LOADING ===================== */
 .loading-indicator { display: none; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--text3); margin-top: 4px; }
 .loading-indicator.visible { display: flex; }

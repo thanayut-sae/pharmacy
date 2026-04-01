@@ -333,8 +333,21 @@
     <!-- === SECTION 6: การตรวจสอบจากยาที่ตัดจ่าย === -->
     <div class="card" id="section-suspect">
       <div class="section-title"><div class="icon">🔎</div>การตรวจสอบจากยาที่ตัดจ่ายผู้ป่วย</div>
-      <div class="field-group" id="fg-q12">
-        <label><span class="num">12.</span>เคสที่มีความเป็นไปได้ <span style="font-weight:400; color:var(--text-dim);">(จะระบุหรือไม่ก็ได้)</span></label>
+
+      <!-- Q12 IMAGE UPLOAD -->
+      <div class="field-group" id="fg-q12-img">
+        <label><span class="num">12.</span>Upload ภาพเคสที่ออกทั้งหมด (จาก NMCOL หรือ DailySale) <span style="font-weight:400; color:var(--text-dim);">(ถ้ามี)</span></label>
+        <div class="upload-area" id="upload-area" tabindex="0">
+          <div class="upload-icon">📸</div>
+          <div class="upload-text">คลิกเลือกไฟล์, ลากไฟล์มาวาง, หรือกดแป้นพิมพ์ <kbd>Ctrl+V</kbd> เพื่อวางภาพแคปหน้าจอ (Screenshot)</div>
+          <img id="upload-preview" src="" alt="Preview" style="display:none; max-width:100%; margin-top:16px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);" />
+          <button type="button" class="remove-btn" id="remove-img-btn" style="display:none; margin-top:12px;" onclick="clearImageUpload(event)">ลบรูปภาพ</button>
+        </div>
+        <input type="file" id="q12-file" accept="image/*" style="display:none;" onchange="handleImageFileSelect(event)" />
+      </div>
+
+      <div class="field-group" id="fg-q13">
+        <label><span class="num">13.</span>เคสที่มีความเป็นไปได้ <span style="font-weight:400; color:var(--text-dim);">(จะระบุหรือไม่ก็ได้)</span></label>
         <div class="radio-group" style="margin-bottom:16px;">
           <label class="radio-item" id="ri-has-case">
             <input type="radio" name="q12_case" value="has_case" id="chk-has-case" onchange="handleQ12Change()" />
@@ -354,11 +367,11 @@
       </div>
     </div>
 
-    <!-- === SECTION 7: Q13 หมายเหตุ === -->
+    <!-- === SECTION 7: Q14 หมายเหตุ === -->
     <div class="card" id="section-incharge">
       <div class="section-title"><div class="icon">📝</div>หมายเหตุเพิ่มเติมสำหรับแจ้ง Incharge</div>
-      <div class="field-group" id="fg-q13">
-        <label><span class="num">13.</span>หมายเหตุเพิ่มเติม <span style="font-weight:400; color:var(--text-dim);">(ระบุหรือไม่ก็ได้)</span></label>
+      <div class="field-group" id="fg-q14">
+        <label><span class="num">14.</span>หมายเหตุเพิ่มเติม <span style="font-weight:400; color:var(--text-dim);">(ระบุหรือไม่ก็ได้)</span></label>
         <textarea id="q13-remark" name="q13_remark" placeholder="ระบุหมายเหตุที่ต้องการแจ้ง Incharge ประจำห้อง…" rows="3"></textarea>
       </div>
     </div>

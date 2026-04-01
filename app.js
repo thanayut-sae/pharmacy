@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyBelm4Um0h1OSnxTcZ-f29eyoSCOx_wMLmPDmgAzgXBNBwzlcK7CSyCxzEhgAtw4UO/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxk6ATTSUhai1mcl9yaRNmzbMOF6DHKr_hVKt87bOuuMbIZcePafMd4q-408wDOQp4/exec';
 
 // ================================================================
 //  STATE
@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('q2-room').addEventListener('change', updateQ11Visibility);
   updateQ11Visibility();
   updateSubmitState();
+  initImageUploader();
 
   // Floating Go-To-Top Button Logic
   const fab = document.getElementById('btn-go-top');
@@ -802,6 +803,88 @@ function validateQ11() {
 }
 
 // ================================================================
+//  IMAGE UPLOAD LOGIC
+// ================================================================
+let currentImageBase64 = null;
+
+function initImageUploader() {
+  const uploadArea = document.getElementById('upload-area');
+  const fileInput = document.getElementById('q12-file');
+  if(!uploadArea || !fileInput) return;
+
+  uploadArea.addEventListener('click', () => fileInput.click());
+  uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = 'var(--accent)'; });
+  uploadArea.addEventListener('dragleave', () => uploadArea.style.borderColor = '');
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault(); uploadArea.style.borderColor = '';
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) processImageFile(e.dataTransfer.files[0]);
+  });
+  
+  // Local paste listener for area
+  uploadArea.addEventListener('paste', handleImagePaste);
+  // Global paste listener
+  window.addEventListener('paste', handleImagePaste);
+}
+
+function handleImagePaste(e) {
+  const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+  for (let index in items) {
+    const item = items[index];
+    if (item.kind === 'file' && item.type.includes('image/')) {
+      e.preventDefault();
+      processImageFile(item.getAsFile());
+      document.getElementById('section-suspect').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      break;
+    }
+  }
+}
+
+function handleImageFileSelect(e) {
+  if (e.target.files && e.target.files.length > 0) processImageFile(e.target.files[0]);
+}
+
+function processImageFile(file) {
+  if (!file || !file.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let w = img.width, h = img.height;
+      if (w > 1200) { h = Math.round((h * 1200) / w); w = 1200; }
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      // Draw white background in case of transparent png
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      
+      currentImageBase64 = canvas.toDataURL('image/jpeg', 0.85); // Compress to limit payload size
+      
+      const preview = document.getElementById('upload-preview');
+      preview.src = currentImageBase64;
+      preview.style.display = 'block';
+      document.getElementById('remove-img-btn').style.display = 'inline-block';
+      document.querySelector('.upload-icon').style.display = 'none';
+      document.querySelector('.upload-text').style.display = 'none';
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImageUpload(e) {
+  if(e) e.stopPropagation();
+  currentImageBase64 = null;
+  document.getElementById('q12-file').value = '';
+  const preview = document.getElementById('upload-preview');
+  preview.src = ''; preview.style.display = 'none';
+  document.getElementById('remove-img-btn').style.display = 'none';
+  document.querySelector('.upload-icon').style.display = 'block';
+  document.querySelector('.upload-text').style.display = 'block';
+}
+
+// ================================================================
 //  SUBMIT
 // ================================================================
 async function submitForm(){
@@ -849,7 +932,7 @@ async function submitForm(){
   q11.f4_help = document.getElementById('chk-q11-f4-help')?.checked || false;
   q11.remark = document.getElementById('q11-remark')?.value || '';
 
-  // Q12 data (radio-based)
+  // Q13 data (radio-based)
   const q12radio = document.querySelector('[name="q12_case"]:checked');
   const q12 = { selection: q12radio ? q12radio.value : '', cases: [] };
   document.querySelectorAll('#suspect-case-list .suspect-case-entry').forEach(entry => {
@@ -865,7 +948,7 @@ async function submitForm(){
     });
   });
 
-  // Q13
+  // Q14
   const q13_remark = document.getElementById('q13-remark')?.value || '';
 
   const payload={
@@ -879,6 +962,8 @@ async function submitForm(){
     diff_new:document.getElementById('q8-diff-new').value,
     checks,q10:q10Sel,similar_drugs:similarDrugs,
     q11, q12, q13_remark,
+    // Add image payload
+    image_upload: currentImageBase64
   };
   try{
     await fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveRecord',data:payload})});
