@@ -52,7 +52,7 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
 
 /* ===================== TOP BAR ===================== */
 .top-bar {
-  position: sticky; top: 0; z-index: 200;
+  position: sticky; top: 0; z-index: 1000;
   background: rgba(255,255,255,0.88);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
@@ -137,9 +137,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 66px; }
   box-shadow: var(--shadow); position: relative;
   transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.page-wrapper:focus-within .card:not(:focus-within) {
-  opacity: 0.6; filter: grayscale(15%); box-shadow: none;
-}
+/* Card focus dimming removed per user request */
 .card:focus-within {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(0,0,0,0.06);

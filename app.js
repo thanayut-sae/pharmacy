@@ -174,7 +174,13 @@ function initDiffSteppers() {
     wrap.appendChild(input);
     
     input.addEventListener('input', function() {
-       this.value = this.value.replace(/[^-\d]/g, '');
+       this.value = this.value.replace(/[^+\-\d]/g, '');
+       // Auto-add + prefix for positive numbers
+       let raw = this.value.replace(/[^\d-]/g, '');
+       if (raw && !raw.startsWith('-')) {
+         let num = parseInt(raw, 10);
+         if (!isNaN(num) && num > 0) this.value = '+' + num;
+       }
        styleDiffInput(this);
        saveFormState();
        updateDiffButtons(this);
