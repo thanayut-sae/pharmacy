@@ -14,7 +14,7 @@
 <div class="top-bar" id="top-bar">
   <div class="top-bar-inner">
     <div class="top-bar-left" style="display:flex; align-items:center;">
-      <span class="top-badge">📋 แบบประเมินรวบรวมข้อมูลยา Diff</span>
+      <span class="top-badge">📋 แบบประเมินและรวบรวมข้อมูลยา Diff</span>
       <span class="autosave-badge" id="autosave-badge"></span>
     </div>
     <div class="top-bar-right">
@@ -221,9 +221,9 @@
         <div class="section-title" style="border-bottom:none; padding-bottom:0; margin-bottom:12px;"><div class="icon" style="background:var(--warning); color:#fff;">⚠️</div><span>10. ยามีหลายความแรง / ลักษณะคล้ายคลึง</span></div>
       <p class="q10-note">เลือกได้ไม่เกิน 2 รายการ (ตัวเลือกสุดท้ายไม่สามารถเลือกร่วมกับตัวเลือกอื่น)</p>
       <div class="radio-group" id="q10-group">
-        <label class="radio-item" id="ri-multi-strength"><input type="checkbox" name="q10" value="multi_strength" id="opt-multi-strength" onchange="handleQ10Change()" /><div class="radio-dot"></div><span>เป็นยาที่มีหลายความแรง</span></label>
-        <label class="radio-item" id="ri-similar-look"><input type="checkbox" name="q10" value="similar_look" id="opt-similar-look" onchange="handleQ10Change()" /><div class="radio-dot"></div><span>เป็นยาที่มีลักษณะคล้ายกับตัวอื่น</span></label>
-        <label class="radio-item" id="ri-none"><input type="checkbox" name="q10" value="none" id="opt-none" onchange="handleQ10Change()" /><div class="radio-dot"></div><span>ไม่มียาความแรงอื่นหรือลักษณะคล้ายกัน</span></label>
+        <label class="radio-item" id="ri-multi-strength"><input type="checkbox" name="q10" value="multi_strength" id="opt-multi-strength" onchange="handleQ10Change(this)" /><div class="radio-dot"></div><span>เป็นยาที่มีหลายความแรง</span></label>
+        <label class="radio-item" id="ri-similar-look"><input type="checkbox" name="q10" value="similar_look" id="opt-similar-look" onchange="handleQ10Change(this)" /><div class="radio-dot"></div><span>เป็นยาที่มีลักษณะคล้ายกับตัวอื่น</span></label>
+        <label class="radio-item" id="ri-none"><input type="checkbox" name="q10" value="none" id="opt-none" onchange="handleQ10Change(this)" /><div class="radio-dot"></div><span>ไม่มียาความแรงอื่นหรือลักษณะคล้ายกัน</span></label>
       </div>
       <div class="field-error-msg" id="q10-error-msg">⚠️ กรุณาเลือกอย่างน้อย 1 ตัวเลือก</div>
       <!-- Similar drug entries -->

@@ -517,15 +517,23 @@ function toggleOtherNote() {
 // ================================================================
 //  Q10 LOGIC
 // ================================================================
-function handleQ10Change() {
+function handleQ10Change(clickedEl) {
   const ms = document.getElementById('opt-multi-strength');
   const sl = document.getElementById('opt-similar-look');
   const no = document.getElementById('opt-none');
+  
+  if (clickedEl && (clickedEl.id === 'opt-multi-strength' || clickedEl.id === 'opt-similar-look') && clickedEl.checked) {
+    no.checked = false;
+  }
+  if (clickedEl && clickedEl.id === 'opt-none' && clickedEl.checked) {
+    ms.checked = false;
+    sl.checked = false;
+  }
+
   ['ri-multi-strength', 'ri-similar-look', 'ri-none'].forEach(id => {
     const ri = document.getElementById(id); ri.classList.toggle('selected', ri.querySelector('input').checked);
   });
-  if (no.checked) { ms.checked = false; sl.checked = false; document.getElementById('ri-multi-strength').classList.remove('selected'); document.getElementById('ri-similar-look').classList.remove('selected'); }
-  if (ms.checked || sl.checked) { no.checked = false; document.getElementById('ri-none').classList.remove('selected'); }
+  
   const showSim = ms.checked || sl.checked;
   document.getElementById('similar-drugs-area').classList.toggle('visible', showSim);
   if (!showSim) { document.getElementById('similar-drug-list').innerHTML = ''; similarDrugCount = 0; }
