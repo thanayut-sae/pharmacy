@@ -64,7 +64,7 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
 }
 .sticky-progress-wrap {
   width: 100%; height: 4px; background: rgba(58,157,106,0.12);
-  display: none;
+  display: block;
 }
 .top-badge { font-size: var(--fs-sm); font-weight: 700; color: var(--accent-dark); }
 .autosave-badge { font-size: 11px; margin-left: 10px; color: var(--text3); font-weight: 500; opacity: 0; transition: opacity 0.5s ease; white-space: nowrap; }
@@ -119,7 +119,6 @@ html { scroll-behavior: smooth; scroll-padding-top: 66px; }
 
 @media (max-width: 600px) {
   .page-wrapper > .progress-bar-wrap, .page-wrapper > .progress-text { display: none; }
-  .sticky-progress-wrap { display: block; }
   .form-header { margin-bottom: 20px; }
 }
 
@@ -337,7 +336,7 @@ textarea { resize: vertical; min-height: 80px; }
   0% { box-shadow: 0 0 0 0 rgba(58,157,106,0.3); }
   100% { box-shadow: 0 0 0 8px rgba(58,157,106,0); }
 }
-.check-label { font-size: var(--fs-sm); flex: 1; line-height: 1.5; }
+.check-label { font-size: var(--fs-sm); font-weight: 600; color: var(--text2); flex: 1; line-height: 1.5; }
 .check-note {
   font-size: var(--fs-xs); color: var(--text2); margin-top: 4px;
   background: rgba(229,161,0,0.08); padding: 4px 8px; border-radius: 4px;
@@ -487,7 +486,7 @@ kbd { background: #fff; padding: 2px 8px; border-radius: 4px; font-family: inher
   box-shadow: none;
 }
 .floating-submit {
-  position: fixed; bottom: 24px; right: 28px; z-index: 900;
+  position: fixed; bottom: 24px; right: 100px; z-index: 900;
   box-shadow: 0 8px 32px rgba(58,157,106,0.4);
   animation: floatUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
   display: none; height: 56px;

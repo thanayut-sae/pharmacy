@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyU1MSKfa4vmdac5nEA6PiHt9HgJqvJZH0eMEu7A4rEkFjfsaD4QRKDmLEjOI21QnhQ/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyMOHEKSdL47F-b_fy514eWwgisCFLDQs9Gss2_inZE6-MKjg0PsOdBKZtjUGrulqM2/exec';
 
 // ================================================================
 //  STATE
@@ -639,7 +639,7 @@ function addSuspectCase() {
 
   entry.innerHTML = `
     <div class="suspect-case-header">เคสที่ ${id}
-      <button type="button" class="remove-btn" onclick="removeSuspectCase(${id})">\u2715</button>
+      ${id > 1 ? `<button type="button" class="remove-btn" onclick="removeSuspectCase(${id})">\u2715</button>` : ''}
     </div>
     <div class="suspect-case-fields">
       <div class="field-row">
@@ -647,7 +647,7 @@ function addSuspectCase() {
         <div class="field-group"><label>HN <span style="color:var(--text3);font-weight:400;">(7 หลัก)</span> <span class="req">*</span></label><input type="text" id="sc-hn-${id}" maxlength="7" pattern="[0-9]{7}" inputmode="numeric" placeholder="เช่น 2412405" oninput="this.value=this.value.replace(/[^0-9]/g,'')" /></div>
       </div>
       <div class="field-row">
-        <div class="field-group"><label>จำนวน <span class="req">*</span></label><input type="number" id="sc-qty-${id}" placeholder="±0" step="any" /></div>
+        <div class="field-group"><label>จำนวน <span class="req">*</span></label><input type="number" id="sc-qty-${id}" placeholder="เช่น 20" step="any" min="0" onchange="if(this.value && Number(this.value) <= 0) { this.value = ''; }" autocomplete="off" /></div>
         <div class="field-group"><label>ผู้จัดยา</label>
           <select id="sc-prep-${id}" onchange="handleScOther(this,'sc-prep-other-${id}')">${makeOptions(assistants)}</select>
           <input type="text" id="sc-prep-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อพนักงานด้วยตนเอง..." />
@@ -836,7 +836,7 @@ function getProgressStats() {
         const date = document.getElementById(`sc-date-${id}`)?.value;
         const hn = document.getElementById(`sc-hn-${id}`)?.value;
         const qty = document.getElementById(`sc-qty-${id}`)?.value;
-        return !!(date && hn && hn.length === 7 && qty !== '');
+        return !!(date && hn && hn.length === 7 && qty !== '' && Number(qty) > 0);
       });
     }
   }
@@ -953,12 +953,12 @@ function validate() {
         
         if (!dateInput.value) { dateInput.parentElement.classList.add('field-error'); cv = false; } else { dateInput.parentElement.classList.remove('field-error'); }
         if (!hnInput.value || hnInput.value.length < 7) { hnInput.parentElement.classList.add('field-error'); cv = false; } else { hnInput.parentElement.classList.remove('field-error'); }
-        if (!qtyInput.value) { qtyInput.parentElement.classList.add('field-error'); cv = false; } else { qtyInput.parentElement.classList.remove('field-error'); }
+        if (!qtyInput.value || Number(qtyInput.value) <= 0) { qtyInput.parentElement.classList.add('field-error'); cv = false; } else { qtyInput.parentElement.classList.remove('field-error'); }
         
         if (!cv) casesValid = false;
       });
       if (!casesValid) {
-        if (q12Err) { q12Err.textContent = 'กรุณากรอกวันที่, HN (7 หลัก) และจำนวน ให้ครบถ้วน'; q12Err.style.display = 'block'; }
+        if (q12Err) { q12Err.textContent = 'กรุณากรอกวันที่, HN (7 หลัก) และจำนวน (ค่าบวกเท่านั้น) ให้ครบถ้วน'; q12Err.style.display = 'block'; }
         ok = false;
         if (!firstError) firstError = document.getElementById('fg-q13');
       } else {
