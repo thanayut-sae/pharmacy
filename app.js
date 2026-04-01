@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbx8iLNPpnMTKXHZHYMK5uUizWraLiPY7MiCSY_PJ5X8E7aCoAMVlWiD2A54wTWpwYFW/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxk6ATTSUhai1mcl9yaRNmzbMOF6DHKr_hVKt87bOuuMbIZcePafMd4q-408wDOQp4/exec';
 
 // ================================================================
 //  STATE
@@ -21,6 +21,11 @@ const MAIN_CHECKS = ['check_recount','check_pending_prep','check_change_counter'
 document.addEventListener('DOMContentLoaded', async () => {
   restoreFontSize();
   setDefaultDate();
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
+
   await loadSheetData();
   restoreFormState();
   initProgressBar();
@@ -29,7 +34,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('q2-room').addEventListener('change', updateQ11Visibility);
   updateQ11Visibility();
   updateSubmitState();
+
+  // Floating Go-To-Top Button Logic
+  const fab = document.getElementById('btn-go-top');
+  if (fab) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) fab.classList.add('visible');
+      else fab.classList.remove('visible');
+    });
+    fab.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
 });
+
+function updateOnlineStatus() {
+  const banner = document.getElementById('offline-banner');
+  if (navigator.onLine) {
+    if (banner) banner.classList.remove('visible');
+  } else {
+    if (banner) banner.classList.add('visible');
+  }
+  updateSubmitState();
+}
 
 function setDefaultDate() {
   const el = document.getElementById('q1-date');
@@ -100,30 +125,34 @@ function initUI() {
 // ================================================================
 //  SEARCHABLE EMPLOYEE DROPDOWN
 // ================================================================
+let empSearchTimeout = {};
 function initEmployeeSearch(prefix, roleFilter, inputEl, hiddenEl) {
   const dropdown = document.getElementById(`${prefix}-dropdown`);
   const getList = () => roleFilter ? employeeData.filter(e=>e.role===roleFilter) : employeeData;
   const isEmpDropdown = prefix !== 'q5';
 
   inputEl.addEventListener('input', () => {
-    const q = inputEl.value.trim().toLowerCase();
-    const list = getList();
-    const matches = q ? list.filter(e=>e.name.toLowerCase().includes(q)).slice(0,40) : list.slice(0,40);
-    renderDropdown(dropdown, matches.map(e=>e.name), name=>{
-      if (name === '__other__') {
-        inputEl.value = ''; hiddenEl.value = '__other__';
-        inputEl.placeholder = 'พิมพ์ชื่อ Parttime...';
-        inputEl.dataset.otherMode = '1';
-      } else {
-        inputEl.value=name; hiddenEl.value=name;
-        inputEl.dataset.otherMode = '';
-      }
-      dropdown.classList.remove('open');
-      setToggleBtnState(prefix, false);
-      saveFormState();
-    }, isEmpDropdown ? {addOther:true} : undefined);
-    dropdown.classList.add('open');
-    setToggleBtnState(prefix, true);
+    clearTimeout(empSearchTimeout[prefix]);
+    empSearchTimeout[prefix] = setTimeout(() => {
+      const q = inputEl.value.trim().toLowerCase();
+      const list = getList();
+      const matches = q ? list.filter(e=>e.name.toLowerCase().includes(q)).slice(0,40) : list.slice(0,40);
+      renderDropdown(dropdown, matches.map(e=>e.name), name=>{
+        if (name === '__other__') {
+          inputEl.value = ''; hiddenEl.value = '__other__';
+          inputEl.placeholder = 'ระบุชื่อพนักงานด้วยตนเอง...';
+          inputEl.dataset.otherMode = '1';
+        } else {
+          inputEl.value=name; hiddenEl.value=name;
+          inputEl.dataset.otherMode = '';
+        }
+        dropdown.classList.remove('open');
+        setToggleBtnState(prefix, false);
+        saveFormState();
+      }, isEmpDropdown ? {addOther:true} : undefined);
+      dropdown.classList.add('open');
+      setToggleBtnState(prefix, true);
+    }, 150);
   });
 
   // When in other mode, sync typed text to hidden value
@@ -167,7 +196,7 @@ function toggleDropdownAll(prefix) {
   renderDropdown(dropdown, list, val=>{
     if (val === '__other__') {
       inputEl.value = ''; hiddenEl.value = '__other__';
-      inputEl.placeholder = 'พิมพ์ชื่อ Parttime...';
+      inputEl.placeholder = 'ระบุชื่อด้วยตนเอง...';
       inputEl.dataset.otherMode = '1';
     } else {
       inputEl.value=val; hiddenEl.value=val;
@@ -205,8 +234,8 @@ function renderDropdown(dropdown, items, onSelect, opts) {
       sep.style.cssText = 'border-top:1px dashed var(--border); margin:4px 0;';
       frag.appendChild(sep);
       const otherItem = document.createElement('div');
-      otherItem.className = 'dropdown-item';
-      otherItem.textContent = '✏️ อื่นๆ (Parttime)';
+      otherItem.className = 'dropdown-item other-option';
+      otherItem.textContent = '✏️ ไม่พบในระบบ (ระบุชื่อเอง)';
       otherItem.style.color = 'var(--text3)';
       otherItem.addEventListener('mousedown', e => { e.preventDefault(); onSelect('__other__'); });
       frag.appendChild(otherItem);
@@ -225,24 +254,28 @@ function clearEmpSearch(prefix) {
 // ================================================================
 //  DRUG SEARCH (Q5)
 // ================================================================
+let drugSearchTimeout;
 function initDrugSearchable() {
   const input=document.getElementById('q5-drug-search');
   const dropdown=document.getElementById('q5-dropdown');
   input.addEventListener('input',()=>{
-    const q=input.value.trim().toLowerCase();
-    const matches=q ? masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,50) : masterData.slice(0,50);
-    dropdown.innerHTML='';
-    if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
-    else{
-      const frag = document.createDocumentFragment();
-      matches.forEach(d=>{
-        const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
-        item.addEventListener('mousedown',e=>{e.preventDefault();selectDrug(d);});
-        frag.appendChild(item);
-      });
-      dropdown.appendChild(frag);
-    }
-    dropdown.classList.add('open');
+    clearTimeout(drugSearchTimeout);
+    drugSearchTimeout = setTimeout(() => {
+      const q=input.value.trim().toLowerCase();
+      const matches=q ? masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,50) : masterData.slice(0,50);
+      dropdown.innerHTML='';
+      if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
+      else{
+        const frag = document.createDocumentFragment();
+        matches.forEach(d=>{
+          const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
+          item.addEventListener('mousedown',e=>{e.preventDefault();selectDrug(d);});
+          frag.appendChild(item);
+        });
+        dropdown.appendChild(frag);
+      }
+      dropdown.classList.add('open');
+    }, 150); // Debounce
   });
   input.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState('q5',false);},200));
   input.addEventListener('focus',()=>{input.dispatchEvent(new Event('input'));});
@@ -264,6 +297,15 @@ function selectDrug(d) {
   if(info)info.style.display='block';
   document.getElementById('q5-dropdown').classList.remove('open');
   saveFormState();
+  
+  // Feature: Smart Auto-Scroll to Q8 (Diff ใหม่)
+  setTimeout(() => {
+    const nextSection = document.getElementById('fg-q8');
+    if (nextSection) {
+      nextSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('q8-diff-new')?.focus();
+    }
+  }, 250);
 }
 
 function clearDrugSearch() {
@@ -499,7 +541,7 @@ function addSuspectCase() {
   // Build name option lists
   const assistants = employeeData.filter(e => e.role === 'ผู้ช่วยเภสัชกร').map(e => e.name);
   const pharmacists = employeeData.filter(e => e.role === 'เภสัชกร').map(e => e.name);
-  const makeOptions = (list) => `<option value="">-- เลือก --</option>` + list.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="__other__">อื่นๆ (Parttime)</option>`;
+  const makeOptions = (list) => `<option value="">-- เลือก --</option>` + list.map(n => `<option value="${n}">${n}</option>`).join('') + `<option value="__other__">ระบุชื่อด้วยตนเอง (Manual)</option>`;
 
   entry.innerHTML = `
     <div class="suspect-case-header">เคสที่ ${id}
@@ -514,17 +556,17 @@ function addSuspectCase() {
         <div class="field-group"><label>จำนวน</label><input type="number" id="sc-qty-${id}" placeholder="±0" step="any" /></div>
         <div class="field-group"><label>ผู้จัดยา</label>
           <select id="sc-prep-${id}" onchange="handleScOther(this,'sc-prep-other-${id}')">${makeOptions(assistants)}</select>
-          <input type="text" id="sc-prep-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อ Parttime..." />
+          <input type="text" id="sc-prep-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อพนักงานด้วยตนเอง..." />
         </div>
       </div>
       <div class="field-row">
         <div class="field-group"><label>ผู้เช็ค</label>
           <select id="sc-chk-${id}" onchange="handleScOther(this,'sc-chk-other-${id}')">${makeOptions(pharmacists)}</select>
-          <input type="text" id="sc-chk-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อ Parttime..." />
+          <input type="text" id="sc-chk-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อพนักงานด้วยตนเอง..." />
         </div>
         <div class="field-group"><label>ผู้จ่าย</label>
           <select id="sc-disp-${id}" onchange="handleScOther(this,'sc-disp-other-${id}')">${makeOptions(pharmacists)}</select>
-          <input type="text" id="sc-disp-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อ Parttime..." />
+          <input type="text" id="sc-disp-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อพนักงานด้วยตนเอง..." />
         </div>
       </div>
     </div>
@@ -597,26 +639,30 @@ function getSelectedSimilarDrugs(excludeId) {
   return selected;
 }
 
+let simDrugSearchTimeout = {};
 function initSimilarDrugSearch(id){
   const input=document.getElementById(`sim-drug-search-${id}`);
   const dropdown=document.getElementById(`sim-dropdown-${id}`);
   input.addEventListener('input',()=>{
-    const q=input.value.trim().toLowerCase();
-    const used = getSelectedSimilarDrugs(id);
-    const filtered = masterData.filter(d => !used.has(d.drug));
-    const matches=q ? filtered.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40) : filtered.slice(0,40);
-    dropdown.innerHTML='';
-    if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
-    else {
-      const frag = document.createDocumentFragment();
-      matches.forEach(d=>{
-        const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
-        item.addEventListener('mousedown',e=>{e.preventDefault();input.value=d.drug;document.getElementById(`sim-drug-val-${id}`).value=d.drug;dropdown.classList.remove('open');saveFormState();});
-        frag.appendChild(item);
-      });
-      dropdown.appendChild(frag);
-    }
-    dropdown.classList.add('open');
+    clearTimeout(simDrugSearchTimeout[id]);
+    simDrugSearchTimeout[id] = setTimeout(() => {
+      const q=input.value.trim().toLowerCase();
+      const used = getSelectedSimilarDrugs(id);
+      const filtered = masterData.filter(d => !used.has(d.drug));
+      const matches=q ? filtered.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40) : filtered.slice(0,40);
+      dropdown.innerHTML='';
+      if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
+      else {
+        const frag = document.createDocumentFragment();
+        matches.forEach(d=>{
+          const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
+          item.addEventListener('mousedown',e=>{e.preventDefault();input.value=d.drug;document.getElementById(`sim-drug-val-${id}`).value=d.drug;dropdown.classList.remove('open');saveFormState();});
+          frag.appendChild(item);
+        });
+        dropdown.appendChild(frag);
+      }
+      dropdown.classList.add('open');
+    }, 150); // Debounce
   });
   input.addEventListener('blur',()=>setTimeout(()=>dropdown.classList.remove('open'),200));
   input.addEventListener('focus',()=>{input.dispatchEvent(new Event('input'));});
@@ -647,24 +693,42 @@ function initProgressBar(){
   form.addEventListener('input',updateProgress);
   updateProgress();
 }
-function updateProgress(){
+function getProgressStats() {
   const req=['q1-date','q2-room','q3-pharmacist','q4-assistant','q5-drug-val','q8-diff-new'];
-  const filled=req.filter(id=>{const el=document.getElementById(id);return el&&el.value&&el.value.trim()!=='';}).length;
-  const pct=Math.round((filled/req.length)*100);
-  document.getElementById('progress-bar').style.transform=`scaleX(${pct/100})`;
-  document.getElementById('progress-text').textContent=`${filled} / ${req.length} รายการ`;
+  let filled = req.filter(id=>{const el=document.getElementById(id);return el&&el.value&&el.value.trim()!=='';}).length;
+  let total = req.length + 3; // +3 for Checklist, Q10, Q11
+
+  const allChecked = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
+  if (allChecked) filled++;
+
+  const q10Filled = document.querySelectorAll('[name="q10"]:checked').length > 0;
+  if (q10Filled) filled++;
+
+  const anyRoom = Q11_ROOMS.some(r => {
+    const chk = document.querySelector(`[name="${r.chkName}"]`);
+    return chk && chk.checked;
+  });
+  const noneChk = document.getElementById('chk-q11-none');
+  const q11Filled = anyRoom || (noneChk && noneChk.checked);
+  if (q11Filled) filled++;
+
+  const allTextFilled = req.length === (filled - (allChecked?1:0) - (q10Filled?1:0) - (q11Filled?1:0));
+
+  return { filled, total, allTextFilled, allChecked, q10Filled, q11Filled };
+}
+
+function updateProgress(){
+  const stats = getProgressStats();
+  const pct = Math.round((stats.filled / stats.total) * 100);
+  document.getElementById('progress-bar').style.transform = `scaleX(${pct/100})`;
+  document.getElementById('progress-text').textContent = `${stats.filled} / ${stats.total} รายการ`;
   updateSubmitState();
 }
 
 function updateSubmitState(){
-  const req=['q1-date','q2-room','q3-pharmacist','q4-assistant','q5-drug-val','q8-diff-new'];
-  const allFieldsFilled = req.every(id => {
-    const el = document.getElementById(id);
-    return el && el.value && el.value.trim() !== '';
-  });
-  const allChecked = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
+  const stats = getProgressStats();
   const btn = document.getElementById('btn-submit');
-  btn.disabled = !(allFieldsFilled && allChecked);
+  btn.disabled = !(stats.allTextFilled && stats.allChecked && stats.q10Filled && stats.q11Filled) || !navigator.onLine;
 }
 
 // ================================================================
