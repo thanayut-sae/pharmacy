@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycby5mrEO6m_MbF-BLyCbsUl2EIbb9jlVw4qIfFB0Jr-Va1zJoinmHAbGnjXPdRHR5EH6/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbyMOHEKSdL47F-b_fy514eWwgisCFLDQs9Gss2_inZE6-MKjg0PsOdBKZtjUGrulqM2/exec';
 
 // ================================================================
 //  STATE
@@ -1732,7 +1732,10 @@ function renderHistory(data) {
     card.innerHTML = `
       <div class="hs-header">
         <div class="hs-date">🕒 ${dateStr}</div>
-        <div class="hs-room">${item.room || '-'}</div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div class="hs-room">${item.room || '-'}</div>
+          <button class="btn-delete-hs" onclick="deleteHistoryRecord(${item.rowNum})" title="ลบข้อมูลนี้">🗑</button>
+        </div>
       </div>
       <div class="hs-drug">${item.drug || 'ไม่ระบุชื่อยา'}</div>
       <div class="hs-diffs">
@@ -1748,6 +1751,27 @@ function renderHistory(data) {
   });
 }
 
+async function deleteHistoryRecord(rowNum) {
+  if(!confirm('🚨 คุณต้องการลบข้อมูลประวัตินี้ทิ้งใช่หรือไม่?\n\n(การลบข้อมูลนี้จะไม่สามารถกู้คืนได้ และบรรทัดใน Sheet จะถูกลบทิ้งไปเลย)')) return;
+  
+  showToast('กำลังลบข้อมูล...', 'info');
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'deleteRecord', rowNum: rowNum }),
+    });
+    const result = await res.json();
+    if(result.success) {
+      showToast('🗑 ลบข้อมูลสำเร็จ!', 'success');
+      loadHistory(); // Reload history after delete
+    } else {
+      throw new Error(result.message || 'Unknown error');
+    }
+  } catch (err) {
+    showToast('⚠️ ลบข้อมูลไม่สำเร็จ: ' + err.message, 'error');
+  }
+}
+
 function filterHistory() {
   const q = document.getElementById('history-search').value.toLowerCase().trim();
   const filtered = historyDataCache.filter(item => {
@@ -1758,3 +1782,4 @@ function filterHistory() {
   });
   renderHistory(filtered);
 }
+
