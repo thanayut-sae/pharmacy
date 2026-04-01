@@ -815,12 +815,17 @@ function getProgressStats() {
   }
   if (q10Filled) filled++;
 
-  const anyRoom = Q11_ROOMS.some(r => {
-    const chk = document.querySelector(`[name="${r.chkName}"]`);
-    return chk && chk.checked;
-  });
+  let q11Filled = false;
   const noneChk = document.getElementById('chk-q11-none');
-  const q11Filled = anyRoom || (noneChk && noneChk.checked);
+  if (noneChk && noneChk.checked) {
+    q11Filled = true;
+  } else {
+    const checkedRooms = Q11_ROOMS.filter(r => document.querySelector(`[name="${r.chkName}"]`)?.checked);
+    if (checkedRooms.length > 0) {
+      const allAnswered = checkedRooms.every(r => document.getElementById(r.diffId)?.value !== '');
+      if (allAnswered) q11Filled = true;
+    }
+  }
   if (q11Filled) filled++;
 
   let q12Filled = true;
@@ -975,14 +980,21 @@ function validate() {
 }
 
 function validateQ11() {
-  const anyRoom = Q11_ROOMS.some(r => {
-    const chk = document.querySelector(`[name="${r.chkName}"]`);
-    return chk && chk.checked;
-  });
+  let ok = false;
   const noneChk = document.getElementById('chk-q11-none');
-  const ok = anyRoom || (noneChk && noneChk.checked);
+  if (noneChk && noneChk.checked) {
+    ok = true;
+  } else {
+    const checkedRooms = Q11_ROOMS.filter(r => document.querySelector(`[name="${r.chkName}"]`)?.checked);
+    if (checkedRooms.length > 0) {
+      ok = checkedRooms.every(r => document.getElementById(r.diffId)?.value !== '');
+    }
+  }
   const err = document.getElementById('q11-error-msg');
-  if (err) err.style.display = ok ? 'none' : 'block';
+  if (err) {
+    err.textContent = 'กรุณากรอก Diff ของห้องยาที่ทำเครื่องหมายเลือกให้ครบถ้วน';
+    err.style.display = ok ? 'none' : 'block';
+  }
   return ok;
 }
 
@@ -1069,17 +1081,87 @@ function clearImageUpload(e) {
 }
 
 // ================================================================
-//  SUBMIT
+//  MODAL / LIGHTBOX / RIPPLE
 // ================================================================
-async function submitForm() {
+
+function confirmSubmit() {
   if (isSubmitting) return;
   if (!validate()) { showToast('⚠️ กรุณากรอกข้อมูลที่จำเป็นให้ครบ', 'error'); return; }
-  // Validate Q11 separately
   if (!validateQ11()) {
-    showToast('⚠️ กรุณาเลือกตำแหน่งที่ต้องตรวจสอบ (ข้อ 11)', 'error');
+    showToast('⚠️ กรุณากรอก Diff ของห้องยาที่เลือกให้ครบ (ข้อ 11)', 'error');
     document.getElementById('fg-q11')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
+
+  // Populate Confirm Modal
+  const drug = document.getElementById('q5-drug-val').value || '-';
+  const room = document.getElementById('q2-room').value || '-';
+  const q12Radio = document.querySelector('[name="q12_case"]:checked');
+  let caseCountText = 'ไม่มีเคส';
+  if (q12Radio && q12Radio.value === 'has_case') {
+    const cases = document.querySelectorAll('#suspect-case-list .suspect-case-entry').length;
+    caseCountText = `${cases} เคส`;
+  }
+
+  const list = document.getElementById('confirm-list');
+  list.innerHTML = `
+    <li><span>ห้องยา:</span> <strong>${room}</strong></li>
+    <li><span>รายการยา Diff:</span> <strong>${drug}</strong></li>
+    <li><span>จำนวนเคสที่บันทึก:</span> <strong>${caseCountText}</strong></li>
+  `;
+  document.getElementById('confirm-modal-overlay').classList.add('visible');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirm-modal-overlay').classList.remove('visible');
+}
+
+function proceedSubmit() {
+  closeConfirmModal();
+  submitForm();
+}
+
+function openLightbox(src) {
+  const overlay = document.getElementById('lightbox-overlay');
+  const img = document.getElementById('lightbox-img');
+  if (overlay && img && src) {
+    img.src = src;
+    overlay.classList.add('visible');
+  }
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox-overlay').classList.remove('visible');
+}
+
+window.addEventListener('beforeunload', function (e) {
+  if (isSubmitting) return undefined;
+  const stats = getProgressStats();
+  if (stats.filled > 0 && stats.filled < stats.total && !document.getElementById('success-screen').style.display.includes('block')) {
+    const msg = 'คุณยังกรอกข้อมูลไม่เสร็จ แน่ใจหรือไม่ที่จะปิดหน้านี้?';
+    (e || window.event).returnValue = msg;
+    return msg;
+  }
+});
+
+document.addEventListener('mousedown', function(e) {
+  const target = e.target.closest('.check-item, .radio-item, .btn-submit, .btn-reset, .btn-primary, .btn-secondary, .fab-go-top');
+  if (!target || target.disabled) return;
+  const rect = target.getBoundingClientRect();
+  const ripple = document.createElement('span');
+  ripple.className = 'ripple';
+  const size = Math.max(rect.width, rect.height);
+  ripple.style.width = ripple.style.height = size + 'px';
+  ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+  ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+  target.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 600);
+});
+
+// ================================================================
+//  SUBMIT
+// ================================================================
+async function submitForm() {
   
   isSubmitting = true;
   

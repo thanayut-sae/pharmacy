@@ -136,13 +136,13 @@
       <!-- Q6 -->
       <div class="field-group" id="fg-q6">
         <label><span class="num">6.</span>เลข Material</label>
-        <input type="text" id="q6-material" name="q6_material" placeholder="Auto-fill จากข้อ 5 หรือกรอกเอง" />
+        <input type="text" id="q6-material" name="q6_material" placeholder="ใส่ข้อมูลอัตโนมัติจากข้อ 5 (หรือพิมพ์เองได้)" />
       </div>
       <!-- Q7 & Q8 -->
       <div class="field-row">
         <div class="field-group" id="fg-q7">
-          <label><span class="num">7.</span>Diff เดิม</label>
-          <input type="number" id="q7-diff-old" name="q7_diff_old" placeholder="Auto-fill" step="any" oninput="styleDiffInput(this)" />
+          <label><span class="num">7.</span>Diff เดิม <span style="font-weight:400; color:var(--text3); font-size:var(--fs-xs);">(แก้ไขได้หากไม่ตรง)</span></label>
+          <input type="number" id="q7-diff-old" name="q7_diff_old" placeholder="ใส่ข้อมูลอัตโนมัติ" step="any" oninput="styleDiffInput(this)" />
         </div>
         <div class="field-group" id="fg-q8">
           <label><span class="num">8.</span>Diff ใหม่ที่นับได้<span class="req">*</span></label>
@@ -347,7 +347,7 @@
         <div class="upload-area" id="upload-area" tabindex="0">
           <div class="upload-icon">📸</div>
           <div class="upload-text">คลิกเลือกไฟล์, ลากไฟล์มาวาง, หรือกดแป้นพิมพ์ <kbd>Ctrl+V</kbd> เพื่อวางภาพแคปหน้าจอ (Screenshot)</div>
-          <img id="upload-preview" src="" alt="Preview" style="display:none; max-width:100%; margin-top:16px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1);" />
+          <img id="upload-preview" src="" alt="Preview" style="display:none; max-width:100%; margin-top:16px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor: zoom-in;" onclick="openLightbox(this.src)" />
           <button type="button" class="remove-btn" id="remove-img-btn" style="display:none; margin-top:12px;" onclick="clearImageUpload(event)">ลบรูปภาพ</button>
         </div>
         <input type="file" id="q12-file" accept="image/*" style="display:none;" onchange="handleImageFileSelect(event)" />
@@ -383,9 +383,8 @@
       </div>
     </div>
 
-    <!-- Submit -->
     <div class="submit-wrap">
-      <button type="button" class="btn-submit" id="btn-submit" onclick="submitForm()">
+      <button type="button" class="btn-submit" id="btn-submit" onclick="confirmSubmit()">
         <span>💾</span> บันทึกข้อมูล
       </button>
     </div>
@@ -405,9 +404,27 @@
 </button>
 
 <!-- Floating Submit (Visible when 100%) -->
-<button type="button" class="btn-submit floating-submit" id="btn-floating-submit" onclick="submitForm()" disabled>
+<button type="button" class="btn-submit floating-submit" id="btn-floating-submit" onclick="confirmSubmit()" disabled>
   <span>🚀</span> บันทึกข้อมูล
 </button>
+
+<!-- Confirm Modal -->
+<div class="overlay" id="confirm-modal-overlay">
+  <div class="confirm-modal">
+    <h3>ตรวจสอบข้อมูลก่อนบันทึก</h3>
+    <ul class="confirm-list" id="confirm-list"></ul>
+    <div class="confirm-actions">
+      <button class="btn-secondary" onclick="closeConfirmModal()">ยกเลิก</button>
+      <button class="btn-primary" onclick="proceedSubmit()">ส่งข้อมูล</button>
+    </div>
+  </div>
+</div>
+
+<!-- Image Lightbox -->
+<div class="lightbox-overlay" id="lightbox-overlay" onclick="closeLightbox()">
+  <span class="lightbox-close">&times;</span>
+  <img class="lightbox-content" id="lightbox-img" alt="Fullscreen Image">
+</div>
 
 <!-- Toast -->
 <div id="toast"></div>
