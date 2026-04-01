@@ -873,10 +873,10 @@ function updateSubmitState() {
 
   const isReady = (stats.allTextFilled && stats.allChecked && stats.q10Filled && stats.q11Filled && stats.q12Filled) && navigator.onLine;
 
-  if (btn) btn.disabled = !isReady;
+  // if (btn) btn.disabled = !isReady;
   
   if (floatBtn) {
-    floatBtn.disabled = !isReady;
+    // floatBtn.disabled = !isReady;
     if (isReady && !isSubmitVisible) { floatBtn.classList.add('show'); }
     else { floatBtn.classList.remove('show'); }
   }
@@ -982,12 +982,24 @@ function validate() {
 function validateQ11() {
   let ok = false;
   const noneChk = document.getElementById('chk-q11-none');
+  let firstErrorField = null;
+
   if (noneChk && noneChk.checked) {
     ok = true;
   } else {
     const checkedRooms = Q11_ROOMS.filter(r => document.querySelector(`[name="${r.chkName}"]`)?.checked);
     if (checkedRooms.length > 0) {
-      ok = checkedRooms.every(r => document.getElementById(r.diffId)?.value !== '');
+      ok = true;
+      checkedRooms.forEach(r => {
+        const input = document.getElementById(r.diffId);
+        if (input.value === '') {
+          ok = false;
+          input.parentElement.classList.add('field-error');
+          if (!firstErrorField) firstErrorField = input.parentElement;
+        } else {
+          input.parentElement.classList.remove('field-error');
+        }
+      });
     }
   }
   const err = document.getElementById('q11-error-msg');
@@ -995,6 +1007,7 @@ function validateQ11() {
     err.textContent = 'กรุณากรอก Diff ของห้องยาที่ทำเครื่องหมายเลือกให้ครบถ้วน';
     err.style.display = ok ? 'none' : 'block';
   }
+  if (firstErrorField) firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
   return ok;
 }
 

@@ -347,7 +347,7 @@
         <div class="upload-area" id="upload-area" tabindex="0">
           <div class="upload-icon">📸</div>
           <div class="upload-text">คลิกเลือกไฟล์, ลากไฟล์มาวาง, หรือกดแป้นพิมพ์ <kbd>Ctrl+V</kbd> เพื่อวางภาพแคปหน้าจอ (Screenshot)</div>
-          <img id="upload-preview" src="" alt="Preview" style="display:none; max-width:100%; margin-top:16px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor: zoom-in;" onclick="openLightbox(this.src)" />
+          <img id="upload-preview" src="" alt="Preview" style="display:none; max-width:100%; margin-top:16px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); cursor: zoom-in;" onclick="event.stopPropagation(); openLightbox(this.src)" />
           <button type="button" class="remove-btn" id="remove-img-btn" style="display:none; margin-top:12px;" onclick="clearImageUpload(event)">ลบรูปภาพ</button>
         </div>
         <input type="file" id="q12-file" accept="image/*" style="display:none;" onchange="handleImageFileSelect(event)" />
@@ -404,7 +404,7 @@
 </button>
 
 <!-- Floating Submit (Visible when 100%) -->
-<button type="button" class="btn-submit floating-submit" id="btn-floating-submit" onclick="confirmSubmit()" disabled>
+<button type="button" class="btn-submit floating-submit" id="btn-floating-submit" onclick="confirmSubmit()">
   <span>🚀</span> บันทึกข้อมูล
 </button>
 
