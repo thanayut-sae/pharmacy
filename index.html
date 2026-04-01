@@ -132,7 +132,6 @@
         <div class="field-group" id="fg-q7">
           <label><span class="num">7.</span>Diff เดิม</label>
           <input type="number" id="q7-diff-old" name="q7_diff_old" placeholder="Auto-fill" step="any" oninput="styleDiffInput(this)" />
-          <span class="diff-hint" id="hint-q7"></span>
         </div>
         <div class="field-group" id="fg-q8">
           <label><span class="num">8.</span>Diff ใหม่ที่นับได้<span class="req">*</span></label>
@@ -154,7 +153,7 @@
             <span class="group-badge required">บังคับ</span>
             <span>รายการที่ต้องตรวจสอบ</span>
           </div>
-          <button type="button" class="btn-select-all" id="btn-select-all" onclick="toggleSelectAll()">☑ เลือกทั้งหมด</button>
+          <button type="button" class="btn-select-all" id="btn-select-all" onclick="toggleSelectAll()"><svg class="sa-icon" viewBox="0 0 16 16" width="14" height="14"><rect x="1" y="1" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/><path class="sa-check" d="M4 8l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> เลือกทั้งหมด</button>
         </div>
         <div class="checklist-mini-progress">
           <div class="mini-progress-bar"><div class="mini-progress-fill" id="checklist-progress-fill"></div></div>
@@ -165,7 +164,7 @@
           <label class="check-item" id="ci-9-2"><input type="checkbox" name="check_pending_prep" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.2 ยาค้างจัด</div></div></label>
           <label class="check-item" id="ci-9-3"><input type="checkbox" name="check_change_counter" value="1" id="chk-9-3" onchange="toggleCheck(this); toggleChangeCounter()" /><div class="check-box"></div>
             <div style="flex:1;"><div class="check-label">9.3 เปลี่ยนคนนับ</div>
-              <div class="sub-field" id="sub-change-counter">
+              <div class="sub-field" id="sub-change-counter" onclick="event.stopPropagation();">
                 <label>ผู้นับคนใหม่<span class="req">*</span></label>
                 <div class="search-select-wrap">
                   <input type="text" id="q9-3-counter-search" class="search-input" placeholder="พิมพ์ชื่อ..." autocomplete="off" />
@@ -184,7 +183,7 @@
           <label class="check-item" id="ci-9-6"><input type="checkbox" name="check_pending_req" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.6 ใบเบิกค้างตัด</div></div></label>
           <label class="check-item" id="ci-9-7"><input type="checkbox" name="check_qi" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div><div><div class="check-label">9.7 ยาคืน QI</div></div></label>
           <label class="check-item" id="ci-9-8"><input type="checkbox" name="check_mrp" value="1" onchange="toggleCheck(this)" /><div class="check-box"></div>
-            <div><div class="check-label">9.8 ยา MRP ที่ Run ขึ้น</div><div class="check-note">🕒 วันธรรมดาตัดยอด 15:00 น. | วันหยุด 12:00 น.</div></div>
+            <div><div class="check-label">9.8 ยา MRP ที่ Run ขึ้น</div><div class="check-note">🕒 ตัดยอด MRP วันธรรมดา 15:00 น. | วันหยุด 12:00 น.</div></div>
           </label>
         </div>
         <div class="checklist-error-msg" id="checklist-error-msg">⚠️ กรุณาเลือกทุกรายการ (ข้อ 9.1–9.8) ให้ครบทุกข้อ</div>
@@ -286,11 +285,13 @@
                   <input type="number" id="q11-diff-f4" name="q11_diff_f4" placeholder="±0" step="any" oninput="styleDiffInput(this)" />
                   <span class="diff-hint" id="hint-q11-f4"></span>
                 </div>
-                <label class="check-item f4-help-item" style="margin-top:10px;" onclick="event.stopPropagation();">
-                  <input type="checkbox" name="q11_f4_help" id="chk-q11-f4-help" value="1" onchange="toggleF4Help(this)" />
-                  <div class="check-box"></div>
-                  <div class="check-label">ส่งเรื่องให้ห้องยาชั้น 4 ช่วยตรวจสอบ</div>
-                </label>
+                <div class="f4-toggle-wrap" onclick="event.stopPropagation();">
+                  <label class="toggle-switch">
+                    <input type="checkbox" name="q11_f4_help" id="chk-q11-f4-help" value="1" onchange="toggleF4Help(this)" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                  <span class="toggle-label">ส่งเรื่องให้ห้องยาชั้น 4 ช่วยตรวจสอบ</span>
+                </div>
               </div>
             </div>
           </label>

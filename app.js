@@ -249,6 +249,9 @@ function selectDrug(d) {
   const q7el = document.getElementById('q7-diff-old');
   q7el.value=(d.diffOld!==undefined&&d.diffOld!=='')?d.diffOld:'';
   styleDiffInput(q7el);
+  // Clear Q8 (Diff ใหม่) — เปลี่ยนตัวยาแล้วค่าเดิมไม่เกี่ยว
+  const q8el = document.getElementById('q8-diff-new');
+  q8el.value = ''; styleDiffInput(q8el);
   const label=document.getElementById('drug-name-label');
   if(label)label.textContent=d.drug;
   const info=document.getElementById('selected-drug-info');
@@ -263,6 +266,8 @@ function clearDrugSearch() {
   document.getElementById('q6-material').value='';
   const q7 = document.getElementById('q7-diff-old');
   q7.value=''; styleDiffInput(q7);
+  const q8 = document.getElementById('q8-diff-new');
+  q8.value=''; styleDiffInput(q8);
   const label=document.getElementById('drug-name-label');
   if(label)label.textContent='___';
   const info=document.getElementById('selected-drug-info');
@@ -275,9 +280,8 @@ function clearDrugSearch() {
 // ================================================================
 function styleDiffInput(input) {
   const val = parseFloat(input.value);
-  // Remove all diff classes
   input.classList.remove('diff-negative', 'diff-positive', 'diff-zero');
-  // Find or create hint element (sibling span.diff-hint)
+  // Find hint span
   let hint = input.nextElementSibling;
   if (!hint || !hint.classList.contains('diff-hint')) hint = null;
 
@@ -285,15 +289,39 @@ function styleDiffInput(input) {
     if (hint) { hint.textContent = ''; hint.className = 'diff-hint'; }
     return;
   }
-  if (val < 0) {
-    input.classList.add('diff-negative');
-    if (hint) { hint.textContent = '▼ ของขาด'; hint.className = 'diff-hint negative'; }
-  } else if (val > 0) {
-    input.classList.add('diff-positive');
-    if (hint) { hint.textContent = '▲ ของเกิน'; hint.className = 'diff-hint positive'; }
+  // Apply color only (no text)
+  if (val < 0) input.classList.add('diff-negative');
+  else if (val > 0) input.classList.add('diff-positive');
+  else input.classList.add('diff-zero');
+  // Clear hint text for non-comparison fields
+  if (hint) { hint.textContent = ''; hint.className = 'diff-hint'; }
+
+  // If this is Q7 or Q8, trigger comparison
+  if (input.id === 'q7-diff-old' || input.id === 'q8-diff-new') {
+    styleDiffComparison();
+  }
+}
+
+function styleDiffComparison() {
+  const q7 = parseFloat(document.getElementById('q7-diff-old').value);
+  const q8 = parseFloat(document.getElementById('q8-diff-new').value);
+  const hint = document.getElementById('hint-q8');
+  if (!hint) return;
+
+  if (isNaN(q7) || isNaN(q8)) {
+    hint.textContent = ''; hint.className = 'diff-hint';
+    return;
+  }
+  const delta = q8 - q7; // positive = เกินขึ้น, negative = ขาดลง
+  if (delta > 0) {
+    hint.textContent = '▲ ของเกินขึ้นจากเดิม';
+    hint.className = 'diff-hint positive';
+  } else if (delta < 0) {
+    hint.textContent = '▼ ของขาดลงจากเดิม';
+    hint.className = 'diff-hint negative';
   } else {
-    input.classList.add('diff-zero');
-    if (hint) { hint.textContent = '● ตรงกัน'; hint.className = 'diff-hint zero'; }
+    hint.textContent = '● ยอดตรงกับเดิม';
+    hint.className = 'diff-hint zero';
   }
 }
 
@@ -316,7 +344,12 @@ function toggleSelectAll(){
 
 function updateSelectAllBtn(){
   const all=MAIN_CHECKS.every(n=>document.querySelector(`[name="${n}"]`).checked);
-  document.getElementById('btn-select-all').textContent=all?'☐ ยกเลิกทั้งหมด':'☑ เลือกทั้งหมด';
+  const btn=document.getElementById('btn-select-all');
+  const boxSvg='<svg class="sa-icon" viewBox="0 0 16 16" width="14" height="14"><rect x="1" y="1" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>';
+  const checkPath='<path class="sa-check" d="M4 8l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+  btn.innerHTML = all
+    ? `${boxSvg}</svg> ยกเลิกทั้งหมด`
+    : `${boxSvg}${checkPath}</svg> เลือกทั้งหมด`;
 }
 
 function updateChecklistProgress(){
@@ -419,14 +452,12 @@ function toggleQ11None(chk) {
 }
 
 function toggleF4Help(chk) {
-  chk.closest('.check-item').classList.toggle('checked', chk.checked);
   const diffWrap = document.getElementById('f4-diff-wrap');
   if (diffWrap) {
     diffWrap.style.display = chk.checked ? 'none' : '';
-    // Clear diff value when hiding
     if (chk.checked) {
       const diffInput = document.getElementById('q11-diff-f4');
-      if (diffInput) diffInput.value = '';
+      if (diffInput) { diffInput.value = ''; styleDiffInput(diffInput); }
     }
   }
   saveFormState();
@@ -976,7 +1007,7 @@ function restoreFormState(){
       }
       if (s.q11.f4_help) {
         const fh = document.getElementById('chk-q11-f4-help');
-        if (fh) { fh.checked = true; fh.closest('.check-item').classList.add('checked'); }
+        if (fh) fh.checked = true;
         const dw = document.getElementById('f4-diff-wrap');
         if (dw) dw.style.display = 'none';
       }

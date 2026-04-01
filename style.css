@@ -249,11 +249,13 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .checklist-items { display: flex; flex-direction: column; gap: 10px; }
 .btn-select-all {
+  display: inline-flex; align-items: center; gap: 5px;
   background: var(--accent-bg); border: 1px solid var(--border);
   color: var(--accent-dark); font-family: inherit; font-size: var(--fs-xs);
   font-weight: 600; padding: 5px 14px; border-radius: 99px; cursor: pointer; transition: var(--transition);
 }
 .btn-select-all:hover { background: var(--accent-glow); border-color: var(--accent); }
+.sa-icon { vertical-align: middle; }
 .checklist-error-msg {
   color: var(--danger); font-size: var(--fs-xs); margin-top: 10px;
   display: none; padding: 8px 12px; background: var(--danger-bg); border-radius: var(--radius-sm);
@@ -308,8 +310,34 @@ textarea { resize: vertical; min-height: 80px; }
 .optional-item { background: var(--surface); border-style: dashed; }
 .optional-item.checked { border-style: solid; }
 .check-hint { font-weight: 400; color: var(--text3); font-size: var(--fs-xs); }
-.f4-help-item { background: linear-gradient(135deg, rgba(58,157,106,0.06), rgba(58,157,106,0.12)); border: 1px dashed var(--accent); }
-.f4-help-item.checked { background: var(--accent-bg); border-style: solid; border-color: var(--accent); }
+
+/* Toggle switch for F4 help */
+.f4-toggle-wrap {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 12px; padding: 10px 14px;
+  background: linear-gradient(135deg, rgba(58,157,106,0.04), rgba(58,157,106,0.08));
+  border: 1px dashed var(--border); border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.toggle-switch {
+  position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: #ccc; border-radius: 24px; transition: .3s ease;
+}
+.toggle-slider::before {
+  content: ''; position: absolute; height: 18px; width: 18px;
+  left: 3px; bottom: 3px; background: white; border-radius: 50%;
+  transition: .3s ease; box-shadow: 0 1px 3px rgba(0,0,0,.15);
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--accent); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+.toggle-label { font-size: var(--fs-sm); color: var(--text2); line-height: 1.4; }
+.toggle-switch input:checked ~ .toggle-label,
+.f4-toggle-wrap:has(input:checked) .toggle-label { color: var(--accent-dark); font-weight: 600; }
+.f4-toggle-wrap:has(input:checked) { border-color: var(--accent); border-style: solid; background: var(--accent-bg); }
 
 /* ===================== Q10 RADIO ===================== */
 .q10-note { font-size: var(--fs-xs); color: var(--text3); margin-bottom: 14px; }
