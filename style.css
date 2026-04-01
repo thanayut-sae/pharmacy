@@ -105,7 +105,7 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
 
 /* ===================== PROGRESS ===================== */
 .progress-bar-wrap { height: 4px; background: rgba(58,157,106,0.12); border-radius: 4px; overflow: hidden; }
-.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-light), var(--accent-dark)); border-radius: 4px; transition: width .4s ease; width: 0%; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent-light), var(--accent-dark)); transform-origin: left; transform: scaleX(0); transition: transform .4s ease; width: 100%; }
 .progress-text { text-align: right; font-size: var(--fs-xs); color: var(--text3); margin: 6px 0 24px; }
 
 /* ===================== CARD ===================== */

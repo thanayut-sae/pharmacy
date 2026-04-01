@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwJz4FIgdxA6pLhmybaySdpFUEPGKn6w4XRHmiK4Q5DvGWEi3Nc-E6uyefa_lA9g7gr/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxk6ATTSUhai1mcl9yaRNmzbMOF6DHKr_hVKt87bOuuMbIZcePafMd4q-408wDOQp4/exec';
 
 // ================================================================
 //  STATE
@@ -193,23 +193,25 @@ function setToggleBtnState(prefix, open) {
 function renderDropdown(dropdown, items, onSelect, opts) {
   dropdown.innerHTML = '';
   if (!items.length) { dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>'; return; }
-  items.forEach(label=>{
-    const item=document.createElement('div'); item.className='dropdown-item'; item.textContent=label;
-    item.addEventListener('mousedown',e=>{e.preventDefault();onSelect(label);});
-    dropdown.appendChild(item);
-  });
-  // Add "อื่นๆ" for employee dropdowns
-  if (opts && opts.addOther) {
-    const sep = document.createElement('div');
-    sep.style.cssText = 'border-top:1px dashed var(--border); margin:4px 0;';
-    dropdown.appendChild(sep);
-    const otherItem = document.createElement('div');
-    otherItem.className = 'dropdown-item';
-    otherItem.textContent = '✏️ อื่นๆ (Parttime)';
-    otherItem.style.color = 'var(--text3)';
-    otherItem.addEventListener('mousedown', e => { e.preventDefault(); onSelect('__other__'); });
-    dropdown.appendChild(otherItem);
-  }
+    const frag = document.createDocumentFragment();
+    items.forEach(label=>{
+      const item=document.createElement('div'); item.className='dropdown-item'; item.textContent=label;
+      item.addEventListener('mousedown',e=>{e.preventDefault();onSelect(label);});
+      frag.appendChild(item);
+    });
+    // Add "อื่นๆ" for employee dropdowns
+    if (opts && opts.addOther) {
+      const sep = document.createElement('div');
+      sep.style.cssText = 'border-top:1px dashed var(--border); margin:4px 0;';
+      frag.appendChild(sep);
+      const otherItem = document.createElement('div');
+      otherItem.className = 'dropdown-item';
+      otherItem.textContent = '✏️ อื่นๆ (Parttime)';
+      otherItem.style.color = 'var(--text3)';
+      otherItem.addEventListener('mousedown', e => { e.preventDefault(); onSelect('__other__'); });
+      frag.appendChild(otherItem);
+    }
+    dropdown.appendChild(frag);
 }
 
 function clearEmpSearch(prefix) {
@@ -231,11 +233,15 @@ function initDrugSearchable() {
     const matches=q ? masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,50) : masterData.slice(0,50);
     dropdown.innerHTML='';
     if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
-    else{matches.forEach(d=>{
-      const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
-      item.addEventListener('mousedown',e=>{e.preventDefault();selectDrug(d);});
-      dropdown.appendChild(item);
-    });}
+    else{
+      const frag = document.createDocumentFragment();
+      matches.forEach(d=>{
+        const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
+        item.addEventListener('mousedown',e=>{e.preventDefault();selectDrug(d);});
+        frag.appendChild(item);
+      });
+      dropdown.appendChild(frag);
+    }
     dropdown.classList.add('open');
   });
   input.addEventListener('blur',()=>setTimeout(()=>{dropdown.classList.remove('open');setToggleBtnState('q5',false);},200));
@@ -358,7 +364,7 @@ function updateChecklistProgress(){
   const pct = Math.round((done / total) * 100);
   const fill = document.getElementById('checklist-progress-fill');
   const text = document.getElementById('checklist-progress-text');
-  if (fill) fill.style.width = pct + '%';
+  if (fill) fill.style.transform = `scaleX(${pct/100})`;
   if (text) {
     text.textContent = `${done} / ${total} รายการ`;
     text.style.color = done === total ? 'var(--success)' : 'var(--accent-dark)';
@@ -601,11 +607,15 @@ function initSimilarDrugSearch(id){
     const matches=q ? filtered.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40) : filtered.slice(0,40);
     dropdown.innerHTML='';
     if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
-    else{matches.forEach(d=>{
-      const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
-      item.addEventListener('mousedown',e=>{e.preventDefault();input.value=d.drug;document.getElementById(`sim-drug-val-${id}`).value=d.drug;dropdown.classList.remove('open');saveFormState();});
-      dropdown.appendChild(item);
-    });}
+    else {
+      const frag = document.createDocumentFragment();
+      matches.forEach(d=>{
+        const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
+        item.addEventListener('mousedown',e=>{e.preventDefault();input.value=d.drug;document.getElementById(`sim-drug-val-${id}`).value=d.drug;dropdown.classList.remove('open');saveFormState();});
+        frag.appendChild(item);
+      });
+      dropdown.appendChild(frag);
+    }
     dropdown.classList.add('open');
   });
   input.addEventListener('blur',()=>setTimeout(()=>dropdown.classList.remove('open'),200));
@@ -641,7 +651,7 @@ function updateProgress(){
   const req=['q1-date','q2-room','q3-pharmacist','q4-assistant','q5-drug-val','q8-diff-new'];
   const filled=req.filter(id=>{const el=document.getElementById(id);return el&&el.value&&el.value.trim()!=='';}).length;
   const pct=Math.round((filled/req.length)*100);
-  document.getElementById('progress-bar').style.width=pct+'%';
+  document.getElementById('progress-bar').style.transform=`scaleX(${pct/100})`;
   document.getElementById('progress-text').textContent=`${filled} / ${req.length} รายการ`;
   updateSubmitState();
 }
@@ -857,7 +867,7 @@ function resetForm(){
   document.querySelector('.progress-text').style.display='';
   document.getElementById('success-screen').style.display='none';
   setDefaultDate();
-  document.getElementById('progress-bar').style.width='0%';
+  document.getElementById('progress-bar').style.transform='scaleX(0)';
   localStorage.removeItem(FORM_STATE_KEY);
   updateSelectAllBtn();
   updateChecklistProgress();
