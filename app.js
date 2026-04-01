@@ -643,11 +643,11 @@ function addSuspectCase() {
     </div>
     <div class="suspect-case-fields">
       <div class="field-row">
-        <div class="field-group"><label>วันที่</label><input type="date" id="sc-date-${id}" /></div>
-        <div class="field-group"><label>HN <span style="color:var(--text3);font-weight:400;">(7 หลัก)</span></label><input type="text" id="sc-hn-${id}" maxlength="7" pattern="[0-9]{7}" inputmode="numeric" placeholder="เช่น 2412405" oninput="this.value=this.value.replace(/[^0-9]/g,'')" /></div>
+        <div class="field-group"><label>วันที่ <span class="req">*</span></label><input type="date" id="sc-date-${id}" /></div>
+        <div class="field-group"><label>HN <span style="color:var(--text3);font-weight:400;">(7 หลัก)</span> <span class="req">*</span></label><input type="text" id="sc-hn-${id}" maxlength="7" pattern="[0-9]{7}" inputmode="numeric" placeholder="เช่น 2412405" oninput="this.value=this.value.replace(/[^0-9]/g,'')" /></div>
       </div>
       <div class="field-row">
-        <div class="field-group"><label>จำนวน</label><input type="number" id="sc-qty-${id}" placeholder="±0" step="any" /></div>
+        <div class="field-group"><label>จำนวน <span class="req">*</span></label><input type="number" id="sc-qty-${id}" placeholder="±0" step="any" /></div>
         <div class="field-group"><label>ผู้จัดยา</label>
           <select id="sc-prep-${id}" onchange="handleScOther(this,'sc-prep-other-${id}')">${makeOptions(assistants)}</select>
           <input type="text" id="sc-prep-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อพนักงานด้วยตนเอง..." />
@@ -662,6 +662,10 @@ function addSuspectCase() {
           <select id="sc-disp-${id}" onchange="handleScOther(this,'sc-disp-other-${id}')">${makeOptions(pharmacists)}</select>
           <input type="text" id="sc-disp-other-${id}" class="sc-other-input" style="display:none;margin-top:6px;" placeholder="ระบุชื่อพนักงานด้วยตนเอง..." />
         </div>
+      </div>
+      <div class="field-group" style="margin-top:12px;">
+        <label>หมายเหตุเคสที่ ${id} <span style="font-weight:400; color:var(--text3);">(ถ้ามี)</span></label>
+        <textarea id="sc-remark-${id}" placeholder="ระบุข้อมูลเพิ่มเติมเกี่ยวกับเคสนี้..." rows="2" style="min-height:50px;"></textarea>
       </div>
     </div>
   `;
@@ -819,9 +823,27 @@ function getProgressStats() {
   const q11Filled = anyRoom || (noneChk && noneChk.checked);
   if (q11Filled) filled++;
 
+  let q12Filled = true;
+  const q12Radio = document.querySelector('[name="q12_case"]:checked');
+  if (q12Radio && q12Radio.value === 'has_case') {
+    const entries = document.querySelectorAll('#suspect-case-list .suspect-case-entry');
+    if (entries.length === 0) {
+      q12Filled = false;
+    } else {
+      q12Filled = Array.from(entries).every(e => {
+        const m = e.id.match(/\d+/); if (!m) return false;
+        const id = m[0];
+        const date = document.getElementById(`sc-date-${id}`)?.value;
+        const hn = document.getElementById(`sc-hn-${id}`)?.value;
+        const qty = document.getElementById(`sc-qty-${id}`)?.value;
+        return !!(date && hn && hn.length === 7 && qty !== '');
+      });
+    }
+  }
+
   const allTextFilled = req.length === (filled - (allChecked ? 1 : 0) - (q10Filled ? 1 : 0) - (q11Filled ? 1 : 0));
 
-  return { filled, total, allTextFilled, allChecked, q10Filled, q11Filled };
+  return { filled, total, allTextFilled, allChecked, q10Filled, q11Filled, q12Filled };
 }
 
 function updateProgress() {
@@ -844,7 +866,7 @@ function updateSubmitState() {
   const btn = document.getElementById('btn-submit');
   const floatBtn = document.getElementById('btn-floating-submit');
 
-  const isReady = (stats.allTextFilled && stats.allChecked && stats.q10Filled && stats.q11Filled) && navigator.onLine;
+  const isReady = (stats.allTextFilled && stats.allChecked && stats.q10Filled && stats.q11Filled && stats.q12Filled) && navigator.onLine;
 
   if (btn) btn.disabled = !isReady;
   
@@ -909,6 +931,44 @@ function validate() {
     if (!hasEntry) { if (simErr) simErr.style.display = 'block'; ok = false; if (!firstError) firstError = document.getElementById('similar-drugs-area'); }
     else { if (simErr) simErr.style.display = 'none'; }
   } else { if (simErr) simErr.style.display = 'none'; }
+  
+  // Q12 Suspect Cases Validation
+  const q12Err = document.getElementById('q12-case-error');
+  const q12Radio = document.querySelector('[name="q12_case"]:checked');
+  if (q12Radio && q12Radio.value === 'has_case') {
+    const entries = document.querySelectorAll('#suspect-case-list .suspect-case-entry');
+    if (entries.length === 0) {
+      if (q12Err) { q12Err.textContent = 'กรุณาระบุข้อมูลเคสอย่างน้อย 1 รายการ'; q12Err.style.display = 'block'; }
+      ok = false;
+      if (!firstError) firstError = document.getElementById('fg-q13');
+    } else {
+      let casesValid = true;
+      entries.forEach(e => {
+        const m = e.id.match(/\d+/); if (!m) return;
+        const id = m[0];
+        const dateInput = document.getElementById(`sc-date-${id}`);
+        const hnInput = document.getElementById(`sc-hn-${id}`);
+        const qtyInput = document.getElementById(`sc-qty-${id}`);
+        let cv = true;
+        
+        if (!dateInput.value) { dateInput.parentElement.classList.add('field-error'); cv = false; } else { dateInput.parentElement.classList.remove('field-error'); }
+        if (!hnInput.value || hnInput.value.length < 7) { hnInput.parentElement.classList.add('field-error'); cv = false; } else { hnInput.parentElement.classList.remove('field-error'); }
+        if (!qtyInput.value) { qtyInput.parentElement.classList.add('field-error'); cv = false; } else { qtyInput.parentElement.classList.remove('field-error'); }
+        
+        if (!cv) casesValid = false;
+      });
+      if (!casesValid) {
+        if (q12Err) { q12Err.textContent = 'กรุณากรอกวันที่, HN (7 หลัก) และจำนวน ให้ครบถ้วน'; q12Err.style.display = 'block'; }
+        ok = false;
+        if (!firstError) firstError = document.getElementById('fg-q13');
+      } else {
+        if (q12Err) q12Err.style.display = 'none';
+      }
+    }
+  } else {
+    if (q12Err) q12Err.style.display = 'none';
+  }
+
   // Scroll to first error
   if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
   return ok;
@@ -1084,6 +1144,7 @@ async function submitForm() {
       prep: getScValue(`sc-prep-${id}`, `sc-prep-other-${id}`),
       checker: getScValue(`sc-chk-${id}`, `sc-chk-other-${id}`),
       dispenser: getScValue(`sc-disp-${id}`, `sc-disp-other-${id}`),
+      remark: document.getElementById(`sc-remark-${id}`)?.value || ''
     });
   });
 
