@@ -582,6 +582,31 @@ input.diff-zero     { color: var(--text3) !important; }
 .suspect-case-fields label { font-size: var(--fs-xs); margin-bottom: 4px; }
 .suspect-case-fields input { font-size: var(--fs-sm); padding: 8px 12px; }
 
+/* ===================== DIFF STEPPER ===================== */
+.diff-stepper-wrap {
+  display: flex; align-items: stretch; height: 44px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--input-bg); overflow: hidden; transition: var(--transition);
+}
+.diff-stepper-wrap:focus-within { border-color: var(--border-focus); box-shadow: 0 0 0 3px var(--accent-glow); }
+.diff-stepper-wrap input {
+  border: none; border-radius: 0; box-shadow: none !important; margin: 0; min-height: unset;
+  text-align: center; width: 100%; min-width: 60px;
+  font-weight: 700; font-size: 1.15rem; outline: none; padding: 2px;
+  appearance: none; -webkit-appearance: none;
+}
+.btn-step {
+  background: var(--surface); border: none; font-size: 1.5rem; font-weight: 400;
+  width: 44px; color: var(--text2); cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; user-select: none;
+}
+.btn-step-minus { border-right: 1px solid var(--border); color: #dc3545; }
+.btn-step-minus:hover { background: #feebee; }
+.btn-step-plus { border-left: 1px solid var(--border); color: #198754; }
+.btn-step-plus:hover { background: #e8f5e9; }
+.btn-step:active { transform: scale(0.95); }
+.btn-step:disabled { opacity: 0.3; cursor: not-allowed; background: var(--surface) !important; filter: grayscale(1); transform: none; }
+
 /* ===================== FLOATING ACTION BUTTON (FAB) ===================== */
 .fab-go-top {
   position: fixed; bottom: 30px; right: 30px;
@@ -594,4 +619,4 @@ input.diff-zero     { color: var(--text3) !important; }
 }
 .fab-go-top:hover { background: var(--accent-dark); transform: translateY(-3px) scale(1.05); box-shadow: 0 8px 20px rgba(58,157,106, 0.4); }
 .fab-go-top.visible { opacity: 1; pointer-events: auto; transform: translateY(0); }
-@media (max-width: 600px) { .fab-go-top { bottom: 20px; right: 20px; width: 44px; height: 44px; } }
+@media (max-width: 600px) { .fab-go-top { bottom: 90px; right: 20px; width: 44px; height: 44px; } }

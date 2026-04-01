@@ -121,6 +121,87 @@ function initUI() {
     const mat = this.value.trim(); if (!mat) return;
     const found = masterData.find(d => d.material === mat); if (found) selectDrug(found);
   });
+  
+  initDiffSteppers();
+}
+
+// ================================================================
+//  DIFF STEPPER BUTTONS (+/-)
+// ================================================================
+function initDiffSteppers() {
+  const diffInputs = document.querySelectorAll('input[type="number"][name*="diff"], input[type="number"][id*="diff"]');
+  diffInputs.forEach(input => {
+    if(input.parentElement.classList.contains('diff-stepper-wrap')) {
+      updateDiffButtons(input);
+      return;
+    }
+
+    input.type = "text";
+    input.inputMode = "numeric";
+    
+    const wrap = document.createElement('div');
+    wrap.className = 'diff-stepper-wrap';
+    input.parentNode.insertBefore(wrap, input);
+    
+    const btnMinus = document.createElement('button');
+    btnMinus.type = 'button';
+    btnMinus.className = 'btn-step btn-step-minus';
+    btnMinus.textContent = '−';
+    btnMinus.tabIndex = -1;
+    btnMinus.onclick = () => toggleDiffSign(input, -1);
+    
+    const btnPlus = document.createElement('button');
+    btnPlus.type = 'button';
+    btnPlus.className = 'btn-step btn-step-plus';
+    btnPlus.textContent = '+';
+    btnPlus.tabIndex = -1;
+    btnPlus.onclick = () => toggleDiffSign(input, 1);
+    
+    wrap.appendChild(btnMinus);
+    wrap.appendChild(input);
+    wrap.appendChild(btnPlus);
+    
+    input.addEventListener('input', function() {
+       this.value = this.value.replace(/[^-\d]/g, '');
+       styleDiffInput(this);
+       saveFormState();
+       updateDiffButtons(this);
+    });
+    
+    updateDiffButtons(input);
+  });
+}
+
+function toggleDiffSign(input, sign) {
+  let val = parseInt(input.value.replace(/[^\d-]/g, ''), 10);
+  if (isNaN(val) || val === 0) return;
+  
+  if (sign === 1 && val < 0) {
+    val = Math.abs(val);
+  } else if (sign === -1 && val > 0) {
+    val = -Math.abs(val);
+  }
+  
+  input.value = val > 0 ? `+${val}` : val;
+  styleDiffInput(input);
+  input.dispatchEvent(new Event('change', { bubbles: true }));
+  updateDiffButtons(input);
+}
+
+function updateDiffButtons(input) {
+  const wrap = input.parentElement;
+  if (!wrap || !wrap.classList.contains('diff-stepper-wrap')) return;
+  const btnMinus = wrap.querySelector('.btn-step-minus');
+  const btnPlus = wrap.querySelector('.btn-step-plus');
+  
+  let val = parseInt(input.value.replace(/[^\d-]/g, ''), 10);
+  if (isNaN(val) || val === 0) {
+    btnMinus.disabled = true;
+    btnPlus.disabled = true;
+  } else {
+    btnMinus.disabled = false;
+    btnPlus.disabled = false;
+  }
 }
 
 // ================================================================
@@ -621,6 +702,7 @@ function addSimilarDrug() {
     <button type="button" class="remove-btn" onclick="removeSimilarDrug(${id})">✕</button>`;
   document.getElementById('similar-drug-list').appendChild(entry);
   initSimilarDrugSearch(id);
+  initDiffSteppers();
 }
 
 function removeSimilarDrug(id) { document.getElementById(`similar-entry-${id}`)?.remove(); saveFormState(); }
@@ -702,7 +784,19 @@ function getProgressStats() {
   const allChecked = MAIN_CHECKS.every(n => document.querySelector(`[name="${n}"]`).checked);
   if (allChecked) filled++;
 
-  const q10Filled = document.querySelectorAll('[name="q10"]:checked').length > 0;
+  const selectedQ10 = Array.from(document.querySelectorAll('[name="q10"]:checked')).map(c => c.value);
+  let q10Filled = selectedQ10.length > 0;
+  if (q10Filled && (selectedQ10.includes('multi_strength') || selectedQ10.includes('similar_look'))) {
+    // Require at least one valid similar drug entry
+    const entries = document.querySelectorAll('#similar-drug-list .similar-drug-entry');
+    const hasValid = Array.from(entries).some(e => {
+      const m = e.id.match(/\d+/); if (!m) return false;
+      const drug = document.getElementById(`sim-drug-val-${m[0]}`)?.value;
+      const diff = document.getElementById(`sim-diff-${m[0]}`)?.value;
+      return drug && diff !== '';
+    });
+    if (!hasValid) q10Filled = false;
+  }
   if (q10Filled) filled++;
 
   const anyRoom = Q11_ROOMS.some(r => {
