@@ -1171,7 +1171,7 @@ window.addEventListener('beforeunload', function (e) {
 });
 
 document.addEventListener('mousedown', function(e) {
-  const target = e.target.closest('.check-item, .radio-item, .btn-submit, .btn-reset, .btn-primary, .btn-secondary, .fab-go-top');
+  const target = e.target.closest('.btn-submit, .btn-reset, .btn-primary, .btn-secondary, .fab-go-top');
   if (!target || target.disabled) return;
   const rect = target.getBoundingClientRect();
   const ripple = document.createElement('span');
