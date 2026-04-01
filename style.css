@@ -266,6 +266,7 @@ textarea { resize: vertical; min-height: 80px; }
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   cursor: pointer; transition: all .25s cubic-bezier(.4,0,.2,1);
 }
+#ci-9-3 { overflow: visible; cursor: default; }
 .check-item:hover { border-color: var(--border-hover); background: var(--surface-hover); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(26,47,35,.06); }
 .check-item.checked { border-color: var(--accent); background: var(--accent-bg); }
 .check-item.checked:hover { background: rgba(58,157,106,0.12); }
@@ -298,9 +299,9 @@ textarea { resize: vertical; min-height: 80px; }
   background: rgba(229,161,0,0.08); padding: 4px 8px; border-radius: 4px;
   display: inline-block;
 }
-.sub-field { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: none; overflow: hidden; }
-.sub-field.visible { display: block; animation: slideDown .25s ease; }
-@keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 300px; } }
+.sub-field { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); display: none; }
+.sub-field.visible { display: block; overflow: visible; animation: slideDown .25s ease; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Optional group visual distinction */
 .optional-group {

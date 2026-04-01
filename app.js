@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyOqCY0mjAGpRXVF2M2ORbUmzYaZITMXem2B5UJf9u7SVZVRoEk6j8GzmH17C4qhSl7/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxk6ATTSUhai1mcl9yaRNmzbMOF6DHKr_hVKt87bOuuMbIZcePafMd4q-408wDOQp4/exec';
 
 // ================================================================
 //  STATE
