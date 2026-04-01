@@ -82,8 +82,9 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
   width: 100%; height: 4px; background: rgba(58,157,106,0.12);
   display: block;
 }
+.top-bar-left { display: flex; align-items: center; gap: 8px; }
 .top-badge { font-size: var(--fs-sm); font-weight: 700; color: var(--accent-dark); }
-.autosave-badge { font-size: 11px; margin-left: 10px; color: var(--accent-dark); font-weight: 600; opacity: 0; transition: opacity 0.5s ease, color 0.5s ease; white-space: nowrap; }
+.autosave-badge { font-size: 11px; margin-left: 2px; color: var(--accent-dark); font-weight: 600; opacity: 0; transition: opacity 0.5s ease, color 0.5s ease; white-space: nowrap; }
 .autosave-badge.visible { opacity: 1; animation: autosaveFlash 2s ease forwards; }
 @keyframes autosaveFlash {
   0% { color: var(--accent); opacity: 1; }
@@ -116,6 +117,9 @@ body.font-large  { --fs-base:18px; --fs-sm:16px;   --fs-xs:14px; --fs-lg:19px; -
 .btn-clear-all:hover { background: var(--danger); color: #fff; }
 @media (max-width: 480px) {
   .top-bar-inner { padding: 10px 14px; }
+  .top-bar-left { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .autosave-badge { margin-left: 0; font-size: 10px; }
+  .top-bar-right { gap: 8px; }
   .btn-clear-all span { display: none; }
   .btn-clear-all { padding: 7px 10px; }
 }
