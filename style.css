@@ -167,7 +167,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 66px; }
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(0,0,0,0.06);
   border-color: var(--accent-light);
-  z-index: 100;
+  z-index: 800;
 }
 .card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
@@ -691,3 +691,38 @@ input.diff-zero     { color: var(--text3) !important; }
 .lightbox-overlay.visible .lightbox-content { transform: scale(1); }
 .lightbox-close { position: absolute; top: 20px; right: 26px; color: white; font-size: 3rem; font-weight: 300; cursor: pointer; user-select: none; }
 .lightbox-close:hover { color: var(--accent-light); }
+
+/* ===================== TABS & HISTORY ===================== */
+.main-tabs { display: flex; gap: 8px; margin-top: 16px; justify-content: center; }
+.main-tab-btn {
+  flex: 1; max-width: 180px; padding: 10px 16px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text2); border-radius: 20px;
+  font-family: inherit; font-size: var(--fs-sm); font-weight: 600; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
+}
+.main-tab-btn.active {
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(58,157,106, 0.2);
+}
+.history-controls { display: flex; gap: 10px; margin-bottom: 20px; }
+.history-controls .search-input { flex: 1; }
+.history-controls .btn-refresh {
+  padding: 0 16px; background: var(--input-bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text); font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap;
+}
+.history-controls .btn-refresh:hover { background: var(--border); }
+.history-loading { text-align: center; padding: 40px; color: var(--text3); display: none; }
+.history-list { display: flex; flex-direction: column; gap: 16px; }
+.history-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 16px 20px; box-shadow: var(--shadow); transition: 0.2s;
+}
+.history-card:hover { border-color: var(--accent-light); transform: translateY(-2px); }
+.hs-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
+.hs-date { font-size: 11px; color: var(--text3); font-weight: 600; }
+.hs-room { background: var(--accent-bg); color: var(--accent-dark); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.hs-drug { font-weight: 700; font-size: var(--fs-input); color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+.hs-diffs { display: flex; gap: 16px; margin-bottom: 12px; font-size: 13px; }
+.hs-diff-item { display: flex; align-items: center; gap: 6px; }
+.hs-diff-item .badge { background: var(--input-bg); padding: 2px 8px; border-radius: 6px; font-family: monospace; font-weight: bold; color: var(--danger); }
+.hs-users { font-size: 12px; color: var(--text2); display: flex; flex-direction: column; gap: 4px; border-top: 1px dashed var(--border); padding-top: 10px; }

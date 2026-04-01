@@ -38,11 +38,15 @@
 </div>
 
 <div class="page-wrapper">
-  <!-- Header -->
   <div class="form-header" id="form-header">
-    <h1>📋 Checklist เมื่อพบยา Diff</h1>
-    <p>กรุณากรอกข้อมูลให้ครบถ้วน แล้วกดบันทึกเมื่อเสร็จสิ้น</p>
+    <h1>📋 Diff Checklist</h1>
+    <p>เลือกลงบันทึก หรือตรวจสอบประวัติการลงข้อมูล</p>
+    <div class="main-tabs">
+      <button type="button" class="main-tab-btn active" id="btn-tab-form" onclick="switchMainTab('form')">📝 บันทึกใหม่</button>
+      <button type="button" class="main-tab-btn" id="btn-tab-history" onclick="switchMainTab('history')">ประวัติ (50 ล่าสุด)</button>
+    </div>
   </div>
+  <div id="view-form">
   <div class="progress-text" id="progress-text" style="display:none;">0 / 9 รายการ</div>
 
   <!-- === OFFLINE BANNER === -->
@@ -395,6 +399,21 @@
     <p>ข้อมูลได้ถูกจัดเก็บเข้าสู่ระบบเรียบร้อยแล้ว<br>ขอบคุณที่ร่วมตรวจสอบอย่างละเอียด</p>
     <button class="btn-reset" onclick="resetForm()">+ จัดการเคสใหม่</button>
   </div>
+  <!-- End Form Wrapper View -->
+  </div>
+  
+  <!-- === VIEW: HISTORY === -->
+  <div id="view-history" style="display: none;">
+    <div class="history-controls">
+      <input type="text" id="history-search" class="search-input" placeholder="🔍 ค้นหายา, ห้อง, หรือชื่อ..." oninput="filterHistory()" />
+      <button class="btn-refresh" onclick="loadHistory()">🔄 รีเฟรช</button>
+    </div>
+    <div id="history-loading" class="history-loading">
+      <div class="spinner"></div><span>กำลังดึงข้อมูลประวัติ...</span>
+    </div>
+    <div id="history-list" class="history-list"></div>
+  </div>
+
 </div>
 <!-- Floating Go To Top Button -->
 <button class="fab-go-top" id="btn-go-top" aria-label="กลับขึ้นบน">

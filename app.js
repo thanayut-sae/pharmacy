@@ -78,6 +78,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
   });
+
+  // Auto-select text when focusing on an input (especially useful for numbers like 0 so user doesn't have to backspace)
+  document.addEventListener('focusin', function(e) {
+    if (e.target.tagName === 'INPUT' && (e.target.type === 'number' || e.target.type === 'text')) {
+      // Small delay ensures iOS fully focuses before selection
+      setTimeout(() => e.target.select(), 50);
+    }
+  });
 });
 
 function updateOnlineStatus() {
@@ -1656,4 +1664,97 @@ let toastTimer;
 function showToast(msg, type = '') {
   const el = document.getElementById('toast'); el.textContent = msg; el.className = 'show ' + type;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => el.className = '', 3500);
+}
+
+// ================================================================
+//  TABS & HISTORY VIEW
+// ================================================================
+let historyDataCache = [];
+
+function switchMainTab(tab) {
+  document.getElementById('btn-tab-form').classList.toggle('active', tab === 'form');
+  document.getElementById('btn-tab-history').classList.toggle('active', tab === 'history');
+  
+  document.getElementById('view-form').style.display = tab === 'form' ? 'block' : 'none';
+  document.getElementById('view-history').style.display = tab === 'history' ? 'block' : 'none';
+  
+  const stickyProg = document.querySelector('.sticky-progress-wrap');
+  if (stickyProg) stickyProg.style.display = tab === 'form' ? 'block' : 'none';
+  
+  if (tab === 'history') {
+    const fab = document.getElementById('btn-floating-submit');
+    if (fab) fab.style.display = 'none';
+    if (historyDataCache.length === 0) loadHistory();
+  } else {
+    updateSubmitState();
+  }
+}
+
+async function loadHistory() {
+  const list = document.getElementById('history-list');
+  const loader = document.getElementById('history-loading');
+  
+  list.innerHTML = '';
+  loader.style.display = 'block';
+  historyDataCache = [];
+  
+  try {
+    const res = await fetch(`${GAS_URL}?action=getHistory`, { method: 'GET', credentials: 'omit', cache: 'no-cache', redirect: 'follow' });
+    if (!res.ok) throw new Error('Network response was not ok');
+    const result = await res.json();
+    historyDataCache = result.history || [];
+    renderHistory(historyDataCache);
+  } catch (err) {
+    showToast('⚠️ ไม่สามารถโหลดประวัติได้: ' + err.message, 'error');
+  } finally {
+    loader.style.display = 'none';
+  }
+}
+
+function renderHistory(data) {
+  const list = document.getElementById('history-list');
+  list.innerHTML = '';
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div style="text-align:center; padding: 20px; color: var(--text3);">ไม่พบข้อมูลประวัติ...</div>';
+    return;
+  }
+  
+  const df = new Intl.DateTimeFormat('th-TH', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' });
+  
+  data.forEach(item => {
+    // Attempt parse date
+    let dateStr = item.timestamp;
+    try { const d = new Date(item.timestamp); if (!isNaN(d.getTime())) dateStr = df.format(d); } catch(e){}
+    
+    // Create card
+    const card = document.createElement('div');
+    card.className = 'history-card';
+    card.innerHTML = `
+      <div class="hs-header">
+        <div class="hs-date">🕒 ${dateStr}</div>
+        <div class="hs-room">${item.room || '-'}</div>
+      </div>
+      <div class="hs-drug">${item.drug || 'ไม่ระบุชื่อยา'}</div>
+      <div class="hs-diffs">
+        <div class="hs-diff-item">เดิม: <span class="badge" style="color:var(--text2)">${item.diffOld === '' ? '-' : item.diffOld}</span></div>
+        <div class="hs-diff-item">ใหม่: <span class="badge" style="color:var(--danger)">${item.diffNew === '' ? '-' : item.diffNew}</span></div>
+      </div>
+      <div class="hs-users">
+        <div>👩‍⚕️ เภสัชกร: ${item.pharma || '-'}</div>
+        <div>🧑‍💼 ผู้ช่วยฯ: ${item.assist || '-'}</div>
+      </div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+function filterHistory() {
+  const q = document.getElementById('history-search').value.toLowerCase().trim();
+  const filtered = historyDataCache.filter(item => {
+    return (item.drug || '').toLowerCase().includes(q) ||
+           (item.room || '').toLowerCase().includes(q) ||
+           (item.pharma || '').toLowerCase().includes(q) ||
+           (item.assist || '').toLowerCase().includes(q);
+  });
+  renderHistory(filtered);
 }
