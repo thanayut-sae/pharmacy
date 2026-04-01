@@ -1,7 +1,7 @@
 // ================================================================
 //  CONFIG
 // ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbyd8KSFSiCAom2P-evr7BvWRZ-VlnQcLO_RMUKZM-3Z9Fy7nHAlTcUR5nInjPpLDWg/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbxk6ATTSUhai1mcl9yaRNmzbMOF6DHKr_hVKt87bOuuMbIZcePafMd4q-408wDOQp4/exec';
 
 // ================================================================
 //  STATE
@@ -576,12 +576,29 @@ function addSimilarDrug(){
 
 function removeSimilarDrug(id){document.getElementById(`similar-entry-${id}`)?.remove();saveFormState();}
 
+function getSelectedSimilarDrugs(excludeId) {
+  const selected = new Set();
+  // Include main drug from Q5
+  const mainDrug = document.getElementById('q5-drug-val')?.value;
+  if (mainDrug) selected.add(mainDrug);
+  // Include all other similar drug entries
+  document.querySelectorAll('#similar-drug-list .similar-drug-entry').forEach(entry => {
+    const m = entry.id.match(/\d+/); if (!m) return;
+    if (String(m[0]) === String(excludeId)) return; // skip self
+    const val = document.getElementById(`sim-drug-val-${m[0]}`)?.value;
+    if (val) selected.add(val);
+  });
+  return selected;
+}
+
 function initSimilarDrugSearch(id){
   const input=document.getElementById(`sim-drug-search-${id}`);
   const dropdown=document.getElementById(`sim-dropdown-${id}`);
   input.addEventListener('input',()=>{
     const q=input.value.trim().toLowerCase();
-    const matches=q ? masterData.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40) : masterData.slice(0,40);
+    const used = getSelectedSimilarDrugs(id);
+    const filtered = masterData.filter(d => !used.has(d.drug));
+    const matches=q ? filtered.filter(d=>d.drug.toLowerCase().includes(q)).slice(0,40) : filtered.slice(0,40);
     dropdown.innerHTML='';
     if(!matches.length){dropdown.innerHTML='<div class="dropdown-item no-result">ไม่พบรายการ</div>';}
     else{matches.forEach(d=>{
@@ -599,7 +616,8 @@ function toggleSimDropdown(id){
   const dropdown=document.getElementById(`sim-dropdown-${id}`);
   const input=document.getElementById(`sim-drug-search-${id}`);
   if(dropdown.classList.contains('open')){dropdown.classList.remove('open');return;}
-  const list=masterData.slice(0,60);
+  const used = getSelectedSimilarDrugs(id);
+  const list=masterData.filter(d => !used.has(d.drug)).slice(0,60);
   dropdown.innerHTML='';
   list.forEach(d=>{
     const item=document.createElement('div');item.className='dropdown-item';item.textContent=d.drug;
