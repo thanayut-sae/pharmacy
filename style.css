@@ -162,20 +162,11 @@ html { scroll-behavior: smooth; scroll-padding-top: 66px; }
   box-shadow: var(--shadow); position: relative;
   transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-/* Card focus dimming removed per user request */
+/* Card focus: subtle inset glow that stays within the card boundary */
 .card:focus-within {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.06);
-  border-color: var(--border-hover);
   z-index: 800;
+  box-shadow: inset 0 0 0 1.5px var(--accent-light), var(--shadow);
 }
-.card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--accent-light), var(--accent-dark));
-  opacity: 0; transition: var(--transition);
-  border-radius: var(--radius) var(--radius) 0 0;
-}
-.card:focus-within::before { opacity: 1; }
 @media (max-width: 600px) { 
   .card { padding: 20px 16px; margin-bottom: 14px; border-radius: 12px; } 
   .page-wrapper { padding: 16px 14px 80px; }
