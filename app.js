@@ -542,10 +542,10 @@ function updateChecklistProgress() {
   const pct = Math.round((done / total) * 100);
   const fill = document.getElementById('checklist-progress-fill');
   const text = document.getElementById('checklist-progress-text');
-  if (fill) fill.style.transform = `scaleX(${pct / 100})`;
+  if (fill) fill.style.width = pct + '%';
   if (text) {
     text.textContent = `${done} / ${total} รายการ`;
-    text.style.color = done === total ? 'var(--success)' : 'var(--accent-dark)';
+    text.style.color = done === total ? 'var(--success)' : 'var(--accent-light)';
   }
 }
 
@@ -1574,20 +1574,27 @@ function restoreFormState() {
     if (s.checks?.check_other) toggleOtherNote();
     if (s.q93h) { document.getElementById('q9-3-counter').value = s.q93h; document.getElementById('q9-3-counter-search').value = s.q93s || s.q93h; }
     if (s.q99) document.getElementById('q9-9-note').value = s.q99;
-    // Restore Q10
-    if (s.q10?.length) {
-      s.q10.forEach(v => { const cb = document.querySelector(`[name="q10"][value="${v}"]`); if (cb) cb.checked = true; });
-      handleQ10Change();
-    }
-    // Restore similar drugs
+    // Restore similar drugs FIRST (before Q10, so handleQ10Change sees them)
     if (s.simDrugs?.length) {
+      document.getElementById('similar-drug-list').innerHTML = ''; 
+      similarDrugCount = 0;
       s.simDrugs.forEach(sd => {
         addSimilarDrug();
         const id = similarDrugCount;
         if (sd.drug) document.getElementById(`sim-drug-val-${id}`).value = sd.drug;
         if (sd.drugS) document.getElementById(`sim-drug-search-${id}`).value = sd.drugS;
-        if (sd.diff) document.getElementById(`sim-diff-${id}`).value = sd.diff;
+        if (sd.diff) {
+          const diffInput = document.getElementById(`sim-diff-${id}`);
+          diffInput.value = sd.diff;
+          styleDiffInput(diffInput);
+          updateDiffButtons(diffInput);
+        }
       });
+    }
+    // Restore Q10 AFTER similar drugs are in place
+    if (s.q10?.length) {
+      s.q10.forEach(v => { const cb = document.querySelector(`[name="q10"][value="${v}"]`); if (cb) cb.checked = true; });
+      handleQ10Change();
     }
     updateSelectAllBtn();
     updateChecklistProgress();
