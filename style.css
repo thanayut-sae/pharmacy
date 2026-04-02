@@ -166,7 +166,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 66px; }
 .card:focus-within {
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(0,0,0,0.06);
-  border-color: var(--accent-light);
+  border-color: var(--border-hover);
   z-index: 800;
 }
 .card::before {
@@ -469,15 +469,15 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ===================== UPLOAD AREA ===================== */
 .upload-area {
-  border: 2px dashed var(--border-hover); border-radius: var(--radius-sm);
+  border: 2px dashed var(--border); border-radius: var(--radius-sm);
   padding: 30px 20px; text-align: center; cursor: pointer;
-  background: var(--surface-hover); transition: all .3s ease;
+  background: var(--input-bg); transition: all .3s ease;
   outline: none; position: relative;
 }
 .upload-area:hover, .upload-area:focus { border-color: var(--accent); background: var(--accent-bg); }
 .upload-icon { font-size: 32px; margin-bottom: 10px; display: block; }
-.upload-text { font-size: var(--fs-sm); color: var(--text2); line-height: 1.5; display: block; }
-kbd { background: #fff; padding: 2px 8px; border-radius: 4px; font-family: inherit; font-size: 0.9em; box-shadow: 0 1px 3px rgba(0,0,0,0.15); border: 1px solid #ddd; font-weight: 600; }
+.upload-text { font-size: var(--fs-sm); color: var(--text3); line-height: 1.5; display: block; }
+kbd { background: var(--surface); padding: 2px 8px; border-radius: 4px; font-family: inherit; font-size: 0.9em; box-shadow: 0 1px 3px rgba(0,0,0,0.15); border: 1px solid var(--border); font-weight: 600; color: var(--text2); }
 
 #remove-img-btn {
   background: #fdecea; border: 1px solid rgba(220,53,69,.2);
